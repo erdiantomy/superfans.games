@@ -174,7 +174,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           </motion.div>
         )}
 
-        {m.status === "finished" && m.winner && (
+        {status === "finished" && m.winner && (
           <motion.div variants={item} className="bg-accent rounded-lg p-4 text-center mb-4">
             <div className="text-[28px] mb-1">🏆</div>
             <div className="font-display text-[20px] font-black text-green">{m.winner.name} WINS!</div>
