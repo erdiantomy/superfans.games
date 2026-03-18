@@ -19,6 +19,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
 
   const live = MATCHES.filter(m => m.status === "live");
   const up = MATCHES.filter(m => m.status === "upcoming");
+  const finished = MATCHES.filter(m => m.status === "finished");
 
   return (
     <motion.div
