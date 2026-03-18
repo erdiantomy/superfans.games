@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { type Match, type Player } from "@/data/constants";
+import { useAuth } from "@/hooks/useAuth";
+import { type Match, type Player } from "@/hooks/useData";
 import { AnimatePresence, motion } from "framer-motion";
 import { screenTransition } from "@/components/fanprize/MotionVariants";
+import AuthScreen from "@/pages/AuthScreen";
 import HomeScreen from "@/components/fanprize/HomeScreen";
 import MatchDetail from "@/components/fanprize/MatchDetail";
 import MatchResultScreen from "@/components/fanprize/MatchResultScreen";
@@ -14,10 +16,25 @@ import SupportModal from "@/components/fanprize/SupportModal";
 type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile";
 
 const Index = () => {
+  const { user, loading } = useAuth();
   const [screen, setScreen] = useState<Screen>("home");
   const [match, setMatch] = useState<Match | null>(null);
   const [nav, setNav] = useState("home");
   const [modal, setModal] = useState<{ m: Match; p: Player } | null>(null);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center" style={{ height: "100dvh" }}>
+        <div className="font-display text-[30px] font-black tracking-tight">
+          <span className="text-green">FAN</span>PRIZE
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthScreen />;
+  }
 
   const goNav = (id: string) => {
     setNav(id);
