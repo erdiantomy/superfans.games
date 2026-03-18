@@ -135,7 +135,7 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
             <div className="font-display text-[28px] font-black text-green mb-1.5">SUPPORT SENT!</div>
             <div className="text-muted-foreground text-[13px] mb-3.5">You are now part of this match</div>
             <div className="inline-block bg-green/10 border border-green/40 rounded-xl px-5 py-2.5">
-              <span className="font-display text-[22px] font-extrabold text-green">+100 SP Earned 🪙</span>
+              <span className="font-display text-[22px] font-extrabold text-green">+{pointsEarned} SP Earned 🪙</span>
             </div>
           </motion.div>
         )}
