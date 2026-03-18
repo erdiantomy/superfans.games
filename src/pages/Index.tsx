@@ -39,7 +39,7 @@ const Index = () => {
 
   const goNav = (id: string) => {
     setNav(id);
-    const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile" };
+    const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
     setScreen(map[id] || "home");
   };
 
