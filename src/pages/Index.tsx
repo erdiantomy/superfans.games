@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { type Match, type Player } from "@/hooks/useData";
 import logo from "@/assets/superfans-logo.png";
@@ -23,12 +23,50 @@ const Index = () => {
   const [match, setMatch] = useState<Match | null>(null);
   const [nav, setNav] = useState("home");
   const [modal, setModal] = useState<{ m: Match; p: Player } | null>(null);
+  const [showSplash, setShowSplash] = useState(true);
 
-  if (loading) {
+  useEffect(() => {
+    const timer = setTimeout(() => setShowSplash(false), 2200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash || loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center" style={{ height: "100dvh" }}>
-        <img src={logo} alt="SuperFans" className="h-12" />
-      </div>
+      <AnimatePresence>
+        {(showSplash || loading) && (
+          <motion.div
+            key="splash"
+            className="min-h-screen bg-background flex flex-col items-center justify-center gap-6"
+            style={{ height: "100dvh" }}
+            exit={{ opacity: 0, scale: 1.05 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
+            <motion.img
+              src={logo}
+              alt="SuperFans"
+              className="w-64"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.1 }}
+            />
+            <motion.div
+              className="flex gap-1.5"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              {[0, 1, 2].map(i => (
+                <motion.div
+                  key={i}
+                  className="w-2 h-2 rounded-full bg-green"
+                  animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }}
+                />
+              ))}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     );
   }
 
