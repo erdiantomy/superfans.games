@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { type Match, type Player } from "@/hooks/useData";
+import logo from "@/assets/superfans-logo.png";
 import { AnimatePresence, motion } from "framer-motion";
 import { screenTransition } from "@/components/fanprize/MotionVariants";
 import AuthScreen from "@/pages/AuthScreen";
