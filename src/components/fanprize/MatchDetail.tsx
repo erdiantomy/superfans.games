@@ -5,6 +5,7 @@ import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
 import Odometer from "./Odometer";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   m: Match;
@@ -15,15 +16,42 @@ interface Props {
 export default function MatchDetail({ m, onBack, onSupport }: Props) {
   const [pool, setPool] = useState(m.pool);
   const [fans, setFans] = useState(m.fans);
+  const [scoreA, setScoreA] = useState(m.sA);
+  const [scoreB, setScoreB] = useState(m.sB);
+  const [supA, setSupA] = useState(m.supA);
+  const [supB, setSupB] = useState(m.supB);
+  const [status, setStatus] = useState(m.status);
 
+  // Sync props when parent match changes
   useEffect(() => {
-    if (m.status !== "live") return;
-    const iv = setInterval(() => {
-      setPool(p => p + Math.floor(Math.random() * 9000) + 1000);
-      if (Math.random() > 0.65) setFans(f => f + 1);
-    }, 2400);
-    return () => clearInterval(iv);
-  }, [m.status]);
+    setPool(m.pool); setFans(m.fans);
+    setScoreA(m.sA); setScoreB(m.sB);
+    setSupA(m.supA); setSupB(m.supB);
+    setStatus(m.status);
+  }, [m]);
+
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel(`match-${m.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "matches", filter: `id=eq.${m.id}` },
+        (payload) => {
+          const r = payload.new as any;
+          setPool(r.pool);
+          setFans(r.fans);
+          setScoreA(r.score_a);
+          setScoreB(r.score_b);
+          setSupA(r.support_a);
+          setSupB(r.support_b);
+          setStatus(r.status);
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [m.id]);
 
   const recent = [["AK", "#FF5252"], ["BR", "#2979FF"], ["CS", "#FF9800"], ["DN", "#9C27B0"], ["EF", "#00BCD4"]];
 
@@ -36,11 +64,11 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           <div className="text-label text-[10px]">{m.title}</div>
           <div className="font-display text-[16px] font-bold">Match Detail</div>
         </div>
-        {m.status === "live" && <LiveDot />}
-        {m.status === "upcoming" && (
+        {status === "live" && <LiveDot />}
+        {status === "upcoming" && (
           <span className="bg-secondary/20 border border-secondary/40 rounded-full px-2.5 py-1 text-[10px] text-secondary font-bold">UPCOMING</span>
         )}
-        {m.status === "finished" && (
+        {status === "finished" && (
           <span className="bg-destructive/20 border border-destructive/40 rounded-full px-2.5 py-1 text-[10px] text-destructive font-bold">FINISHED</span>
         )}
       </div>
@@ -63,12 +91,12 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
             </div>
 
             <div className="text-center px-3">
-              {m.status !== "upcoming" ? (
+              {status !== "upcoming" ? (
                 <>
                   <div className="font-display text-[44px] font-black leading-none tracking-tight">
-                    <span className="text-green">{m.sA}</span>
+                    <span className="text-green">{scoreA}</span>
                     <span className="text-muted-foreground text-[30px] mx-1">:</span>
-                    <span className="text-blue">{m.sB}</span>
+                    <span className="text-blue">{scoreB}</span>
                   </div>
                   <div className="text-label text-[9px] mt-0.5">SET SCORE</div>
                 </>
@@ -85,7 +113,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
             </div>
           </div>
 
-          <SupportBar a={m.supA} b={m.supB} />
+          <SupportBar a={supA} b={supB} />
         </motion.div>
 
         {/* Pool Info */}
@@ -122,7 +150,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
         </motion.div>
 
         {/* Support Buttons */}
-        {m.status !== "finished" && (
+        {status !== "finished" && (
           <motion.div variants={item}>
             <SectionHead title="SUPPORT A PLAYER" />
             <div className="grid grid-cols-2 gap-2.5 mb-4">
@@ -146,7 +174,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           </motion.div>
         )}
 
-        {m.status === "finished" && m.winner && (
+        {status === "finished" && m.winner && (
           <motion.div variants={item} className="bg-accent rounded-lg p-4 text-center mb-4">
             <div className="text-[28px] mb-1">🏆</div>
             <div className="font-display text-[20px] font-black text-green">{m.winner.name} WINS!</div>
