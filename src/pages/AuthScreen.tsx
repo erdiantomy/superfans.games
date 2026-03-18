@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
+import logo from "@/assets/superfans-logo.png";
 
 export default function AuthScreen() {
   const handleGoogleSignIn = async () => {
