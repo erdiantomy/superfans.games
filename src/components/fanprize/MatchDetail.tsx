@@ -150,7 +150,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
         </motion.div>
 
         {/* Support Buttons */}
-        {m.status !== "finished" && (
+        {status !== "finished" && (
           <motion.div variants={item}>
             <SectionHead title="SUPPORT A PLAYER" />
             <div className="grid grid-cols-2 gap-2.5 mb-4">
