@@ -14,16 +14,208 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      matches: {
+        Row: {
+          created_at: string
+          fans: number
+          id: string
+          player_a_avatar: string
+          player_a_name: string
+          player_a_sport: string
+          player_a_tier: string
+          player_a_win_rate: number
+          player_b_avatar: string
+          player_b_name: string
+          player_b_sport: string
+          player_b_tier: string
+          player_b_win_rate: number
+          pool: number
+          score_a: number
+          score_b: number
+          starts_at: string | null
+          status: Database["public"]["Enums"]["match_status"]
+          support_a: number
+          support_b: number
+          title: string
+          updated_at: string
+          winner: string | null
+        }
+        Insert: {
+          created_at?: string
+          fans?: number
+          id?: string
+          player_a_avatar?: string
+          player_a_name: string
+          player_a_sport?: string
+          player_a_tier?: string
+          player_a_win_rate?: number
+          player_b_avatar?: string
+          player_b_name: string
+          player_b_sport?: string
+          player_b_tier?: string
+          player_b_win_rate?: number
+          pool?: number
+          score_a?: number
+          score_b?: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["match_status"]
+          support_a?: number
+          support_b?: number
+          title: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Update: {
+          created_at?: string
+          fans?: number
+          id?: string
+          player_a_avatar?: string
+          player_a_name?: string
+          player_a_sport?: string
+          player_a_tier?: string
+          player_a_win_rate?: number
+          player_b_avatar?: string
+          player_b_name?: string
+          player_b_sport?: string
+          player_b_tier?: string
+          player_b_win_rate?: number
+          pool?: number
+          score_a?: number
+          score_b?: number
+          starts_at?: string | null
+          status?: Database["public"]["Enums"]["match_status"]
+          support_a?: number
+          support_b?: number
+          title?: string
+          updated_at?: string
+          winner?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string
+          id: string
+          points: number
+          rank: number | null
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          points?: number
+          rank?: number | null
+          updated_at?: string
+          user_id: string
+          username?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          points?: number
+          rank?: number | null
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      supports: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          match_id: string
+          player: string
+          points_earned: number
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          match_id: string
+          player: string
+          points_earned?: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          match_id?: string
+          player?: string
+          points_earned?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supports_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallet_transactions: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          idr_amount: number
+          sp_amount: number
+          type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          idr_amount?: number
+          sp_amount?: number
+          type: Database["public"]["Enums"]["tx_type"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          idr_amount?: number
+          sp_amount?: number
+          type?: Database["public"]["Enums"]["tx_type"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          avatar_url: string | null
+          points: number | null
+          rank: number | null
+          total_supports: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      match_status: "live" | "upcoming" | "finished"
+      tx_type: "support" | "reward" | "topup" | "redeem" | "bonus"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +342,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      match_status: ["live", "upcoming", "finished"],
+      tx_type: ["support", "reward", "topup", "redeem", "bonus"],
+    },
   },
 } as const
