@@ -5,6 +5,7 @@ import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
 import Odometer from "./Odometer";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Props {
   m: Match;
@@ -15,15 +16,42 @@ interface Props {
 export default function MatchDetail({ m, onBack, onSupport }: Props) {
   const [pool, setPool] = useState(m.pool);
   const [fans, setFans] = useState(m.fans);
+  const [scoreA, setScoreA] = useState(m.sA);
+  const [scoreB, setScoreB] = useState(m.sB);
+  const [supA, setSupA] = useState(m.supA);
+  const [supB, setSupB] = useState(m.supB);
+  const [status, setStatus] = useState(m.status);
 
+  // Sync props when parent match changes
   useEffect(() => {
-    if (m.status !== "live") return;
-    const iv = setInterval(() => {
-      setPool(p => p + Math.floor(Math.random() * 9000) + 1000);
-      if (Math.random() > 0.65) setFans(f => f + 1);
-    }, 2400);
-    return () => clearInterval(iv);
-  }, [m.status]);
+    setPool(m.pool); setFans(m.fans);
+    setScoreA(m.sA); setScoreB(m.sB);
+    setSupA(m.supA); setSupB(m.supB);
+    setStatus(m.status);
+  }, [m]);
+
+  // Realtime subscription
+  useEffect(() => {
+    const channel = supabase
+      .channel(`match-${m.id}`)
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "matches", filter: `id=eq.${m.id}` },
+        (payload) => {
+          const r = payload.new as any;
+          setPool(r.pool);
+          setFans(r.fans);
+          setScoreA(r.score_a);
+          setScoreB(r.score_b);
+          setSupA(r.support_a);
+          setSupB(r.support_b);
+          setStatus(r.status);
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [m.id]);
 
   const recent = [["AK", "#FF5252"], ["BR", "#2979FF"], ["CS", "#FF9800"], ["DN", "#9C27B0"], ["EF", "#00BCD4"]];
 
