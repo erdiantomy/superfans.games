@@ -68,7 +68,7 @@ export const REWARDS: Reward[] = [
   { id: 1, title: "GoPay Voucher", value: "Rp 10.000", points: 500, stock: 50, type: "voucher", color: "#00AED6" },
   { id: 2, title: "OVO Cashback", value: "Rp 25.000", points: 1000, stock: 30, type: "voucher", color: "#4C3494" },
   { id: 3, title: "Court Booking 20% OFF", value: "20% OFF", points: 750, stock: 20, type: "sports", color: "#00E676" },
-  { id: 4, title: "FanPrize Jersey", value: "Exclusive", points: 2500, stock: 10, type: "merch", color: "#FF5252" },
+  { id: 4, title: "SuperFans Jersey", value: "Exclusive", points: 2500, stock: 10, type: "merch", color: "#FF5252" },
   { id: 5, title: "Coaching Session", value: "1 Hour", points: 3000, stock: 5, type: "experience", color: "#FF9800" },
   { id: 6, title: "DANA Voucher", value: "Rp 50.000", points: 2000, stock: 15, type: "voucher", color: "#1890FF" },
 ];
