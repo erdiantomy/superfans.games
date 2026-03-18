@@ -50,6 +50,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
         <motion.div
           key={m.id}
           variants={item}
+          whileTap={{ scale: 0.98 }}
           onClick={() => onPick(m)}
           className="gradient-card border border-subtle rounded-[20px] p-[18px] mb-5 relative overflow-hidden cursor-pointer"
         >
