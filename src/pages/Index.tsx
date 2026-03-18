@@ -10,10 +10,11 @@ import MatchResultScreen from "@/components/fanprize/MatchResultScreen";
 import WalletScreen from "@/components/fanprize/WalletScreen";
 import StoreScreen from "@/components/fanprize/StoreScreen";
 import ProfileScreen from "@/components/fanprize/ProfileScreen";
+import AdminPanel from "@/pages/AdminPanel";
 import BottomNav from "@/components/fanprize/BottomNav";
 import SupportModal from "@/components/fanprize/SupportModal";
 
-type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile";
+type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "admin";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -38,7 +39,7 @@ const Index = () => {
 
   const goNav = (id: string) => {
     setNav(id);
-    const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile" };
+    const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
     setScreen(map[id] || "home");
   };
 
@@ -62,6 +63,7 @@ const Index = () => {
         />
       );
     }
+    if (screen === "admin") return <AdminPanel key="admin" onBack={() => { setScreen("home"); setNav("home"); }} />;
     if (screen === "wallet") return <WalletScreen key="wallet" />;
     if (screen === "store") return <StoreScreen key="store" />;
     if (screen === "profile") return <ProfileScreen key="profile" />;

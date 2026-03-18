@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useIsAdmin } from "@/hooks/useAdmin";
 
 interface Props {
   active: string;
@@ -13,11 +14,16 @@ const tabs = [
   { id: "profile", icon: "👤", label: "Profile" },
 ];
 
+const adminTab = { id: "admin", icon: "⚙️", label: "Admin" };
+
 export default function BottomNav({ active, onNav }: Props) {
+  const { data: isAdmin } = useIsAdmin();
+  const allTabs = isAdmin ? [...tabs, adminTab] : tabs;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-md border-t border-border z-40">
       <div className="max-w-md mx-auto flex">
-        {tabs.map(t => {
+        {allTabs.map(t => {
           const isActive = active === t.id;
           return (
             <motion.button
