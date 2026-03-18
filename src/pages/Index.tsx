@@ -46,7 +46,7 @@ const Index = () => {
     if (screen === "profile") return <ProfileScreen />;
     return (
       <HomeScreen
-        onPick={m => { setMatch(m); setScreen("matchDetail"); }}
+        onPick={m => { setMatch(m); setScreen(m.status === "finished" ? "matchResult" : "matchDetail"); }}
       />
     );
   };
