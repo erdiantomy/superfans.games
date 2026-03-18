@@ -27,9 +27,7 @@ const Index = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center" style={{ height: "100dvh" }}>
-        <div className="font-display text-[30px] font-black tracking-tight">
-          <span className="text-green">FAN</span>PRIZE
-        </div>
+        <img src={logo} alt="SuperFans" className="h-12" />
       </div>
     );
   }
