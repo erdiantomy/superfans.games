@@ -2,13 +2,14 @@ import { useState } from "react";
 import { type Match, type Player } from "@/data/constants";
 import HomeScreen from "@/components/fanprize/HomeScreen";
 import MatchDetail from "@/components/fanprize/MatchDetail";
+import MatchResultScreen from "@/components/fanprize/MatchResultScreen";
 import WalletScreen from "@/components/fanprize/WalletScreen";
 import StoreScreen from "@/components/fanprize/StoreScreen";
 import ProfileScreen from "@/components/fanprize/ProfileScreen";
 import BottomNav from "@/components/fanprize/BottomNav";
 import SupportModal from "@/components/fanprize/SupportModal";
 
-type Screen = "home" | "matchDetail" | "wallet" | "store" | "profile";
+type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile";
 
 const Index = () => {
   const [screen, setScreen] = useState<Screen>("home");
