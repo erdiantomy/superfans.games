@@ -31,7 +31,7 @@ export default function AuthScreen() {
 
         {/* Tagline */}
         <div className="mb-10">
-          <h1 className="font-display text-[22px] font-bold mb-2">Support Your Athletes</h1>
+          <h1 className="font-display text-[22px] font-bold mb-2">Turn Supporters Into Loyal Fans</h1>
           <p className="text-muted-foreground text-[14px] leading-relaxed">
             Back your favorite players in live matches, earn Support Points, and redeem exclusive rewards.
           </p>
