@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 interface Props {
   active: string;
   onNav: (id: string) => void;
@@ -18,10 +20,12 @@ export default function BottomNav({ active, onNav }: Props) {
         {tabs.map(t => {
           const isActive = active === t.id;
           return (
-            <button
+            <motion.button
               key={t.id}
               onClick={() => onNav(t.id)}
               className="flex-1 flex flex-col items-center py-2.5 cursor-pointer transition-colors"
+              whileTap={{ scale: 0.85 }}
+              animate={isActive ? { scale: [1, 1.25, 1], transition: { duration: 0.35, ease: "easeOut" } } : { scale: 1 }}
             >
               <span className={`text-[20px] ${isActive ? "" : "opacity-50"}`}>{t.icon}</span>
               <span
@@ -29,7 +33,7 @@ export default function BottomNav({ active, onNav }: Props) {
               >
                 {t.label}
               </span>
-            </button>
+            </motion.button>
           );
         })}
       </div>

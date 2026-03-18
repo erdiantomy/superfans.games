@@ -50,6 +50,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
         <motion.div
           key={m.id}
           variants={item}
+          whileTap={{ scale: 0.98 }}
           onClick={() => onPick(m)}
           className="gradient-card border border-subtle rounded-[20px] p-[18px] mb-5 relative overflow-hidden cursor-pointer"
         >
@@ -99,9 +100,9 @@ export default function HomeScreen({ onPick }: HomeProps) {
 
           <SupportBar a={m.supA} b={m.supB} />
 
-          <button className="w-full mt-3 gradient-green rounded-xl py-3 font-display text-[16px] font-extrabold text-background tracking-wider uppercase">
+          <motion.button whileTap={{ scale: 0.95 }} className="w-full mt-3 gradient-green rounded-xl py-3 font-display text-[16px] font-extrabold text-background tracking-wider uppercase">
             SUPPORT NOW — EARN POINTS
-          </button>
+          </motion.button>
         </motion.div>
       ))}
 
@@ -113,6 +114,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
         <motion.div
           key={m.id}
           variants={item}
+          whileTap={{ scale: 0.97 }}
           onClick={() => onPick(m)}
           className="bg-card border border-subtle rounded-lg p-3.5 mb-2 flex items-center gap-3 cursor-pointer hover:bg-accent transition-colors"
         >
@@ -158,6 +160,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
             <motion.div
               key={m.id}
               variants={item}
+              whileTap={{ scale: 0.97 }}
               onClick={() => onPick(m)}
               className="bg-card border border-subtle rounded-lg p-3.5 mb-2 flex items-center gap-3 cursor-pointer hover:bg-accent transition-colors"
             >

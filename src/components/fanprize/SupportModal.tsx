@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { type Match, type Player, idr } from "@/data/constants";
 import { Avatar } from "./UIElements";
 
@@ -22,8 +23,21 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background/75 flex items-end z-50" onClick={onClose}>
-      <div className="w-full bg-card rounded-t-[22px] p-5 pb-10 animate-slide-up" onClick={e => e.stopPropagation()}>
+    <motion.div
+      className="fixed inset-0 bg-background/75 flex items-end z-50"
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        className="w-full bg-card rounded-t-[22px] p-5 pb-10"
+        onClick={e => e.stopPropagation()}
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
         {!done ? (
           <>
             <div className="w-[34px] h-1 rounded-full bg-muted mx-auto mb-[18px]" />
@@ -37,9 +51,10 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
 
             <div className="grid grid-cols-4 gap-2 mb-3">
               {AMTS.map(a => (
-                <button
+                <motion.button
                   key={a}
                   onClick={() => { setAmt(a); setCustom(""); }}
+                  whileTap={{ scale: 0.92 }}
                   className="rounded-xl p-3.5 font-display text-[17px] font-bold cursor-pointer transition-all"
                   style={{
                     backgroundColor: amt === a ? `${c}22` : "hsl(var(--muted))",
@@ -48,7 +63,7 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
                   }}
                 >
                   Rp {a / 1000}k
-                </button>
+                </motion.button>
               ))}
             </div>
 
@@ -65,23 +80,28 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
             </div>
 
             <div className="flex gap-2.5">
-              <button onClick={onClose} className="flex-1 bg-muted rounded-xl py-3.5 font-display text-[15px] font-bold text-foreground cursor-pointer">Cancel</button>
-              <button onClick={confirm} className="flex-[2] rounded-xl py-3.5 font-display text-[15px] font-bold cursor-pointer text-background" style={{ background: `linear-gradient(135deg, ${c}, ${c}dd)` }}>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={onClose} className="flex-1 bg-muted rounded-xl py-3.5 font-display text-[15px] font-bold text-foreground cursor-pointer">Cancel</motion.button>
+              <motion.button whileTap={{ scale: 0.95 }} onClick={confirm} className="flex-[2] rounded-xl py-3.5 font-display text-[15px] font-bold cursor-pointer text-background" style={{ background: `linear-gradient(135deg, ${c}, ${c}dd)` }}>
                 CONFIRM {idr(amt)}
-              </button>
+              </motion.button>
             </div>
           </>
         ) : (
-          <div className="text-center py-6">
+          <motion.div
+            className="text-center py-6"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          >
             <div className="text-[56px] mb-3">🎉</div>
             <div className="font-display text-[28px] font-black text-green mb-1.5">SUPPORT SENT!</div>
             <div className="text-muted-foreground text-[13px] mb-3.5">You are now part of this match</div>
             <div className="inline-block bg-green/10 border border-green/40 rounded-xl px-5 py-2.5">
               <span className="font-display text-[22px] font-extrabold text-green">+100 SP Earned 🪙</span>
             </div>
-          </div>
+          </motion.div>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
