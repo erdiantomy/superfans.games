@@ -77,8 +77,8 @@ npm install
 
 ### 4. Environment Variables
 ```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SUPABASE_URL=https://qsgwtjcrgedjbjsbibxr.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFzZ3d0amNyZ2VkamJqc2JpYnhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxOTA0NTEsImV4cCI6MjA4OTc2NjQ1MX0.oaEAJWTGxH5awf2S-NAS3c8x13fm9Xe4Im--5jHLXfE
 ```
 
 ### 5. Run
