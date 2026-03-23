@@ -295,7 +295,7 @@ export function useApproveScore() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (scoreId: string) => {
-      const { error } = await supabase.rpc("credit_xp_for_score", {
+      const { error } = await (supabase.rpc as any)("credit_xp_for_score", {
         submission_id: scoreId,
       });
       if (error) throw error;
