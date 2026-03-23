@@ -1,14 +1,53 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable";
 import logo from "@/assets/superfans-logo.png";
 
 export default function AuthScreen() {
+  const [signingIn, setSigningIn] = useState(false);
+
   const handleGoogleSignIn = async () => {
+    setSigningIn(true);
     const { error } = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });
-    if (error) console.error("Google sign-in error:", error);
+    if (error) {
+      console.error("Google sign-in error:", error);
+      setSigningIn(false);
+    }
   };
+
+  if (signingIn) {
+    return (
+      <div
+        className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center px-6"
+        style={{ height: "100dvh" }}
+      >
+        <motion.div
+          className="text-center flex flex-col items-center gap-6"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 24 }}
+        >
+          <img src={logo} alt="SuperFans" className="w-48 mx-auto" />
+          <div className="flex gap-1.5">
+            {[0, 1, 2].map(i => (
+              <motion.div
+                key={i}
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ background: "hsl(var(--green))" }}
+                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15 }}
+              />
+            ))}
+          </div>
+          <div style={{ fontSize: 13, color: "hsl(var(--muted-foreground))" }}>
+            Redirecting to Google…
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div
