@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { type Match, type Player } from "@/hooks/useData";
 import logo from "@/assets/superfans-logo.png";
 import { AnimatePresence, motion } from "framer-motion";
-import { screenTransition } from "@/components/fanprize/MotionVariants";
+import { screenTransition, directionalTransition } from "@/components/fanprize/MotionVariants";
 import AuthScreen from "@/pages/AuthScreen";
 import HomeScreen from "@/components/fanprize/HomeScreen";
 import MatchDetail from "@/components/fanprize/MatchDetail";
@@ -17,11 +17,14 @@ import SupportModal from "@/components/fanprize/SupportModal";
 
 type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "admin";
 
+const NAV_ORDER: Record<string, number> = { home: 0, matches: 0, wallet: 1, store: 2, profile: 3, admin: 4 };
+
 const Index = () => {
   const { user, loading } = useAuth();
   const [screen, setScreen] = useState<Screen>("home");
   const [match, setMatch] = useState<Match | null>(null);
   const [nav, setNav] = useState("home");
+  const [direction, setDirection] = useState(0);
   const [modal, setModal] = useState<{ m: Match; p: Player } | null>(null);
   const [showSplash, setShowSplash] = useState(true);
 
@@ -75,6 +78,9 @@ const Index = () => {
   }
 
   const goNav = (id: string) => {
+    const oldOrder = NAV_ORDER[nav] ?? 0;
+    const newOrder = NAV_ORDER[id] ?? 0;
+    setDirection(newOrder >= oldOrder ? 1 : -1);
     setNav(id);
     const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
     setScreen(map[id] || "home");
@@ -114,11 +120,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground max-w-md mx-auto relative overflow-hidden" style={{ height: "100dvh" }}>
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={screen}
           className="h-full"
-          {...screenTransition}
+          {...directionalTransition(direction)}
         >
           {renderScreen()}
         </motion.div>
