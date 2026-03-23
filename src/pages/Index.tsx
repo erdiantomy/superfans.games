@@ -17,11 +17,14 @@ import SupportModal from "@/components/fanprize/SupportModal";
 
 type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "admin";
 
+const NAV_ORDER: Record<string, number> = { home: 0, matches: 0, wallet: 1, store: 2, profile: 3, admin: 4 };
+
 const Index = () => {
   const { user, loading } = useAuth();
   const [screen, setScreen] = useState<Screen>("home");
   const [match, setMatch] = useState<Match | null>(null);
   const [nav, setNav] = useState("home");
+  const [direction, setDirection] = useState(0);
   const [modal, setModal] = useState<{ m: Match; p: Player } | null>(null);
   const [showSplash, setShowSplash] = useState(true);
 
