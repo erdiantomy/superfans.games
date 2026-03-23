@@ -232,8 +232,7 @@ export function useSessionPlayers(sessionId: string | undefined) {
     queryKey: ["session_players", sessionId],
     enabled: !!sessionId,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("session_players")
+      const { data, error } = await (supabase.from as any)("session_players")
         .select("*, player:padel_players(*)")
         .eq("session_id", sessionId!);
       if (error) throw error;
