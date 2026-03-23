@@ -111,8 +111,7 @@ export function useMonthlyLeaderboard() {
   return useQuery({
     queryKey: ["leaderboard", "monthly"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("padel_players")
+      const { data, error } = await (supabase.from as any)("padel_players")
         .select("*")
         .order("monthly_pts", { ascending: false })
         .limit(20);
