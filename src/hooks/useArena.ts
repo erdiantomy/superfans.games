@@ -342,8 +342,7 @@ export function usePlaceSupport() {
     mutationFn: async ({
       sessionId, supporterId, backedId, amount,
     }: { sessionId: string; supporterId: string; backedId: string; amount: number }) => {
-      const { data, error } = await supabase
-        .from("session_supports")
+      const { data, error } = await (supabase.from as any)("session_supports")
         .insert({ session_id: sessionId, supporter_id: supporterId, backed_id: backedId, amount })
         .select()
         .single();
