@@ -78,6 +78,9 @@ const Index = () => {
   }
 
   const goNav = (id: string) => {
+    const oldOrder = NAV_ORDER[nav] ?? 0;
+    const newOrder = NAV_ORDER[id] ?? 0;
+    setDirection(newOrder >= oldOrder ? 1 : -1);
     setNav(id);
     const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
     setScreen(map[id] || "home");
