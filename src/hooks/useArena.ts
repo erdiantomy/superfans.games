@@ -156,8 +156,7 @@ export function useSessions(statusFilter?: string[]) {
   return useQuery({
     queryKey: ["sessions", statusFilter],
     queryFn: async () => {
-      let q = supabase
-        .from("sessions")
+      let q = (supabase.from as any)("sessions")
         .select("*, host:padel_players!sessions_host_id_fkey(*)");
       if (statusFilter?.length) q = q.in("status", statusFilter);
       const { data, error } = await q.order("created_at", { ascending: false });
