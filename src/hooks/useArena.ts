@@ -141,8 +141,7 @@ export function usePadelPlayer(userId: string | undefined) {
     enabled: !!userId,
     retry: 2,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("padel_players")
+      const { data, error } = await (supabase.from as any)("padel_players")
         .select("*")
         .eq("user_id", userId!)
         .maybeSingle();
