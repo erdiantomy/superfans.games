@@ -8,6 +8,7 @@ import Landing       from "@/pages/Landing";
 import SessionPage   from "@/pages/SessionPage";
 import AdminPage     from "@/pages/AdminPage";
 import HostDashboard from "@/pages/HostDashboard";
+import RankPage      from "@/pages/RankPage";
 import AuthScreen    from "@/pages/AuthScreen";
 import Index         from "@/pages/Index";
 import NotFound      from "@/pages/NotFound";
@@ -24,15 +25,13 @@ const App = () => (
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
-            {/* Tom's Arena — game.tomspadel.com */}
             <Route path="/"                element={<Landing />} />
+            <Route path="/rank"            element={<RankPage />} />
             <Route path="/session/:code"   element={<SessionPage />} />
-            <Route path="/match/:code"     element={<SessionPage />} />  {/* alias */}
+            <Route path="/match/:code"     element={<SessionPage />} />
             <Route path="/admin"           element={<AdminPage />} />
             <Route path="/host"            element={<HostDashboard />} />
             <Route path="/auth"            element={<AuthScreen />} />
-
-            {/* Legacy */}
             <Route path="/fanprize"        element={<Index />} />
             <Route path="*"               element={<NotFound />} />
           </Routes>
