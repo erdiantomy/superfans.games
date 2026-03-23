@@ -93,7 +93,7 @@ export async function ensurePadelPlayer(user: {
   const words = name.trim().split(" ");
   const avatar = ((words[0]?.[0] || "P") + (words[1]?.[0] || words[0]?.[1] || "P")).toUpperCase();
 
-  const { data, error } = await supabase.rpc("upsert_padel_player", {
+  const { data, error } = await (supabase.rpc as any)("upsert_padel_player", {
     p_user_id: user.id,
     p_name:    name,
     p_email:   email,
