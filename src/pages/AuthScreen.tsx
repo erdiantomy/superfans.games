@@ -34,7 +34,7 @@ export default function AuthScreen() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 300, damping: 24 }}
         >
-          <img src={logo} alt="SuperFans" className="w-48 mx-auto" />
+          <img src={logo} alt="SuperFans" className="w-64 mx-auto" />
           <div className="flex gap-1.5">
             {[0, 1, 2].map(i => (
               <motion.div
@@ -66,7 +66,7 @@ export default function AuthScreen() {
         transition={{ type: "spring", stiffness: 300, damping: 24 }}
       >
         <div className="mb-8">
-          <img src={logo} alt="SuperFans" className="w-80 mx-auto mb-2" />
+          <img src={logo} alt="SuperFans" className="w-96 mx-auto mb-2" />
         </div>
 
         <div style={{ marginBottom: 24 }}>

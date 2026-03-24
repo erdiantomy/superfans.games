@@ -45,7 +45,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           setScoreB(r.score_b as number);
           setSupA(r.support_a as number);
           setSupB(r.support_b as number);
-          setStatus(r.status as string);
+          setStatus(r.status as "live" | "upcoming" | "finished");
         }
       )
       .subscribe();

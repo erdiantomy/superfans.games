@@ -45,7 +45,7 @@ export default function HomeScreen({ onPick }: HomeProps) {
       {/* Header */}
       <motion.div variants={item} className="flex justify-between items-center mb-6">
         <div>
-          <img src={logo} alt="SuperFans" className="h-8" />
+          <img src={logo} alt="SuperFans" className="h-11" />
         </div>
         <div className="flex items-center gap-2">
           <div className="bg-card border border-subtle rounded-[20px] px-3 py-1.5 text-[12px] text-green font-semibold flex items-center gap-1.5">
