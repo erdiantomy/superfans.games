@@ -66,7 +66,7 @@ export default function AuthScreen() {
         transition={{ type: "spring", stiffness: 300, damping: 24 }}
       >
         <div className="mb-8">
-          <img src={logo} alt="SuperFans" className="w-80 mx-auto mb-2" />
+          <img src={logo} alt="SuperFans" className="w-96 mx-auto mb-2" />
         </div>
 
         <div style={{ marginBottom: 24 }}>
