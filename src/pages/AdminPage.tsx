@@ -6,6 +6,7 @@ import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision, calcXP } from "@/lib/gamification";
 import { Av, Tag, StatusTag, Divider, Row, C, fmtLabel, shareUrl, fmtTs } from "@/components/arena";
 import { toast } from "sonner";
+import logo from "@/assets/superfans-logo.png";
 
 export default function AdminPage() {
   const navigate  = useNavigate();
