@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer } from "@/hooks/useArena";
 import { Tag, StatusTag, C, fmtLabel, shareUrl } from "@/components/arena";
 import { toast } from "sonner";
+import logo from "@/assets/superfans-logo.png";
 
 export default function HostDashboard() {
   const navigate          = useNavigate();
