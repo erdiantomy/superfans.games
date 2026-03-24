@@ -54,8 +54,8 @@ export default function SupportModal({ m, p, onClose, onConfirm }: Props) {
       qc.invalidateQueries({ queryKey: ["profile"] });
       setDone(true);
       setTimeout(() => onConfirm(amt), 2200);
-    } catch (err: any) {
-      toast.error(err.message || "Failed to submit support");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Failed to submit support");
       setSubmitting(false);
     }
   };

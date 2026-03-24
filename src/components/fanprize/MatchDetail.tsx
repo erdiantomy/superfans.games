@@ -38,14 +38,14 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
         "postgres_changes",
         { event: "UPDATE", schema: "public", table: "matches", filter: `id=eq.${m.id}` },
         (payload) => {
-          const r = payload.new as any;
-          setPool(r.pool);
-          setFans(r.fans);
-          setScoreA(r.score_a);
-          setScoreB(r.score_b);
-          setSupA(r.support_a);
-          setSupB(r.support_b);
-          setStatus(r.status);
+          const r = payload.new as Record<string, unknown>;
+          setPool(r.pool as number);
+          setFans(r.fans as number);
+          setScoreA(r.score_a as number);
+          setScoreB(r.score_b as number);
+          setSupA(r.support_a as number);
+          setSupB(r.support_b as number);
+          setStatus(r.status as string);
         }
       )
       .subscribe();

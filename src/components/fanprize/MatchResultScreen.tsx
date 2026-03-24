@@ -43,12 +43,24 @@ function Confetti() {
 }
 
 export default function MatchResultScreen({ m, onBack }: Props) {
-  const winner = m.winner!;
+  const winner = m.winner;
   const winnerPayout = Math.floor(m.pool * 0.9);
   const platformFee = Math.floor(m.pool * 0.1);
 
   const userBackedWinner = true;
   const userPointsChange = userBackedWinner ? "+150 SP" : "-50 SP";
+
+  // Guard: if match is finished but winner is not set yet, show fallback
+  if (!winner) {
+    return (
+      <div className="h-full flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <div className="text-[40px]">⏳</div>
+        <div className="font-display text-[20px] font-bold">Waiting for results</div>
+        <div className="text-label text-[12px]">The winner hasn't been declared yet.</div>
+        <button onClick={onBack} className="bg-card border border-subtle rounded-lg px-5 py-2.5 text-foreground text-sm font-semibold cursor-pointer mt-2">← Back</button>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col relative">

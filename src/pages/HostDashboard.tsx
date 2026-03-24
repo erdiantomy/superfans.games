@@ -17,10 +17,11 @@ export default function HostDashboard() {
   useEffect(() => {
     if (!user || meLoading || me || ensuring) return;
     setEnsuring(true);
-    ensurePadelPlayer(user as any).then(() => {
+    ensurePadelPlayer(user as Parameters<typeof ensurePadelPlayer>[0]).then(() => {
       refetchMe();
       setEnsuring(false);
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, me, meLoading]);
 
   const myOwnSessions = allSessions.filter(s => me && s.host_id === me.id);
@@ -145,8 +146,8 @@ function CreateSessionForm({ onDone, hostId }: { onDone: () => void; hostId: str
         approved_at:  null,
       });
       setDone(true);
-    } catch (e: any) {
-      setErr(e?.message ?? "Something went wrong. Please try again.");
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "Something went wrong. Please try again.");
     }
   };
 

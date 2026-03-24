@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Arena tables (padel_players, sessions, etc.) are not in the auto-generated
+// Supabase types yet – every `supabase.from(...)` call for these tables requires
+// an `as any` cast.  The disable above keeps the file clean until types are regenerated.
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { calcXP } from "@/lib/gamification";

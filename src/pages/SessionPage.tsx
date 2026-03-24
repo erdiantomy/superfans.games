@@ -65,7 +65,7 @@ export default function SessionPage() {
     try {
       await requestJoin.mutateAsync({ sessionId: session.id, playerId: me.id });
       toast.success("Join request sent · Waiting for host approval");
-    } catch (e: any) { toast.error(e.message); }
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to join"); }
   };
 
   const handleApprove = async (spId: string) => {
@@ -86,7 +86,7 @@ export default function SessionPage() {
       await placeSupport.mutateAsync({ sessionId: session.id, supporterId: me.id, backedId: supPicked, amount: supAmt });
       setSupported(true);
       toast.success(`You're backing this player — ${cr(supAmt)} locked`);
-    } catch (e: any) { toast.error(e.message); }
+    } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to place support"); }
   };
 
   const tabs = isHost

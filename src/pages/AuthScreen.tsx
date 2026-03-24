@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable";
+import { toast } from "sonner";
 import logo from "@/assets/superfans-logo.png";
 
 export default function AuthScreen() {
@@ -13,6 +14,7 @@ export default function AuthScreen() {
     });
     if (error) {
       console.error("Google sign-in error:", error);
+      toast.error("Sign-in failed. Please try again.");
       setSigningIn(false);
     }
   };
