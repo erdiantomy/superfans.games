@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowLeft, Plus, Trash2, Trophy, Save } from "lucide-react";
 import { toast } from "sonner";
+import logo from "@/assets/superfans-logo.png";
 import type { Match } from "@/hooks/useData";
 
 interface MatchForm {
