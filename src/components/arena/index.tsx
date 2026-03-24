@@ -129,7 +129,7 @@ export function useCountdown(targetMs: number) {
     if (left <= 0) return;
     const iv = setInterval(() => setLeft(t => Math.max(0, t - 1000)), 1000);
     return () => clearInterval(iv);
-  }, []);
+  }, [left]);
   const s = Math.floor(left / 1000), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
   const p = (n: number) => String(n).padStart(2, "0");
   return { left, expired: left <= 0, label: h > 0 ? `${h}h ${p(m)}m ${p(sec)}s` : `${p(m)}m ${p(sec)}s`, urgent: left < 30 * 60 * 1000 };

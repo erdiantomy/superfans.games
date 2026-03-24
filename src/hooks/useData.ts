@@ -84,7 +84,7 @@ export function useProfile(userId: string | undefined) {
         .from("profiles")
         .select("*")
         .eq("user_id", userId!)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },

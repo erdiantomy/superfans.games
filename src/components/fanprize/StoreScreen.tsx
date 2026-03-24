@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { REWARDS, typeEmoji } from "@/data/constants";
 import { SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
+import { toast } from "sonner";
 
 export default function StoreScreen() {
   const [cat, setCat] = useState("all");
@@ -52,6 +53,7 @@ export default function StoreScreen() {
             <div className="text-label text-[10px] mb-2.5">Stock: {r.stock}</div>
             <button
               className="w-full rounded-lg py-2 font-display text-[13px] font-bold cursor-pointer"
+              onClick={() => toast.info("Redemption coming soon!")}
               style={{ backgroundColor: `${r.color}18`, border: `1px solid ${r.color}40`, color: r.color }}
             >
               🪙 {r.points.toLocaleString()} SP
