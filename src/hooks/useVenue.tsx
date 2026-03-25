@@ -45,7 +45,8 @@ export function VenueProvider({ children }: { children: ReactNode }) {
   const { data: venue, isLoading, error } = useQuery({
     queryKey: ["venue", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // venues table exists in DB but may not be in generated types yet
+      const { data, error } = await (supabase as any)
         .from("venues")
         .select("*")
         .eq("slug", slug)
