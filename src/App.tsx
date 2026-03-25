@@ -9,12 +9,13 @@ import Landing       from "@/pages/Landing";
 import VenuePage     from "@/pages/VenuePage";
 import RegisterPage  from "@/pages/RegisterPage";
 import SessionPage   from "@/pages/SessionPage";
-import AdminPage     from "@/pages/AdminPage";
-import HostDashboard from "@/pages/HostDashboard";
-import RankPage      from "@/pages/RankPage";
-import AuthScreen    from "@/pages/AuthScreen";
-import Index         from "@/pages/Index";
-import NotFound      from "@/pages/NotFound";
+import AdminPage      from "@/pages/AdminPage";
+import SuperAdminPage from "@/pages/SuperAdminPage";
+import HostDashboard  from "@/pages/HostDashboard";
+import RankPage       from "@/pages/RankPage";
+import AuthScreen     from "@/pages/AuthScreen";
+import Index          from "@/pages/Index";
+import NotFound       from "@/pages/NotFound";
 
 import "./App.css";
 
@@ -52,7 +53,7 @@ const App = () => (
             {/* Backwards-compat redirects: old flat routes → /tomspadel/* */}
             <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />
             <Route path="/host"            element={<Navigate to="/tomspadel/host" replace />} />
-            <Route path="/admin"           element={<Navigate to="/tomspadel/admin" replace />} />
+            <Route path="/admin"           element={<SuperAdminPage />} />
             <Route path="/session/:code"   element={<LegacySessionRedirect />} />
             <Route path="/match/:code"     element={<LegacyMatchRedirect />} />
 
