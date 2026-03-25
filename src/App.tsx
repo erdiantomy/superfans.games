@@ -5,17 +5,20 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { VenueProvider } from "@/hooks/useVenue";
 
-import HomePage       from "@/pages/HomePage";
-import VenuePage     from "@/pages/VenuePage";
-import RegisterPage  from "@/pages/RegisterPage";
-import SessionPage   from "@/pages/SessionPage";
-import AdminPage      from "@/pages/AdminPage";
-import SuperAdminPage from "@/pages/SuperAdminPage";
-import HostDashboard  from "@/pages/HostDashboard";
-import RankPage       from "@/pages/RankPage";
-import AuthScreen     from "@/pages/AuthScreen";
-import Index          from "@/pages/Index";
-import NotFound       from "@/pages/NotFound";
+import HomePage           from "@/pages/HomePage";
+import VenuePage         from "@/pages/VenuePage";
+import RegisterPage      from "@/pages/RegisterPage";
+import SessionPage       from "@/pages/SessionPage";
+import AdminPage          from "@/pages/AdminPage";
+import SuperAdminPage     from "@/pages/SuperAdminPage";
+import HostDashboard      from "@/pages/HostDashboard";
+import RankPage           from "@/pages/RankPage";
+import AuthScreen         from "@/pages/AuthScreen";
+import Index              from "@/pages/Index";
+import TopUpPage          from "@/pages/TopUpPage";
+import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
+import PaymentFailedPage  from "@/pages/PaymentFailedPage";
+import NotFound           from "@/pages/NotFound";
 
 import "./App.css";
 
@@ -48,7 +51,10 @@ const App = () => (
             <Route path="/"           element={<HomePage />} />
             <Route path="/auth"       element={<AuthScreen />} />
             <Route path="/register"  element={<RegisterPage />} />
-            <Route path="/fanprize"   element={<Index />} />
+            <Route path="/fanprize"         element={<Index />} />
+            <Route path="/topup"            element={<TopUpPage />} />
+            <Route path="/payment/success"  element={<PaymentSuccessPage />} />
+            <Route path="/payment/failed"   element={<PaymentFailedPage />} />
 
             {/* Backwards-compat redirects: old flat routes → /tomspadel/* */}
             <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />

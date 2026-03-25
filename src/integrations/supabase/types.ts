@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      credit_packages: {
+        Row: {
+          bonus_pct: number
+          credits: number
+          id: string
+          is_active: boolean
+          name: string
+          price_idr: number
+          sort_order: number
+        }
+        Insert: {
+          bonus_pct?: number
+          credits: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_idr: number
+          sort_order?: number
+        }
+        Update: {
+          bonus_pct?: number
+          credits?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_idr?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string
@@ -91,6 +121,104 @@ export type Database = {
           winner?: string | null
         }
         Relationships: []
+      }
+      padel_players: {
+        Row: {
+          avatar: string
+          created_at: string
+          credits: number
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }
+        Insert: {
+          avatar?: string
+          created_at?: string
+          credits?: number
+          division?: string
+          id?: string
+          lifetime_xp?: number
+          matches_played?: number
+          matches_won?: number
+          monthly_pts?: number
+          name?: string
+          streak?: number
+          user_id: string
+        }
+        Update: {
+          avatar?: string
+          created_at?: string
+          credits?: number
+          division?: string
+          id?: string
+          lifetime_xp?: number
+          matches_played?: number
+          matches_won?: number
+          monthly_pts?: number
+          name?: string
+          streak?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      payment_orders: {
+        Row: {
+          created_at: string
+          credits_amount: number
+          expired_at: string | null
+          id: string
+          package_id: string | null
+          paid_at: string | null
+          payment_channel: string | null
+          player_id: string
+          price_idr: number
+          status: string
+          xendit_invoice_id: string | null
+          xendit_invoice_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          credits_amount?: number
+          expired_at?: string | null
+          id?: string
+          package_id?: string | null
+          paid_at?: string | null
+          payment_channel?: string | null
+          player_id: string
+          price_idr?: number
+          status?: string
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          credits_amount?: number
+          expired_at?: string | null
+          id?: string
+          package_id?: string | null
+          paid_at?: string | null
+          payment_channel?: string | null
+          player_id?: string
+          price_idr?: number
+          status?: string
+          xendit_invoice_id?: string | null
+          xendit_invoice_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "credit_packages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -316,6 +444,7 @@ export type Database = {
           description: string
           id: string
           idr_amount: number
+          payment_order_id: string | null
           sp_amount: number
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
@@ -325,6 +454,7 @@ export type Database = {
           description?: string
           id?: string
           idr_amount?: number
+          payment_order_id?: string | null
           sp_amount?: number
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
@@ -334,11 +464,20 @@ export type Database = {
           description?: string
           id?: string
           idr_amount?: number
+          payment_order_id?: string | null
           sp_amount?: number
           type?: Database["public"]["Enums"]["tx_type"]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_payment_order_id_fkey"
+            columns: ["payment_order_id"]
+            isOneToOne: false
+            referencedRelation: "payment_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
