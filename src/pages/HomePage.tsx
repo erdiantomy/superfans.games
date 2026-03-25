@@ -1,9 +1,64 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 
 const GREEN = "#00E676";
+
+const ROLE_TABS = [
+  { key: "player", label: "🎾 Players", color: GREEN },
+  { key: "venue", label: "🏟️ Venue Owners", color: "#60D5FF" },
+  { key: "host", label: "📋 Session Hosts", color: "#FFD166" },
+] as const;
+
+type RoleKey = typeof ROLE_TABS[number]["key"];
+
+const ROLE_FLOWS: Record<RoleKey, { icon: string; title: string; desc: string; visual: string }[]> = {
+  player: [
+    { icon: "📱", title: "Open Your Venue Link", desc: "No app download. Just open your venue's URL (e.g. superfans.games/yourclub) on any phone or laptop.", visual: "🌐 → 📱" },
+    { icon: "🔐", title: "Sign In with Google", desc: "One-tap Google sign-in. Your profile is created instantly with a unique username and avatar.", visual: "👤 ✓" },
+    { icon: "🏓", title: "Join a Live Session", desc: "See open sessions at your venue. Tap to join — the host assigns you to a court and match.", visual: "📋 → 🏓" },
+    { icon: "📊", title: "Play & Earn XP", desc: "After your match, staff verifies the score. You earn XP based on result and session ranking. Win = 100 base XP, Loss = 50 base XP.", visual: "⭐ +XP" },
+    { icon: "🏆", title: "Climb the Leaderboard", desc: "Your XP accumulates across all venues. Rise through divisions: Bronze → Silver → Gold → Platinum → Diamond.", visual: "📈 🥇" },
+    { icon: "💰", title: "Support & Earn Credits", desc: "Back other players before matches. If they win, you split 70% of the losing pool proportionally.", visual: "🤝 → 💵" },
+  ],
+  venue: [
+    { icon: "📝", title: "Register Your Venue", desc: "Fill out a 5-minute form with your venue name, city, number of courts, and brand color. We activate within 24 hours.", visual: "📋 → ✅" },
+    { icon: "🔗", title: "Get Your Branded URL", desc: "You receive a unique link like superfans.games/yourclub. Share it with your players — that's it!", visual: "🌐 yourclub" },
+    { icon: "🏆", title: "Set Monthly Prizes", desc: "Define a prize pool amount. Top 3 players on your leaderboard at month's end split it automatically.", visual: "💰 → 🥇🥈🥉" },
+    { icon: "📊", title: "Track Everything", desc: "See live player counts, session history, leaderboards, and revenue from the admin dashboard.", visual: "📈 Dashboard" },
+    { icon: "💳", title: "Earn from Support Economy", desc: "10% platform fee on the support pool goes to sustaining the ecosystem. Zero monthly subscription for you.", visual: "0 → 💵" },
+  ],
+  host: [
+    { icon: "➕", title: "Create a Session", desc: "As host, open a new session — pick the format (Americano or Mexicano), set the number of courts and rounds.", visual: "🆕 Session" },
+    { icon: "👥", title: "Players Join", desc: "Players see your session in real-time and tap to join. You see the roster build up live on your screen.", visual: "👤👤👤 → 📋" },
+    { icon: "🔀", title: "Matches Auto-Generate", desc: "The system pairs players and assigns courts automatically each round. No spreadsheets needed.", visual: "🤖 → 🏓🏓" },
+    { icon: "✅", title: "Verify Scores", desc: "After each match, players submit scores. You review and approve — XP is credited instantly upon approval.", visual: "📝 → ✓ → ⭐" },
+    { icon: "📊", title: "Session Leaderboard", desc: "A live leaderboard updates after each round. Players see their rank, wins, and XP earned in real-time.", visual: "🏆 Live" },
+  ],
+};
+
+const ECONOMY_FLOW = [
+  { label: "Fan backs Player A", amount: "100 Cr", icon: "🤝" },
+  { label: "Player A wins!", amount: "", icon: "🏆" },
+  { label: "70% → Winning backers", amount: "70 Cr", icon: "💰" },
+  { label: "20% → Winning player", amount: "20 Cr", icon: "⭐" },
+  { label: "10% → Platform", amount: "10 Cr", icon: "🏟️" },
+];
+
+const XP_TABLE = [
+  { result: "Win", base: 100, rank1: "200 XP (×2.0)", rank3: "140 XP (×1.4)", rank6: "120 XP (×1.2)" },
+  { result: "Loss", base: 50, rank1: "100 XP (×2.0)", rank3: "70 XP (×1.4)", rank6: "60 XP (×1.2)" },
+];
+
+const DIVISIONS = [
+  { label: "Diamond", color: "#60D5FF", min: "3000+", icon: "💎" },
+  { label: "Platinum", color: "#B8A9FF", min: "2400", icon: "⚪" },
+  { label: "Gold", color: "#FFD166", min: "1600", icon: "🥇" },
+  { label: "Silver", color: "#C0C0C0", min: "900", icon: "🥈" },
+  { label: "Bronze", color: "#CD7F32", min: "0", icon: "🥉" },
+];
 
 interface Venue {
   id: string; slug: string; name: string; logo_url: string | null;
