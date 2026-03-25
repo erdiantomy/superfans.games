@@ -53,7 +53,7 @@ const App = () => (
             {/* Backwards-compat redirects: old flat routes → /tomspadel/* */}
             <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />
             <Route path="/host"            element={<Navigate to="/tomspadel/host" replace />} />
-            <Route path="/admin"           element={<Navigate to="/tomspadel/admin" replace />} />
+            <Route path="/admin"           element={<SuperAdminPage />} />
             <Route path="/session/:code"   element={<LegacySessionRedirect />} />
             <Route path="/match/:code"     element={<LegacyMatchRedirect />} />
 
