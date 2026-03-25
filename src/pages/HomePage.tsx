@@ -129,22 +129,8 @@ export default function HomePage() {
         <div style={{ height: 1, background: "#eee" }} />
       </div>
 
-      {/* HOW IT WORKS */}
-      <section style={{ padding: "48px 24px", maxWidth: 720, margin: "0 auto" }}>
-        <h2 style={{ textAlign: "center", fontSize: 11, fontWeight: 800, letterSpacing: 2, color: GREEN, textTransform: "uppercase", marginBottom: 8 }}>How It Works</h2>
-        <p style={{ textAlign: "center", fontSize: 24, fontWeight: 800, marginBottom: 36, fontFamily: "'Barlow Condensed', sans-serif" }}>Up and running in 3 steps</p>
-        <div style={{ display: "grid", gap: 16 }}>
-          {STEPS.map(s => (
-            <motion.div key={s.n} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-              <div style={{ width: 40, height: 40, borderRadius: 10, background: `${GREEN}15`, color: GREEN, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 18, fontFamily: "'Barlow Condensed'", flexShrink: 0 }}>{s.n}</div>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>{s.title}</div>
-                <div style={{ fontSize: 14, color: "#666", lineHeight: 1.6 }}>{s.desc}</div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      {/* HOW IT WORKS — Enhanced */}
+      <HowItWorksSection />
 
       {/* FEATURES */}
       <section style={{ background: "#f9f9f9", padding: "48px 24px" }}>
