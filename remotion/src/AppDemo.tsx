@@ -507,7 +507,7 @@ const WalletScreen: React.FC = () => {
 };
 
 // ─── Main App Demo ───
-const T = 20;
+const T = 25;
 
 export const AppDemo: React.FC = () => {
   return (
@@ -527,35 +527,35 @@ export const AppDemo: React.FC = () => {
       {/* Phone with screens */}
       <PhoneFrame>
         <TransitionSeries>
-          <TransitionSeries.Sequence durationInFrames={120}>
+          <TransitionSeries.Sequence durationInFrames={180}>
             <VenueLanding />
           </TransitionSeries.Sequence>
           <TransitionSeries.Transition
             presentation={slide({ direction: "from-right" })}
             timing={springTiming({ config: { damping: 200 }, durationInFrames: T })}
           />
-          <TransitionSeries.Sequence durationInFrames={110}>
+          <TransitionSeries.Sequence durationInFrames={160}>
             <LiveSession />
           </TransitionSeries.Sequence>
           <TransitionSeries.Transition
             presentation={slide({ direction: "from-right" })}
             timing={springTiming({ config: { damping: 200 }, durationInFrames: T })}
           />
-          <TransitionSeries.Sequence durationInFrames={110}>
+          <TransitionSeries.Sequence durationInFrames={160}>
             <LeaderboardScreen />
           </TransitionSeries.Sequence>
           <TransitionSeries.Transition
             presentation={slide({ direction: "from-right" })}
             timing={springTiming({ config: { damping: 200 }, durationInFrames: T })}
           />
-          <TransitionSeries.Sequence durationInFrames={110}>
+          <TransitionSeries.Sequence durationInFrames={160}>
             <SupportScreen />
           </TransitionSeries.Sequence>
           <TransitionSeries.Transition
             presentation={slide({ direction: "from-right" })}
             timing={springTiming({ config: { damping: 200 }, durationInFrames: T })}
           />
-          <TransitionSeries.Sequence durationInFrames={100}>
+          <TransitionSeries.Sequence durationInFrames={140}>
             <WalletScreen />
           </TransitionSeries.Sequence>
         </TransitionSeries>
@@ -570,11 +570,11 @@ const FloatingLabel: React.FC = () => {
   const { fps } = useVideoConfig();
 
   const labels = [
-    { text: "Venue Landing", start: 0, end: 100 },
-    { text: "Live Session", start: 100, end: 190 },
-    { text: "Leaderboard & Divisions", start: 190, end: 280 },
-    { text: "Support Economy", start: 280, end: 370 },
-    { text: "Wallet & Credits", start: 370, end: 450 },
+    { text: "Venue Landing", start: 0, end: 155 },
+    { text: "Live Session", start: 155, end: 290 },
+    { text: "Leaderboard & Divisions", start: 290, end: 425 },
+    { text: "Support Economy", start: 425, end: 560 },
+    { text: "Wallet & Credits", start: 560, end: 680 },
   ];
 
   return (
