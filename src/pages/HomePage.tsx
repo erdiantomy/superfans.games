@@ -399,7 +399,7 @@ export default function HomePage() {
               width: 100, height: 4, background: "#444", borderRadius: 2,
               margin: "8px auto 0",
             }} />
-          </div>
+          </motion.div>
         </motion.div>
       </section>
 
