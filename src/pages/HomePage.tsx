@@ -366,7 +366,10 @@ export default function HomePage() {
           transition={{ delay: 0.3, duration: 0.6 }}
           style={{ marginTop: 40, display: "flex", justifyContent: "center" }}
         >
-          <div style={{
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            style={{
             width: 280,
             background: "#111",
             borderRadius: 40,
@@ -396,7 +399,7 @@ export default function HomePage() {
               width: 100, height: 4, background: "#444", borderRadius: 2,
               margin: "8px auto 0",
             }} />
-          </div>
+          </motion.div>
         </motion.div>
       </section>
 
