@@ -173,6 +173,35 @@ function Dashboard() {
   const [tab, setTab] = useState<TabKey>("overview");
 
   // ─── Data queries ────────────────────────────────
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ["sa-unread-notifs"],
+    refetchInterval: 15000,
+    queryFn: async () => {
+      const { count, error } = await (supabase as any).from("admin_notifications").select("*", { count: "exact", head: true }).eq("read", false);
+      if (error) return 0;
+      return count ?? 0;
+    },
+  });
+
+  const { data: recentNotifs = [], refetch: refetchNotifs } = useQuery({
+    queryKey: ["sa-recent-notifs"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("admin_notifications").select("*").order("created_at", { ascending: false }).limit(20);
+      if (error) return [];
+      return data ?? [];
+    },
+  });
+
+  const [showNotifs, setShowNotifs] = useState(false);
+
+  const markAllRead = async () => {
+    const unreadIds = recentNotifs.filter((n: any) => !n.read).map((n: any) => n.id);
+    if (unreadIds.length === 0) return;
+    await (supabase as any).from("admin_notifications").update({ read: true }).in("id", unreadIds);
+    qc.invalidateQueries({ queryKey: ["sa-unread-notifs"] });
+    refetchNotifs();
+  };
+
   const { data: venues = [] } = useQuery({
     queryKey: ["sa-venues"],
     queryFn: async () => {
