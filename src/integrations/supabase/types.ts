@@ -256,6 +256,262 @@ export type Database = {
         }
         Relationships: []
       }
+      score_submissions: {
+        Row: {
+          court: number
+          created_at: string
+          id: string
+          reported_by: string
+          reviewed_at: string | null
+          round: number
+          score_a: string
+          score_b: string
+          session_id: string
+          session_rank_losers: number
+          session_rank_winners: number
+          status: string
+          team_a_p1: string
+          team_a_p2: string
+          team_b_p1: string
+          team_b_p2: string
+          winner_team: string | null
+          xp_credited: boolean
+        }
+        Insert: {
+          court?: number
+          created_at?: string
+          id?: string
+          reported_by: string
+          reviewed_at?: string | null
+          round?: number
+          score_a?: string
+          score_b?: string
+          session_id: string
+          session_rank_losers?: number
+          session_rank_winners?: number
+          status?: string
+          team_a_p1?: string
+          team_a_p2?: string
+          team_b_p1?: string
+          team_b_p2?: string
+          winner_team?: string | null
+          xp_credited?: boolean
+        }
+        Update: {
+          court?: number
+          created_at?: string
+          id?: string
+          reported_by?: string
+          reviewed_at?: string | null
+          round?: number
+          score_a?: string
+          score_b?: string
+          session_id?: string
+          session_rank_losers?: number
+          session_rank_winners?: number
+          status?: string
+          team_a_p1?: string
+          team_a_p2?: string
+          team_b_p1?: string
+          team_b_p2?: string
+          winner_team?: string | null
+          xp_credited?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "score_submissions_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "score_submissions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_players: {
+        Row: {
+          created_at: string
+          id: string
+          joined_at: string | null
+          player_id: string
+          role: string
+          session_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          joined_at?: string | null
+          player_id: string
+          role?: string
+          session_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          joined_at?: string | null
+          player_id?: string
+          role?: string
+          session_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_players_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_supports: {
+        Row: {
+          amount: number
+          backed_id: string
+          created_at: string
+          id: string
+          payout: number | null
+          resolved: boolean
+          session_id: string
+          supporter_id: string
+        }
+        Insert: {
+          amount?: number
+          backed_id: string
+          created_at?: string
+          id?: string
+          payout?: number | null
+          resolved?: boolean
+          session_id: string
+          supporter_id: string
+        }
+        Update: {
+          amount?: number
+          backed_id?: string
+          created_at?: string
+          id?: string
+          payout?: number | null
+          resolved?: boolean
+          session_id?: string
+          supporter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_supports_backed_id_fkey"
+            columns: ["backed_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_supports_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_supports_supporter_id_fkey"
+            columns: ["supporter_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sessions: {
+        Row: {
+          admin_note: string | null
+          approved_at: string | null
+          code: string
+          courts: number
+          created_at: string
+          current_round: number
+          format: string
+          host_id: string
+          id: string
+          locked: boolean
+          max_players: number
+          name: string
+          partner_type: string
+          points_per_match: number
+          scheduled_at: string | null
+          status: string
+          total_rounds: number
+          venue_id: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          approved_at?: string | null
+          code?: string
+          courts?: number
+          created_at?: string
+          current_round?: number
+          format?: string
+          host_id: string
+          id?: string
+          locked?: boolean
+          max_players?: number
+          name: string
+          partner_type?: string
+          points_per_match?: number
+          scheduled_at?: string | null
+          status?: string
+          total_rounds?: number
+          venue_id?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          approved_at?: string | null
+          code?: string
+          courts?: number
+          created_at?: string
+          current_round?: number
+          format?: string
+          host_id?: string
+          id?: string
+          locked?: boolean
+          max_players?: number
+          name?: string
+          partner_type?: string
+          points_per_match?: number
+          scheduled_at?: string | null
+          status?: string
+          total_rounds?: number
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supports: {
         Row: {
           amount: number
@@ -494,12 +750,44 @@ export type Database = {
       }
     }
     Functions: {
+      credit_xp_for_score: {
+        Args: { submission_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      upsert_padel_player: {
+        Args: {
+          p_avatar: string
+          p_email: string
+          p_name: string
+          p_user_id: string
+        }
+        Returns: {
+          avatar: string
+          created_at: string
+          credits: number
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "padel_players"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       verify_venue_password: {
         Args: { plain_password: string; venue_slug: string }
