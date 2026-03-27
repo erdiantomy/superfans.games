@@ -306,7 +306,42 @@ function Dashboard() {
         <div style={{ fontSize: 10, color: C.dim, marginTop: 4 }}>Logged in as {user?.email}</div>
       </div>
 
-      {/* Tabs */}
+      {/* Notifications dropdown */}
+      {showNotifs && (
+        <div style={{ position: "relative", zIndex: 50 }}>
+          <div onClick={() => setShowNotifs(false)} style={{ position: "fixed", inset: 0 }} />
+          <div style={{ position: "absolute", right: 16, top: 0, width: 340, maxHeight: 400, overflowY: "auto", background: "#14161E", border: "1px solid #1E2235", borderRadius: 14, boxShadow: "0 8px 32px rgba(0,0,0,0.5)", zIndex: 51 }}>
+            <div style={{ padding: "12px 14px", borderBottom: "1px solid #1E2235", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: C.fg }}>🔔 Notifications</span>
+              {unreadCount > 0 && (
+                <button onClick={markAllRead} style={{ background: "none", border: "none", color: C.green, fontSize: 11, fontWeight: 600, cursor: "pointer" }}>Mark all read</button>
+              )}
+            </div>
+            {recentNotifs.length === 0 ? (
+              <div style={{ padding: 24, textAlign: "center", fontSize: 12, color: C.muted }}>No notifications yet</div>
+            ) : (
+              recentNotifs.map((n: any) => {
+                const typeEmoji: Record<string, string> = { venue_registration: "🏟️", session_request: "🎾", payment_completed: "💰", score_submitted: "📊", general: "📢" };
+                const ago = getTimeAgo(n.created_at);
+                return (
+                  <div key={n.id} style={{ padding: "10px 14px", borderBottom: "1px solid #1E2235", background: n.read ? "transparent" : "#1a1c2a", cursor: "default" }}>
+                    <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                      <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>{typeEmoji[n.type] || "📢"}</span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: n.read ? C.muted : C.fg, lineHeight: 1.3 }}>{n.subject}</div>
+                        <div style={{ fontSize: 11, color: C.dim, marginTop: 2, lineHeight: 1.4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{n.body}</div>
+                        <div style={{ fontSize: 10, color: C.dim, marginTop: 3 }}>{ago}</div>
+                      </div>
+                      {!n.read && <span style={{ width: 8, height: 8, borderRadius: 4, background: C.orange, flexShrink: 0, marginTop: 4 }} />}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+
       <div style={{ display: "flex", borderBottom: "1px solid #1E2235", flexShrink: 0, overflowX: "auto" }}>
         {tabs.map(t => (
           <button key={t.v} onClick={() => setTab(t.v)} style={{
