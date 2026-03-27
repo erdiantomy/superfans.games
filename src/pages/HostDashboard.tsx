@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { useVenue } from "@/hooks/useVenue";
 import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer } from "@/hooks/useArena";
 import { Tag, StatusTag, C, fmtLabel, shareUrl } from "@/components/arena";
 import { toast } from "sonner";
