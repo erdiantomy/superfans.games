@@ -468,11 +468,15 @@ function Dashboard() {
                     <div style={{ fontSize: 10, color: C.dim, marginTop: 4 }}>{fmtDate(v.created_at)}</div>
                   </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 8, paddingTop: 8, borderTop: "1px solid #1E2235" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 6, marginTop: 8, paddingTop: 8, borderTop: "1px solid #1E2235" }}>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); toggleVenueStatus(v); }}
+                    style={{ background: v.status === "active" ? `${C.orange}15` : `${C.green}15`, border: `1px solid ${v.status === "active" ? C.orange + "35" : C.green + "35"}`, color: v.status === "active" ? C.orange : C.green, padding: "6px 14px", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+                  >{v.status === "active" ? "⏸ Suspend" : "▶ Reactivate"}</button>
                   <button
                     onClick={(e) => { e.stopPropagation(); setVenueToDelete(v); }}
                     style={{ background: `${C.red}15`, border: `1px solid ${C.red}35`, color: C.red, padding: "6px 14px", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 700, cursor: "pointer" }}
-                  >🗑 Remove Venue</button>
+                  >🗑 Delete</button>
                 </div>
               </div>
             ))}
