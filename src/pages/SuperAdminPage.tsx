@@ -292,7 +292,13 @@ function Dashboard() {
             <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.orange, letterSpacing: 1 }}>SUPERFANS HQ</div>
             <div style={{ fontSize: 9, color: C.dim, letterSpacing: 1 }}>PLATFORM SUPER ADMIN</div>
           </div>
-          <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <button onClick={() => setShowNotifs(v => !v)} style={{ ...headerBtnStyle, position: "relative", fontSize: 16, padding: "6px 10px" }}>
+              🔔
+              {unreadCount > 0 && (
+                <span style={{ position: "absolute", top: -4, right: -4, background: C.red, color: "#fff", fontSize: 9, fontWeight: 900, borderRadius: 10, padding: "1px 5px", minWidth: 16, textAlign: "center", lineHeight: "14px" }}>{unreadCount > 99 ? "99+" : unreadCount}</span>
+              )}
+            </button>
             <button onClick={() => navigate("/")} style={headerBtnStyle}>← Home</button>
             <button onClick={signOut} style={{ ...headerBtnStyle, color: C.red, borderColor: C.red + "30" }}>Sign Out</button>
           </div>
