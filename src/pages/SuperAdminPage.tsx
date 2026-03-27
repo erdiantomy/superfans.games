@@ -293,6 +293,7 @@ function Dashboard() {
     { v: "matches", l: "⚽ Matches" },
     { v: "users", l: "👥 Users" },
     { v: "revenue", l: "💰 Revenue" },
+    { v: "notifications", l: "🔔 Notifs", n: unreadCount },
   ];
 
   return (
