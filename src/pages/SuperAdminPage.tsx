@@ -140,10 +140,11 @@ function StatCard({ icon, label, value, color = C.green }: { icon: string; label
 }
 
 /* ── Registration Card ──────────────────────────────── */
-function RegistrationCard({ r, onApprove, onReject }: { r: Registration; onApprove: () => void; onReject: () => void }) {
+function RegistrationCard({ r, onApprove, onReject, onDelete }: { r: Registration; onApprove: () => void; onReject: () => void; onDelete: () => void }) {
   const isPending = r.status === "pending";
   const isApproved = r.status === "approved";
   const isRejected = r.status === "rejected";
+  const canDelete = isPending || isRejected;
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   return (
@@ -164,11 +165,17 @@ function RegistrationCard({ r, onApprove, onReject }: { r: Registration; onAppro
         🎾 {r.courts} courts · Prize: Rp {(r.monthly_prize || 0).toLocaleString("id-ID")}<br />📅 {fmtDate(r.created_at)}
       </div>
       {isApproved && <div style={{ color: C.green, fontSize: 12, fontWeight: 700 }}>✅ Approved & Activated</div>}
-      {isRejected && <div style={{ color: C.red, fontSize: 12, fontWeight: 700 }}>❌ Rejected</div>}
+      {isRejected && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div style={{ color: C.red, fontSize: 12, fontWeight: 700 }}>❌ Rejected</div>
+          <button onClick={onDelete} style={{ background: `${C.red}15`, border: `1px solid ${C.red}35`, color: C.red, padding: "5px 12px", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>🗑 Remove</button>
+        </div>
+      )}
       {isPending && (
         <div style={{ display: "flex", gap: 8 }}>
           <button onClick={onApprove} style={{ flex: 2, background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "10px 0", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✓ Approve & Activate</button>
           <button onClick={onReject} style={{ flex: 1, background: `${C.red}12`, border: `1px solid ${C.red}35`, color: C.red, padding: "10px 0", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✕ Reject</button>
+          <button onClick={onDelete} style={{ flex: 0, background: `${C.red}10`, border: `1px solid ${C.red}25`, color: C.red, padding: "10px 12px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 14, fontWeight: 800, cursor: "pointer" }} title="Delete registration">🗑</button>
         </div>
       )}
     </div>
@@ -282,6 +289,15 @@ function Dashboard() {
       toast.error("Registration rejected");
       qc.invalidateQueries({ queryKey: ["sa-registrations"] });
     } catch (err: any) { toast.error(err.message || "Failed to reject"); }
+  };
+
+  const deleteRegistration = async (regId: string) => {
+    try {
+      const { error } = await (supabase as any).from("venue_registrations").delete().eq("id", regId);
+      if (error) throw error;
+      toast.success("Registration removed");
+      qc.invalidateQueries({ queryKey: ["sa-registrations"] });
+    } catch (err: any) { toast.error(err.message || "Failed to delete registration"); }
   };
 
   const [venueToDelete, setVenueToDelete] = useState<Venue | null>(null);
@@ -412,7 +428,7 @@ function Dashboard() {
               <>
                 <div style={{ fontSize: 13, fontWeight: 700, color: C.orange, marginBottom: 8 }}>⚠️ Pending Approvals</div>
                 {pendingRegs.slice(0, 3).map(r => (
-                  <RegistrationCard key={r.id} r={r} onApprove={() => approveRegistration(r)} onReject={() => rejectRegistration(r.id)} />
+                  <RegistrationCard key={r.id} r={r} onApprove={() => approveRegistration(r)} onReject={() => rejectRegistration(r.id)} onDelete={() => deleteRegistration(r.id)} />
                 ))}
                 {pendingRegs.length > 3 && (
                   <button onClick={() => setTab("registrations")} style={{ width: "100%", background: "none", border: `1px dashed ${C.orange}40`, color: C.orange, padding: "8px 0", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>View all {pendingRegs.length} pending →</button>
@@ -444,7 +460,7 @@ function Dashboard() {
                 <div style={{ fontSize: 14, color: C.muted }}>No registrations yet</div>
               </div>
             ) : registrations.map(r => (
-              <RegistrationCard key={r.id} r={r} onApprove={() => approveRegistration(r)} onReject={() => rejectRegistration(r.id)} />
+              <RegistrationCard key={r.id} r={r} onApprove={() => approveRegistration(r)} onReject={() => rejectRegistration(r.id)} onDelete={() => deleteRegistration(r.id)} />
             ))}
           </>
         )}
