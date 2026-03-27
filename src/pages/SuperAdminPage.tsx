@@ -508,60 +508,7 @@ function Dashboard() {
         {tab === "revenue" && <RevenueTab matches={matches} />}
 
         {/* ── NOTIFICATIONS ───────────────────────── */}
-        {tab === "notifications" && (
-          <>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <div>
-                <div className="font-display" style={{ fontSize: 16, fontWeight: 800 }}>Admin Notifications</div>
-                <div style={{ fontSize: 11, color: C.muted }}>{unreadCount} unread · {recentNotifs.length} total</div>
-              </div>
-              {unreadCount > 0 && (
-                <button onClick={markAllRead} style={{ background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "6px 14px", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
-                  ✓ Mark all read
-                </button>
-              )}
-            </div>
-
-            {recentNotifs.length === 0 ? (
-              <div style={{ textAlign: "center", padding: "40px 0" }}>
-                <div style={{ fontSize: 40, marginBottom: 12 }}>🔕</div>
-                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>No notifications yet</div>
-                <div style={{ fontSize: 12, color: C.muted }}>Notifications from venue registrations, sessions, scores, and payments will appear here.</div>
-              </div>
-            ) : (
-              recentNotifs.map((n: any) => {
-                const typeEmoji: Record<string, string> = { venue_registration: "🏟️", session_request: "🎾", payment_completed: "💰", score_submitted: "📊", general: "📢" };
-                const typeLabel: Record<string, string> = { venue_registration: "Venue Registration", session_request: "Session Request", payment_completed: "Payment", score_submitted: "Score Submitted", general: "General" };
-                const typeColor: Record<string, string> = { venue_registration: C.orange, session_request: C.green, payment_completed: C.gold || "#FFD700", score_submitted: C.blue || "#4A9EFF", general: C.muted };
-                return (
-                  <div key={n.id} style={{ background: n.read ? "#14161E" : "#1a1c2a", border: `1px solid ${n.read ? "#1E2235" : (typeColor[n.type] || C.orange) + "30"}`, borderRadius: 12, padding: 14, marginBottom: 8 }}>
-                    <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-                      <span style={{ fontSize: 22, flexShrink: 0 }}>{typeEmoji[n.type] || "📢"}</span>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                          <Tag label={typeLabel[n.type] || n.type} color={typeColor[n.type] || C.muted} />
-                          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                            <span style={{ fontSize: 10, color: C.dim }}>{getTimeAgo(n.created_at)}</span>
-                            {!n.read && <span style={{ width: 8, height: 8, borderRadius: 4, background: C.orange }} />}
-                          </div>
-                        </div>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: n.read ? C.muted : C.fg, marginBottom: 4 }}>{n.subject}</div>
-                        <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.4 }}>{n.body}</div>
-                        {n.metadata && Object.keys(n.metadata).length > 0 && (
-                          <div style={{ background: "#0A0C11", borderRadius: 8, padding: "8px 10px", marginTop: 8, fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
-                            {Object.entries(n.metadata).map(([k, v]) => (
-                              <div key={k}><strong style={{ color: C.dim }}>{k}:</strong> {String(v)}</div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </>
-        )}
+        {tab === "notifications" && <NotificationsTab notifs={recentNotifs} unreadCount={unreadCount} markAllRead={markAllRead} />}
       </div>
     </div>
   );
