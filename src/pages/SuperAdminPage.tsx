@@ -284,6 +284,18 @@ function Dashboard() {
     } catch (err: any) { toast.error(err.message || "Failed to reject"); }
   };
 
+  const [venueToDelete, setVenueToDelete] = useState<Venue | null>(null);
+
+  const deleteVenue = async (venue: Venue) => {
+    try {
+      const { error } = await (supabase as any).from("venues").delete().eq("id", venue.id);
+      if (error) throw error;
+      toast.success(`${venue.name} removed successfully`);
+      qc.invalidateQueries({ queryKey: ["sa-venues"] });
+      setVenueToDelete(null);
+    } catch (err: any) { toast.error(err.message || "Failed to delete venue"); }
+  };
+
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
   const tabs: { v: TabKey; l: string; n?: number }[] = [
