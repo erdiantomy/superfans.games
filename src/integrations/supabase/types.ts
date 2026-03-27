@@ -789,6 +789,36 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      venue_lifetime_leaderboard: {
+        Args: { p_venue_id: string }
+        Returns: {
+          avatar: string
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }[]
+      }
+      venue_monthly_leaderboard: {
+        Args: { p_venue_id: string }
+        Returns: {
+          avatar: string
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }[]
+      }
       verify_venue_password: {
         Args: { plain_password: string; venue_slug: string }
         Returns: boolean
