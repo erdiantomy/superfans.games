@@ -176,7 +176,7 @@ function RegistrationCard({ r, onApprove, onReject }: { r: Registration; onAppro
 }
 
 /* ── Main Dashboard ─────────────────────────────────── */
-type TabKey = "overview" | "registrations" | "venues" | "matches" | "users" | "revenue";
+type TabKey = "overview" | "registrations" | "venues" | "matches" | "users" | "revenue" | "notifications";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -203,8 +203,6 @@ function Dashboard() {
       return data ?? [];
     },
   });
-
-  type TabKey = "overview" | "registrations" | "venues" | "matches" | "users" | "revenue" | "notifications";
 
   const [showNotifs, setShowNotifs] = useState(false);
 
