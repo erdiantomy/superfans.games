@@ -1,33 +1,19 @@
 
 
-## Add Revenue/Earnings Tracking to Super Admin Dashboard
+## Fix: Super Admin Login for Google OAuth Accounts
 
-### What will be built
+**Problem**: The `/superadmin` login gate uses `supabase.auth.signInWithPassword()`, but your account (`erdian.tomy@gmail.com`) was created via Google OAuth. There's no password associated with it, so email+password login always fails with "Invalid login credentials."
 
-A new **"💰 Revenue"** tab in the SuperAdmin dashboard showing:
+**Solution**: Add a "Sign in with Google" button alongside the existing email+password form in the AuthGate component. This way you can authenticate with your Google account (which already has the `admin` role assigned).
 
-1. **Platform-wide totals** — Total pool across all matches, total support volume, and estimated platform fees (10% of pools)
-2. **Per-venue revenue breakdown** — Each venue's total pool amount, match count, and fan engagement, displayed as sortable cards
-3. **Revenue stat cards** at top — Total revenue (pools), platform fee earnings, total supports value
+### Changes
 
-### How
+**File**: `src/pages/SuperAdminPage.tsx`
 
-**Single file change**: `src/pages/SuperAdminPage.tsx`
+1. Import `lovable` from `@/integrations/lovable` (same OAuth helper used in AuthScreen)
+2. Add a "Sign in with Google" button below the existing SIGN IN button in the AuthGate's login form
+3. Wire it to `lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/superadmin" })` so after Google auth the user returns to `/superadmin`
+4. Add a visual divider ("or") between the email+password form and the Google button
 
-1. Add `"revenue"` to the `TabKey` union and add a `💰 Revenue` tab button
-2. Query `supports` table for total support amounts (already public SELECT)
-3. Compute revenue data from existing `matches` and `venues` queries:
-   - Group matches by title (which contains venue info) to calculate per-venue pool totals
-   - Sum all `pool` values across matches for platform total
-   - Calculate 10% platform fee from total pools
-4. Render the revenue tab with:
-   - 3 StatCards: Total Pools, Platform Fees (10%), Total Supports
-   - Per-venue breakdown cards showing pool totals, match counts, average pool per match
-
-### Technical details
-
-- No new database tables or queries needed beyond adding a `supports` aggregate query
-- Revenue calculations use the existing 10% fee model from the platform economics
-- All data derived from already-fetched `matches` array plus a new supports sum query
-- Venue attribution done by cross-referencing match data with venues list
+The existing admin role check (`useIsAdmin`) remains unchanged — after Google sign-in, the page will verify the user has the `admin` role before granting access.
 
