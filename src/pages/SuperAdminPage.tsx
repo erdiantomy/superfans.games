@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { startOfMonth, endOfMonth, subMonths, isWithinInterval, format, parseISO } from "date-fns";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
