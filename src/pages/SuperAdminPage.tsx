@@ -269,6 +269,17 @@ function Dashboard() {
 
   const [playerSort, setPlayerSort] = useState<{ col: string; asc: boolean }>({ col: "profile_created_at", asc: false });
 
+  const sortedPlayers = useMemo(() => {
+    const list = [...playerProfiles];
+    list.sort((a: any, b: any) => {
+      const av = a[playerSort.col] ?? 0;
+      const bv = b[playerSort.col] ?? 0;
+      if (typeof av === "string") return playerSort.asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      return playerSort.asc ? av - bv : bv - av;
+    });
+    return list;
+  }, [playerProfiles, playerSort]);
+
   const pendingRegs = registrations.filter(r => r.status === "pending");
   const activeVenues = venues.filter(v => v.status === "active");
   const liveMatches = matches.filter(m => m.status === "live");
