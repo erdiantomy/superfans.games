@@ -311,7 +311,7 @@ export default function RankPage() {
         ))}
       </div>
 
-      {showClaim && <ClaimProfileModal onClose={() => setShowClaim(false)} />}
+      
     </div>
   );
 }
