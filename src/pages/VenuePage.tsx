@@ -9,6 +9,7 @@ import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision } from "@/lib/gamification";
 import { Av, Tag, StatusTag, CountdownBadge, Divider, XpBar, C, fmtLabel } from "@/components/arena";
 import CreditsDisplay from "@/components/wallet/CreditsDisplay";
+import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
 import type { PadelPlayer, Session } from "@/hooks/useArena";
 
 function fmtRp(n: number) {
