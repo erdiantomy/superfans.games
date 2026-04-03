@@ -247,7 +247,7 @@ export default function VenuePage() {
                 <span style={{ width: 22, textAlign: "center", fontSize: i < 3 ? 15 : 11, fontWeight: 700, color: i < 3 ? accent : C.dim }}>{["👑", "🥈", "🥉"][i] || i + 1}</span>
                 <PlayerLink player={p} size={32} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{p.name}</div>
+                  <div style={{ display: "flex", gap: 5, marginTop: 2 }}>
                   <div style={{ display: "flex", gap: 5, marginTop: 2 }}>
                     <Tag label={div.label} color={div.color} />
                     {p.streak >= 3 && <Tag label={`🔥${p.streak}`} color={C.orange} />}
