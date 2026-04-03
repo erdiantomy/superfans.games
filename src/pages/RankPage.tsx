@@ -256,27 +256,7 @@ export default function RankPage() {
 
             {/* Claim Your Page Banner */}
             {user && userProfile === null && (
-              <div style={{
-                margin: "16px 0 8px",
-                background: `linear-gradient(135deg,#0B1A0C,#0B0E16)`,
-                border: `1px solid ${C.green}30`,
-                borderRadius: 14, padding: "14px 16px", textAlign: "center",
-              }}>
-                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
-                  🎉 You're on the leaderboard!
-                </div>
-                <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>
-                  Claim your page to let fans support you.
-                </div>
-                <button onClick={() => setShowClaim(true)} style={{
-                  background: C.green, border: "none",
-                  color: "#0A0C11", padding: "8px 20px", borderRadius: 20,
-                  fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800,
-                  cursor: "pointer",
-                }}>
-                  CLAIM YOUR PAGE →
-                </button>
-              </div>
+              <ClaimProfileBanner />
             )}
 
             {/* Bottom CTA */}
