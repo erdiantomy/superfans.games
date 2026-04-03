@@ -345,7 +345,7 @@ function Dashboard() {
     { v: "venues", l: "🏟️ Venues" },
     { v: "matches", l: "⚽ Matches" },
     { v: "users", l: "👥 Users" },
-    { v: "revenue", l: "💰 Revenue" },
+    { v: "players", l: "🎮 Players" },
     { v: "notifications", l: "🔔 Notifs", n: unreadCount },
   ];
 
