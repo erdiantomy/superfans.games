@@ -257,6 +257,18 @@ function Dashboard() {
     },
   });
 
+  // Player profiles
+  const { data: playerProfiles = [] } = useQuery({
+    queryKey: ["sa-player-profiles"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("player_profile_full").select("*").order("profile_created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const [playerSort, setPlayerSort] = useState<{ col: string; asc: boolean }>({ col: "profile_created_at", asc: false });
+
   const pendingRegs = registrations.filter(r => r.status === "pending");
   const activeVenues = venues.filter(v => v.status === "active");
   const liveMatches = matches.filter(m => m.status === "live");
