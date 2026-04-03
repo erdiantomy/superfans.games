@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import logo from "@/assets/superfans-logo.png";
 
 export default function AuthScreen() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate("/fanprize", { replace: true });
+    }
+  }, [user, loading, navigate]);
   const [signingIn, setSigningIn] = useState(false);
 
   const handleGoogleSignIn = async () => {
