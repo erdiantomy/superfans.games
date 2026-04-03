@@ -476,7 +476,7 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   onClick={() => navigate(`/${p.slug}`)}
-                  style={{ background: "#fff", border: "1px solid #eee", borderRadius: 14, padding: "18px 14px", textAlign: "center", cursor: "pointer", transition: "box-shadow .2s" }}
+                  style={{ background: "#f8f9fa", border: "1px solid #ddd", borderRadius: 14, padding: "18px 14px", textAlign: "center", cursor: "pointer", transition: "box-shadow .2s", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}
                   whileHover={{ boxShadow: `0 4px 20px ${GREEN}15` }}
                 >
                   {/* Avatar */}
