@@ -15,7 +15,6 @@ export default function RankPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [tab, setTab] = useState<"monthly" | "lifetime">("monthly");
-  const [showClaim, setShowClaim] = useState(false);
   useArenaRealtime();
 
   const { data: monthly  = [], isLoading: mLoad } = useMonthlyLeaderboard();
