@@ -363,7 +363,7 @@ export default function SessionPage() {
                     <div key={sp.id} onClick={() => setSupPicked(sp.player_id)} style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 12px", borderRadius: 12, marginBottom: 6, background: sel ? `${div.color}12` : C.raised, border: `2px solid ${sel ? div.color : C.border}`, cursor: "pointer", transition: "all .15s" }}>
                       <Av initials={sp.player.avatar} size={36} color={div.color} />
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700 }}>{sp.player.name}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}><PlayerLink player={sp.player} size={36} showAvatar={false} /></div>
                         <Tag label={div.label} color={div.color} />
                       </div>
                       <div style={{ textAlign: "right" }}>
