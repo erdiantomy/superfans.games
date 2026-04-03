@@ -260,7 +260,7 @@ export default function SessionPage() {
                 <span style={{ width: 18, fontSize: 10, color: C.dim, textAlign: "center" }}>{i + 1}</span>
                 <Av initials={sp.player.avatar} size={34} color={getDivision(sp.player.lifetime_xp).color} />
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 700 }}>{sp.player.name}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}><PlayerLink player={sp.player} size={34} showAvatar={false} /></div>
                   <div style={{ fontSize: 10, color: C.muted }}>{sp.player.email}</div>
                 </div>
                 {sp.role === "host" && <Tag label="HOST" color={C.orange} />}
