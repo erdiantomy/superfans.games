@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
               <p style="margin: 0; font-size: 14px; color: #6D7A94; line-height: 1.5;">${notification.body}</p>
             </div>
             <div style="text-align: center; margin-top: 24px;">
-              <a href="https://superfanspro.com" style="display: inline-block; padding: 12px 32px; background: #00E676; color: #0B0E14; font-weight: 700; border-radius: 8px; text-decoration: none; font-size: 14px;">
+              <a href="https://superfans.games" style="display: inline-block; padding: 12px 32px; background: #00E676; color: #0B0E14; font-weight: 700; border-radius: 8px; text-decoration: none; font-size: 14px;">
                 Open SuperFans
               </a>
             </div>
