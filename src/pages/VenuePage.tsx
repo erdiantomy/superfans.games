@@ -9,6 +9,7 @@ import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision } from "@/lib/gamification";
 import { Av, Tag, StatusTag, CountdownBadge, Divider, XpBar, C, fmtLabel } from "@/components/arena";
 import CreditsDisplay from "@/components/wallet/CreditsDisplay";
+import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
 import type { PadelPlayer, Session } from "@/hooks/useArena";
 
 function fmtRp(n: number) {
@@ -151,6 +152,9 @@ export default function VenuePage() {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 90px" }}>
+        {/* Claim profile banner */}
+        {user && <ClaimProfileBanner />}
+
         {/* Realtime indicator */}
         <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14, background: C.raised, border: `1px solid ${C.border}`, borderRadius: 10, padding: "8px 12px" }}>
           <div style={{ width: 6, height: 6, borderRadius: "50%", background: accent, animation: "pulse 2s infinite", flexShrink: 0 }} />

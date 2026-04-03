@@ -183,7 +183,7 @@ function RegistrationCard({ r, onApprove, onReject, onDelete }: { r: Registratio
 }
 
 /* ── Main Dashboard ─────────────────────────────────── */
-type TabKey = "overview" | "registrations" | "venues" | "matches" | "users" | "revenue" | "notifications";
+type TabKey = "overview" | "registrations" | "venues" | "matches" | "users" | "revenue" | "notifications" | "players";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -256,6 +256,29 @@ function Dashboard() {
       return data ?? [];
     },
   });
+
+  // Player profiles
+  const { data: playerProfiles = [] } = useQuery({
+    queryKey: ["sa-player-profiles"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("player_profile_full").select("*").order("profile_created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const [playerSort, setPlayerSort] = useState<{ col: string; asc: boolean }>({ col: "profile_created_at", asc: false });
+
+  const sortedPlayers = useMemo(() => {
+    const list = [...playerProfiles];
+    list.sort((a: any, b: any) => {
+      const av = a[playerSort.col] ?? 0;
+      const bv = b[playerSort.col] ?? 0;
+      if (typeof av === "string") return playerSort.asc ? av.localeCompare(bv) : bv.localeCompare(av);
+      return playerSort.asc ? av - bv : bv - av;
+    });
+    return list;
+  }, [playerProfiles, playerSort]);
 
   const pendingRegs = registrations.filter(r => r.status === "pending");
   const activeVenues = venues.filter(v => v.status === "active");
@@ -333,7 +356,7 @@ function Dashboard() {
     { v: "venues", l: "🏟️ Venues" },
     { v: "matches", l: "⚽ Matches" },
     { v: "users", l: "👥 Users" },
-    { v: "revenue", l: "💰 Revenue" },
+    { v: "players", l: "🎮 Players" },
     { v: "notifications", l: "🔔 Notifs", n: unreadCount },
   ];
 
@@ -596,6 +619,56 @@ function Dashboard() {
 
         {/* ── NOTIFICATIONS ───────────────────────── */}
         {tab === "notifications" && <NotificationsTab notifs={recentNotifs} unreadCount={unreadCount} markAllRead={markAllRead} />}
+
+        {/* ── PLAYERS ────────────────────────────── */}
+        {tab === "players" && (
+          <>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 12 }}>{playerProfiles.length} claimed player profiles.</div>
+            {playerProfiles.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "32px 0" }}>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>🎮</div>
+                <div style={{ fontSize: 14, color: C.muted }}>No player profiles yet</div>
+              </div>
+            ) : (
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+                  <thead>
+                    <tr style={{ borderBottom: "1px solid #1E2235" }}>
+                      {[
+                        { col: "display_name", label: "Player" },
+                        { col: "slug", label: "Slug" },
+                        { col: "games_played", label: "Games" },
+                        { col: "win_rate", label: "Win %" },
+                        { col: "total_raised", label: "Raised" },
+                        { col: "supporter_count", label: "Fans" },
+                        { col: "is_public", label: "Status" },
+                        { col: "profile_created_at", label: "Created" },
+                      ].map(h => (
+                        <th key={h.col} onClick={() => setPlayerSort(prev => ({ col: h.col, asc: prev.col === h.col ? !prev.asc : false }))} style={{ padding: "8px 6px", fontSize: 10, fontWeight: 700, color: playerSort.col === h.col ? C.orange : C.muted, cursor: "pointer", textTransform: "uppercase", letterSpacing: 0.5, whiteSpace: "nowrap", userSelect: "none", textAlign: "left" }}>
+                          {h.label} {playerSort.col === h.col ? (playerSort.asc ? "↑" : "↓") : ""}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sortedPlayers.map((p: any) => (
+                      <tr key={p.profile_id} style={{ borderBottom: "1px solid #1E2235" }}>
+                        <td style={{ padding: "10px 6px", fontWeight: 600 }}>{p.display_name}</td>
+                        <td style={{ padding: "10px 6px" }}><a href={`/${p.slug}`} target="_blank" rel="noopener" style={{ color: C.green, textDecoration: "none", fontWeight: 600 }}>/{p.slug}</a></td>
+                        <td style={{ padding: "10px 6px", textAlign: "center" }}>{p.games_played ?? 0}</td>
+                        <td style={{ padding: "10px 6px", textAlign: "center" }}>{p.win_rate ?? 0}%</td>
+                        <td style={{ padding: "10px 6px", textAlign: "right", color: C.green, fontWeight: 600 }}>Rp {((p.total_raised || 0) as number).toLocaleString("id-ID")}</td>
+                        <td style={{ padding: "10px 6px", textAlign: "center" }}>{p.supporter_count ?? 0}</td>
+                        <td style={{ padding: "10px 6px", textAlign: "center" }}><Tag label={p.is_public ? "PUBLIC" : "PRIVATE"} color={p.is_public ? C.green : C.muted} /></td>
+                        <td style={{ padding: "10px 6px", fontSize: 10, color: C.dim }}>{p.profile_created_at ? new Date(p.profile_created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
