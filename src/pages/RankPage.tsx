@@ -1,25 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { useMonthlyLeaderboard, useLifetimeLeaderboard } from "@/hooks/useArena";
 import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision } from "@/lib/gamification";
-import { Av, Tag, C } from "@/components/arena";
+import { Tag, C } from "@/components/arena";
+import PlayerLink from "@/components/arena/PlayerLink";
+import ClaimProfileModal from "@/components/profile/ClaimProfileModal";
 
 export default function RankPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [tab, setTab] = useState<"monthly" | "lifetime">("monthly");
+  const [showClaim, setShowClaim] = useState(false);
   useArenaRealtime();
 
   const { data: monthly  = [], isLoading: mLoad } = useMonthlyLeaderboard();
   const { data: lifetime = [], isLoading: lLoad } = useLifetimeLeaderboard();
+
+  // Check if user has a profile
+  const { data: userProfile } = useQuery({
+    queryKey: ["user-profile-check", user?.id],
+    queryFn: async () => {
+      const { data: player } = await (supabase as any).from("padel_players").select("id").eq("user_id", user!.id).single();
+      if (!player) return null;
+      const { data: profile } = await (supabase as any).from("player_profiles").select("slug").eq("player_id", player.id).single();
+      return profile?.slug ?? null;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const list    = tab === "monthly" ? monthly : lifetime;
   const loading = tab === "monthly" ? mLoad : lLoad;
   const top3    = list.slice(0, 3);
   const rest    = list.slice(3);
 
-  const podiumOrder = [top3[1], top3[0], top3[2]]; // 2nd, 1st, 3rd
+  const podiumOrder = [top3[1], top3[0], top3[2]];
   const podiumHeight = [80, 110, 60];
   const podiumEmoji  = ["🥈", "👑", "🥉"];
   const podiumRank   = [2, 1, 3];
@@ -43,7 +63,7 @@ export default function RankPage() {
               RANKINGS
             </div>
             <div style={{ fontSize: 10, color: C.dim, letterSpacing: 1, marginTop: 2 }}>
-              superfanspro.vercel.app/rank · LIVE
+              superfans.games · LIVE
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -139,10 +159,7 @@ export default function RankPage() {
                       )}
                       <div style={{ fontSize: isPrime ? 26 : 20, marginBottom: 6 }}>{podiumEmoji[i]}</div>
                       <div style={{ display: "flex", justifyContent: "center", marginBottom: 6 }}>
-                        <Av initials={player.avatar} size={isPrime ? 50 : 38} color={div.color} glow={isPrime} />
-                      </div>
-                      <div style={{ fontSize: isPrime ? 12 : 11, fontWeight: 700, marginBottom: 2 }}>
-                        {player.name.split(" ")[0]}
+                        <PlayerLink player={player} size={isPrime ? 50 : 38} glow={isPrime} nameOnly />
                       </div>
                       <div className="font-display" style={{ fontSize: isPrime ? 20 : 15, fontWeight: 900, color: div.color }}>
                         {val.toLocaleString()}
@@ -208,9 +225,8 @@ export default function RankPage() {
                     width: 26, textAlign: "center", fontSize: 16,
                     fontWeight: 900, color: C.dim, flexShrink: 0,
                   }}>{rank}</div>
-                  <Av initials={player.avatar} size={36} color={div.color} />
+                  <PlayerLink player={player} size={36} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 3 }}>{player.name}</div>
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                       <Tag label={div.label} color={div.color} />
                       {player.streak >= 3 && <Tag label={`🔥 ${player.streak}`} color="#FF8C00" />}
@@ -236,6 +252,31 @@ export default function RankPage() {
                 <div style={{ fontSize: 12, color: C.dim, lineHeight: 1.6 }}>
                   Rankings appear once the first<br />match is approved by staff.
                 </div>
+              </div>
+            )}
+
+            {/* Claim Your Page Banner */}
+            {user && userProfile === null && (
+              <div style={{
+                margin: "16px 0 8px",
+                background: `linear-gradient(135deg,#0B1A0C,#0B0E16)`,
+                border: `1px solid ${C.green}30`,
+                borderRadius: 14, padding: "14px 16px", textAlign: "center",
+              }}>
+                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+                  🎉 You're on the leaderboard!
+                </div>
+                <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>
+                  Claim your page to let fans support you.
+                </div>
+                <button onClick={() => setShowClaim(true)} style={{
+                  background: C.green, border: "none",
+                  color: "#0A0C11", padding: "8px 20px", borderRadius: 20,
+                  fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800,
+                  cursor: "pointer",
+                }}>
+                  CLAIM YOUR PAGE →
+                </button>
               </div>
             )}
 
@@ -272,20 +313,26 @@ export default function RankPage() {
           { icon: "🏠", label: "Home",    action: () => navigate("/")      },
           { icon: "🏆", label: "Rankings",action: () => {},                  active: true },
           { icon: "🎾", label: "Sessions",action: () => navigate("/")      },
+          ...(user ? [{ icon: "👤", label: userProfile ? "My Page" : "Claim Page", action: () => userProfile ? navigate(`/${userProfile}`) : setShowClaim(true) }] : []),
         ].map((t, i) => (
-          <button key={i} onClick={t.action} style={{
+          <button key={i} onClick={t.action as any} style={{
             flex: 1, display: "flex", flexDirection: "column",
             alignItems: "center", gap: 2, background: "none", border: "none",
-            padding: "8px 0 14px", cursor: "pointer",
+            padding: "8px 0 14px", cursor: "pointer", position: "relative",
           }}>
-            <span style={{ fontSize: 18, opacity: t.active ? 1 : 0.4 }}>{t.icon}</span>
+            <span style={{ fontSize: 18, opacity: (t as any).active ? 1 : 0.4 }}>{t.icon}</span>
             <span className="font-display" style={{
               fontSize: 9, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-              color: t.active ? C.green : C.dim,
+              color: (t as any).active ? C.green : C.dim,
             }}>{t.label}</span>
+            {t.label === "Claim Page" && (
+              <div style={{ position: "absolute", top: 4, right: "30%", width: 6, height: 6, borderRadius: "50%", background: C.green }} />
+            )}
           </button>
         ))}
       </div>
+
+      {showClaim && <ClaimProfileModal onClose={() => setShowClaim(false)} />}
     </div>
   );
 }
