@@ -12,6 +12,13 @@ export default function AuthScreen() {
 
   useEffect(() => {
     if (!loading && user) {
+      const firstName = user.user_metadata?.full_name?.split(" ")[0]
+        || user.user_metadata?.name?.split(" ")[0]
+        || "Champ";
+      toast.success(`Welcome back, ${firstName}! 🎾`, {
+        description: "Ready to play?",
+        duration: 3000,
+      });
       navigate("/fanprize", { replace: true });
     }
   }, [user, loading, navigate]);
