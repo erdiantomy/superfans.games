@@ -80,12 +80,24 @@ export default function TopUpPage() {
 
       if (res.error) throw new Error(res.error.message);
       const data = res.data as { success: boolean; invoice_url: string; error?: string };
-      if (!data.success) throw new Error(data.error || "Payment failed");
+      if (!data.success) {
+        const errMsg = data.error || "Payment failed";
+        const friendlyMessages: Record<string, string> = {
+          "Not authenticated": "You need to sign in before purchasing credits.",
+          "Invalid token": "Your session has expired. Please sign in again.",
+          "Missing package_id": "No package selected. Please try again.",
+          "Package not found": "This credit package is no longer available.",
+          "Player not found": "Your player profile wasn't found. Please sign out and sign in again.",
+          "Failed to create order": "We couldn't create your order. Please try again later.",
+          "Payment gateway error": "The payment gateway is temporarily unavailable. Please try again in a few minutes.",
+        };
+        throw new Error(friendlyMessages[errMsg] || errMsg);
+      }
 
       // Redirect to Xendit checkout
       window.location.href = data.invoice_url;
     } catch (err: any) {
-      toast.error(err.message || "Failed to create payment");
+      toast.error(err.message || "Something went wrong. Please try again.");
       setProcessing(null);
     }
   };
