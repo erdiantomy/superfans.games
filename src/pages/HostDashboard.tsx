@@ -132,7 +132,7 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
   const [name,   setName]   = useState(prefill?.name ? `${prefill.name} (copy)` : "");
   const [date,   setDate]   = useState("");
   const [time,   setTime]   = useState("");
-  const [courts, setCourts] = useState(2);
+  const [courts, setCourts] = useState(prefill?.courts || 2);
   const [done,   setDone]   = useState(false);
   const [err,    setErr]    = useState("");
 
