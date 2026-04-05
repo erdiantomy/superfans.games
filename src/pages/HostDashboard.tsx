@@ -17,6 +17,7 @@ export default function HostDashboard() {
   const { data: allSessions = [] } = useSessions();
   const [view, setView]   = useState<"list" | "create">("list");
   const [ensuring, setEnsuring] = useState(false);
+  const [prefill, setPrefill] = useState<any>(null);
 
   // Auto-create padel_players record if it doesn't exist yet
   useEffect(() => {
@@ -46,7 +47,7 @@ export default function HostDashboard() {
     );
   }
 
-  if (view === "create") return <CreateSessionForm onDone={() => setView("list")} hostId={me?.id ?? ""} venueId={venue?.id} />;
+  if (view === "create") return <CreateSessionForm onDone={() => { setView("list"); setPrefill(null); }} hostId={me?.id ?? ""} venueId={venue?.id} prefill={prefill} />;
 
   return (
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
@@ -65,62 +66,88 @@ export default function HostDashboard() {
       </div>
 
       <div style={{ flex:1, overflowY:"auto", padding:"14px 16px 90px" }}>
-        {myOwnSessions.length === 0 && (
+        {myOwnSessions.length === 0 ? (
           <div style={{ textAlign:"center", padding:"40px 0" }}>
             <div style={{ fontSize:40, marginBottom:12 }}>🎾</div>
             <div className="font-display" style={{ fontSize:20, fontWeight:800, marginBottom:8 }}>No sessions yet</div>
             <div style={{ fontSize:12, color:C.muted, marginBottom:20 }}>Create your first session. Admin will review and approve it before you can invite players.</div>
             <button onClick={() => setView("create")} style={{ background:C.green, border:"none", color:"#0A0C11", padding:"12px 24px", borderRadius:12, fontFamily:"'Barlow Condensed'", fontSize:16, fontWeight:800, cursor:"pointer" }}>CREATE SESSION</button>
           </div>
-        )}
-
-        {myOwnSessions.map(s => (
-          <div key={s.id} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:14, marginBottom:10 }}>
-            <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
-              <StatusTag status={s.status} />
-              <Tag label={fmtLabel(s.format)} color={s.format === "americano" ? C.green : C.purple} />
+        ) : (
+          <>
+            {/* Host Stats */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
+                <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.green }}>{myOwnSessions.length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Sessions</div>
+              </div>
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
+                <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.blue }}>{myOwnSessions.filter(s => s.status === "finished").length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Completed</div>
+              </div>
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
+                <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.orange }}>{myOwnSessions.filter(s => ["active", "live"].includes(s.status)).length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Active</div>
+              </div>
             </div>
-            <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>{s.name}</div>
 
-            {s.status === "pending_approval" && (
-              <div style={{ background:`${C.orange}12`, border:`1px solid ${C.orange}30`, borderRadius:10, padding:"8px 12px", marginBottom:8, fontSize:11, color:C.orange, lineHeight:1.6 }}>
-                ⏳ Waiting for admin to approve this session.<br/>You cannot share the invite link yet.
-              </div>
-            )}
-            {s.status === "rejected" && (
-              <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}30`, borderRadius:10, padding:"8px 12px", marginBottom:8, fontSize:11, color:C.red, lineHeight:1.6 }}>
-                ❌ Rejected by admin.{s.admin_note ? ` Reason: ${s.admin_note}` : ""}
-              </div>
-            )}
-            {(s.status === "active" || s.status === "live") && (
-              <>
-                <div style={{ background:C.raised, borderRadius:10, padding:"8px 12px", marginBottom:8 }}>
-                  <div style={{ fontSize:10, color:C.muted, marginBottom:3 }}>✅ Approved · Share this invite link</div>
-                  <div className="font-display" style={{ fontSize:13, fontWeight:700, color:C.green }}>https://{shareUrl(s.code)}</div>
+            {myOwnSessions.map(s => (
+              <div key={s.id} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:14, marginBottom:10 }}>
+                <div style={{ display:"flex", gap:6, marginBottom:8, flexWrap:"wrap" }}>
+                  <StatusTag status={s.status} />
+                  <Tag label={fmtLabel(s.format)} color={s.format === "americano" ? C.green : C.purple} />
                 </div>
-                <div style={{ display:"flex", gap:8 }}>
-                  <button onClick={() => { navigator.clipboard?.writeText(`https://${shareUrl(s.code)}`); toast.success("Link copied!"); }} style={{ flex:1, background:`${C.green}18`, border:`1px solid ${C.green}40`, color:C.green, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>🔗 Copy Link</button>
-                  <button onClick={() => navigate(`/session/${s.code}`)} style={{ flex:1, background:C.raised, border:`1px solid ${C.border}`, color:C.fg, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>View →</button>
+                <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>{s.name}</div>
+                {s.status === "pending_approval" && (
+                  <div style={{ background:`${C.orange}12`, border:`1px solid ${C.orange}30`, borderRadius:10, padding:"8px 12px", marginBottom:8, fontSize:11, color:C.orange, lineHeight:1.6 }}>
+                    ⏳ Waiting for admin to approve this session.<br/>You cannot share the invite link yet.
+                  </div>
+                )}
+                {s.status === "rejected" && (
+                  <div style={{ background:`${C.red}12`, border:`1px solid ${C.red}30`, borderRadius:10, padding:"8px 12px", marginBottom:8, fontSize:11, color:C.red, lineHeight:1.6 }}>
+                    ❌ Rejected by admin.{s.admin_note ? ` Reason: ${s.admin_note}` : ""}
+                  </div>
+                )}
+                {(s.status === "active" || s.status === "live") && (
+                  <>
+                    <div style={{ background:C.raised, borderRadius:10, padding:"8px 12px", marginBottom:8 }}>
+                      <div style={{ fontSize:10, color:C.muted, marginBottom:3 }}>✅ Approved · Share this invite link</div>
+                      <div className="font-display" style={{ fontSize:13, fontWeight:700, color:C.green }}>https://{shareUrl(s.code)}</div>
+                    </div>
+                    <div style={{ display:"flex", gap:8 }}>
+                      <button onClick={() => { navigator.clipboard?.writeText(`https://${shareUrl(s.code)}`); toast.success("Link copied!"); }} style={{ flex:1, background:`${C.green}18`, border:`1px solid ${C.green}40`, color:C.green, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>🔗 Copy Link</button>
+                      <button onClick={() => navigate(`/session/${s.code}`)} style={{ flex:1, background:C.raised, border:`1px solid ${C.border}`, color:C.fg, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>View →</button>
+                    </div>
+                  </>
+                )}
+                <div style={{ fontSize:10, color:C.dim, marginTop:8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>Code: {s.code} · {s.courts} courts · {s.max_players} max players</span>
+                  {["finished", "active"].includes(s.status) && (
+                    <button
+                      title="Create a new session with the same settings"
+                      onClick={() => { setPrefill({ format: s.format, partner_type: s.partner_type, name: s.name, courts: s.courts, total_rounds: s.total_rounds, max_players: s.max_players }); setView("create"); }}
+                      style={{ background: C.raised, border: `1px solid ${C.border}`, color: C.muted, padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+                    >↻ Repeat</button>
+                  )}
                 </div>
-              </>
-            )}
-            <div style={{ fontSize:10, color:C.dim, marginTop:8 }}>Code: {s.code} · {s.courts} courts · {s.max_players} max players</div>
-          </div>
-        ))}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
 }
 
 // ─── CREATE SESSION FORM ──────────────────────────────
-function CreateSessionForm({ onDone, hostId, venueId }: { onDone: () => void; hostId: string; venueId?: string }) {
-  const [step,   setStep]   = useState(1);
-  const [fmt,    setFmt]    = useState<"americano"|"mexicano"|null>(null);
-  const [pt,     setPt]     = useState<"random"|"fixed"|null>(null);
-  const [name,   setName]   = useState("");
+function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () => void; hostId: string; venueId?: string; prefill?: any }) {
+  const [step,   setStep]   = useState(prefill?.format && prefill?.partner_type ? 3 : 1);
+  const [fmt,    setFmt]    = useState<"americano"|"mexicano"|null>(prefill?.format || null);
+  const [pt,     setPt]     = useState<"random"|"fixed"|null>(prefill?.partner_type || null);
+  const [name,   setName]   = useState(prefill?.name ? `${prefill.name} (copy)` : "");
   const [date,   setDate]   = useState("");
   const [time,   setTime]   = useState("");
-  const [courts, setCourts] = useState(2);
+  const [courts, setCourts] = useState(prefill?.courts || 2);
   const [done,   setDone]   = useState(false);
   const [err,    setErr]    = useState("");
 

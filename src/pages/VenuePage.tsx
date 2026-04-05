@@ -12,6 +12,7 @@ import PlayerLink from "@/components/arena/PlayerLink";
 import CreditsDisplay from "@/components/wallet/CreditsDisplay";
 import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
 import type { PadelPlayer, Session } from "@/hooks/useArena";
+import BottomNav from "@/components/arena/BottomNav";
 
 function fmtRp(n: number) {
   return "Rp " + n.toLocaleString("id-ID");
@@ -157,7 +158,7 @@ export default function VenuePage() {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 90px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 120px" }}>
         {/* Claim profile banner */}
         {user && <ClaimProfileBanner />}
 
@@ -266,6 +267,7 @@ export default function VenuePage() {
           })
         )}
       </div>
+      <BottomNav />
     </div>
   );
 }

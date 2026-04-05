@@ -413,25 +413,43 @@ export default function HomePage() {
       </nav>
 
       {/* HERO */}
-      <section style={{ textAlign: "center", padding: "40px 16px 36px", maxWidth: 640, margin: "0 auto" }}>
+      <section style={{ textAlign: "center", padding: "40px 16px 36px", maxWidth: 720, margin: "0 auto" }}>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: "clamp(28px, 6vw, 44px)", fontWeight: 900, lineHeight: 1.1, marginBottom: 16, fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: -0.5 }}>
-          Play. Compete.<br /><span style={{ color: GREEN }}>Get Supported.</span>
+          Turn Every Match<br /><span style={{ color: GREEN }}>Into a Story</span>
         </motion.h1>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} style={{ fontSize: 15, color: "#555", lineHeight: 1.7, marginBottom: 28, maxWidth: 480, margin: "0 auto 28px" }}>
-          Claim your player page, climb the leaderboard, and receive support from your fans — all at your favorite padel venue.
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} style={{ fontSize: 15, color: "#555", lineHeight: 1.7, marginBottom: 32, maxWidth: 520, margin: "0 auto 32px" }}>
+          The gamification layer for padel venues. XP, leaderboards, fan support — zero app downloads.
         </motion.p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <button onClick={() => navigate("/auth")} style={{ background: GREEN, color: "#111", border: "none", padding: "12px 24px", borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: "pointer", width: "100%", maxWidth: 280 }}>
-            Claim Your Page →
-          </button>
-          <button onClick={() => { const el = document.getElementById("venue-section"); el?.scrollIntoView({ behavior: "smooth" }); }} style={{ background: "transparent", color: "#555", border: "1px solid #ddd", padding: "12px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: "pointer", width: "100%", maxWidth: 280 }}>
-            I'm a Venue Owner →
-          </button>
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <button onClick={() => navigate("/tomspadel")} style={{ background: "none", border: "none", color: GREEN, fontSize: 13, fontWeight: 600, cursor: "pointer", textDecoration: "underline" }}>
-            See a live example →
-          </button>
+
+        {/* Role Cards */}
+        <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+          {[
+            { icon: "🎾", accent: GREEN, title: "I'm a Player", desc: "Join sessions, earn XP, climb divisions, get fan support", cta: user && userProfileSlug ? "My Profile →" : "Find Your Venue →", action: () => user && userProfileSlug ? navigate(`/${userProfileSlug}`) : document.getElementById("venue-section")?.scrollIntoView({ behavior: "smooth" }) },
+            { icon: "🏟️", accent: "#60D5FF", title: "I Own a Venue", desc: "Free setup. Branded URL. Live leaderboards. Monthly prizes.", cta: "Register Free →", action: () => navigate("/register") },
+            { icon: "📋", accent: "#FFD166", title: "I Host Sessions", desc: "Create sessions, manage players, auto-generate matches", cta: "Learn How →", action: () => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }) },
+          ].map(card => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              style={{
+                flex: "1 1 200px", maxWidth: 260, textAlign: "left",
+                background: "#fff", border: "1px solid #eee", borderLeft: `4px solid ${card.accent}`,
+                borderRadius: 14, padding: 20, cursor: "pointer",
+                transition: "box-shadow .2s",
+              }}
+              whileHover={{ boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}
+              onClick={card.action}
+            >
+              <div style={{ fontSize: 28, marginBottom: 10 }}>{card.icon}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{card.title}</div>
+              <div style={{ fontSize: 12, color: "#666", lineHeight: 1.6, marginBottom: 14 }}>{card.desc}</div>
+              <button onClick={(e) => { e.stopPropagation(); card.action(); }} style={{ background: `${card.accent}12`, border: `1px solid ${card.accent}30`, color: card.accent, padding: "7px 14px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                {card.cta}
+              </button>
+            </motion.div>
+          ))}
         </div>
 
         {/* App Demo Video in Phone Mockup */}
@@ -466,6 +484,11 @@ export default function HomePage() {
             <div style={{ width: 100, height: 4, background: "#444", borderRadius: 2, margin: "8px auto 0" }} />
           </motion.div>
         </motion.div>
+        <div style={{ marginTop: 12 }}>
+          <a href="/tomspadel" onClick={(e) => { e.preventDefault(); navigate("/tomspadel"); }} style={{ color: "#999", fontSize: 12, textDecoration: "none" }}>
+            See it live at superfans.games/tomspadel →
+          </a>
+        </div>
       </section>
 
       {/* FEATURED PLAYERS */}

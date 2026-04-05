@@ -173,26 +173,76 @@ export default function RegisterPage() {
   // ─── SUCCESS SCREEN ─────────────────────────────────
   if (submitted) {
     return (
-      <div style={{ minHeight: "100vh", background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ textAlign: "center", maxWidth: 420 }}>
-          <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#00E67620", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
-            <Check size={32} color="#00E676" />
-          </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: "#111", marginBottom: 12 }}>Registration Submitted!</h1>
-          <p style={{ fontSize: 15, color: "#666", lineHeight: 1.6, marginBottom: 8 }}>
-            We'll review and activate your venue within 24 hours.
+      <div style={{ minHeight: "100dvh", background: "#fff", display: "flex", flexDirection: "column", alignItems: "center", padding: "40px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>🎉</div>
+          <h1 style={{ fontFamily: "'Barlow Condensed', sans-serif", fontSize: 32, fontWeight: 900, marginBottom: 8 }}>You're In!</h1>
+          <p style={{ fontSize: 14, color: "#666", maxWidth: 360 }}>
+            <strong>{form.venue_name}</strong> has been submitted for review. Here's what happens next.
           </p>
-          <p style={{ fontSize: 13, color: "#999", marginBottom: 28 }}>
-            A confirmation has been sent to <strong style={{ color: "#333" }}>{form.contact_email}</strong>
-          </p>
-          <div style={{ background: "#f8f8f8", borderRadius: 12, padding: "16px 20px", marginBottom: 24, textAlign: "left" }}>
-            <div style={{ fontSize: 11, color: "#999", letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>Your venue URL</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "#111" }}>superfans.games/<span style={{ color: "#00E676" }}>{form.slug}</span></div>
+        </div>
+
+        <div style={{ width: "100%", maxWidth: 440 }}>
+          {[
+            { step: 1, title: "Application Submitted", desc: "We received your venue details", status: "done" as const, icon: "✅" },
+            { step: 2, title: "Under Review", desc: "Our team will review and activate within 24 hours", status: "active" as const, icon: "⏳" },
+            { step: 3, title: "Get Your Branded URL", desc: `Your venue will be live at superfans.games/${form.slug}`, status: "upcoming" as const, icon: "🔗" },
+            { step: 4, title: "Create Your First Session", desc: "Go to your Host Dashboard and create a padel session", status: "upcoming" as const, icon: "📋" },
+            { step: 5, title: "Invite Players", desc: "Share your session link — players sign in with Google, no app needed", status: "upcoming" as const, icon: "📱" },
+          ].map(item => (
+            <div key={item.step} style={{ display: "flex", gap: 16, alignItems: "stretch", marginBottom: 0 }}>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: 40 }}>
+                <div style={{
+                  width: 36, height: 36, borderRadius: "50%",
+                  background: item.status === "done" ? "#00E676" : item.status === "active" ? "#FFF3E0" : "#f5f5f5",
+                  border: item.status === "active" ? "2px solid #FF8C00" : "2px solid #eee",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 16, flexShrink: 0,
+                }}>
+                  {item.status === "done" ? "✓" : item.icon}
+                </div>
+                {item.step < 5 && (
+                  <div style={{ width: 2, flex: 1, minHeight: 20, background: item.status === "done" ? "#00E676" : "#eee" }} />
+                )}
+              </div>
+              <div style={{ flex: 1, paddingBottom: 20 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: item.status === "upcoming" ? "#999" : "#222", marginBottom: 4 }}>{item.title}</div>
+                <div style={{ fontSize: 12, color: item.status === "upcoming" ? "#bbb" : "#666", lineHeight: 1.5 }}>{item.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ width: "100%", maxWidth: 440, background: "#f9f9f9", border: "1px solid #eee", borderRadius: 14, padding: "16px 20px", marginTop: 8, marginBottom: 24 }}>
+          <div style={{ fontSize: 11, color: "#999", textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>Your Venue Details</div>
+          <div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#999" }}>Name</span>
+              <span style={{ fontWeight: 700 }}>{form.venue_name}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#999" }}>URL</span>
+              <span style={{ fontWeight: 700, color: "#00E676" }}>superfans.games/{form.slug}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#999" }}>City</span>
+              <span style={{ fontWeight: 700 }}>{form.city}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span style={{ color: "#999" }}>Monthly Prize</span>
+              <span style={{ fontWeight: 700 }}>{fmtRp(form.monthly_prize)}</span>
+            </div>
           </div>
-          <button onClick={() => navigate("/")} style={{ background: "#111", color: "#fff", border: "none", padding: "12px 28px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
-            Back to Home
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 440 }}>
+          <button onClick={() => navigate("/")} style={{ width: "100%", background: "#00E676", color: "#111", border: "none", padding: "14px 0", borderRadius: 12, fontFamily: "'Barlow Condensed', sans-serif", fontSize: 16, fontWeight: 800, cursor: "pointer" }}>
+            EXPLORE SUPERFANS →
           </button>
-        </motion.div>
+          <a href="https://wa.me/6281218153309" target="_blank" rel="noopener noreferrer" style={{ width: "100%", textAlign: "center", background: "transparent", color: "#555", border: "1px solid #ddd", padding: "12px 0", borderRadius: 12, fontSize: 13, fontWeight: 600, textDecoration: "none", display: "block" }}>
+            💬 Chat with us on WhatsApp
+          </a>
+        </div>
       </div>
     );
   }

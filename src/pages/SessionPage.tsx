@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
 import { useSessionRealtime } from "@/hooks/useRealtime";
-import { getDivision, cr, resolveSupports } from "@/lib/gamification";
+import { getDivision, getDivisionProgress, getXpToNextDivision, cr, resolveSupports } from "@/lib/gamification";
 import { Av, Tag, StatusTag, CountdownBadge, Divider, Row, C, fmtLabel, shareUrl, fmtTs } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import { toast } from "sonner";
@@ -237,6 +237,47 @@ export default function SessionPage() {
 
       <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px 90px" }}>
 
+        {/* POST-SESSION RECAP */}
+        {session.status === "finished" && canSee && (
+          <div style={{ background: "linear-gradient(135deg, #0B1A0C, #0B0E16)", border: `1px solid ${C.green}30`, borderRadius: 16, padding: 20, marginBottom: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 36, marginBottom: 8 }}>🏆</div>
+            <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green, marginBottom: 4 }}>SESSION COMPLETE</div>
+            <div style={{ fontSize: 12, color: C.muted, marginBottom: 16 }}>{session.name}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.green }}>{approved.length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Players</div>
+              </div>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.gold }}>{cr(pool)}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Pool</div>
+              </div>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.blue }}>{supports.length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Supporters</div>
+              </div>
+            </div>
+            {me && approved.find(sp => sp.player_id === me.id) && (() => {
+              const div = getDivision(me.lifetime_xp);
+              const xpToNext = getXpToNextDivision(me.lifetime_xp);
+              return (
+                <div style={{ background: C.raised, borderRadius: 12, padding: "12px 14px", textAlign: "left" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: div.color }}>{div.label} Division</span>
+                    <span className="font-display" style={{ fontSize: 16, fontWeight: 900, color: C.green }}>{me.lifetime_xp.toLocaleString()} XP</span>
+                  </div>
+                  <div style={{ height: 4, background: C.border, borderRadius: 2, overflow: "hidden", marginBottom: 4 }}>
+                    <div style={{ height: "100%", background: div.color, borderRadius: 2, width: `${getDivisionProgress(me.lifetime_xp)}%` }} />
+                  </div>
+                  <div style={{ fontSize: 10, color: C.muted }}>
+                    {xpToNext !== null ? `${xpToNext} XP to next division` : "You've reached the highest division!"}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
         {/* HOST: PLAYERS TAB */}
         {tab === "players" && isHost && (
           <>
@@ -312,8 +353,10 @@ export default function SessionPage() {
         {/* LIVE TAB */}
         {tab === "live" && (
           <div style={{ fontSize: 12, color: C.muted, textAlign: "center", padding: "24px 0" }}>
-            Live match scores appear here when rounds are in progress.<br />
-            <span style={{ color: C.green }}>Connect to Supabase to see real-time scores.</span>
+            {session.status === "active" && "⏳ Session hasn't started yet. Matches will appear here once the host begins Round 1."}
+            {session.status === "finished" && "✅ This session has ended. Check the Standings tab for final results."}
+            {session.status === "live" && "No matches in progress. The host will start rounds when all players are ready."}
+            {!["active", "finished", "live"].includes(session.status) && "No matches in progress. The host will start rounds when all players are ready."}
           </div>
         )}
 
@@ -328,7 +371,8 @@ export default function SessionPage() {
               if (!sp.player) return null;
               const div = getDivision(sp.player.lifetime_xp);
               return (
-                <Row key={sp.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <React.Fragment key={sp.id}>
+                <Row style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span style={{ width: 22, textAlign: "center", fontSize: i < 3 ? 15 : 11, fontWeight: 700, color: i < 3 ? C.green : C.dim }}>{["👑","🥈","🥉"][i] || i + 1}</span>
                   <Av initials={sp.player.avatar} size={34} color={div.color} />
                   <div style={{ flex: 1 }}>
@@ -340,6 +384,23 @@ export default function SessionPage() {
                     <div style={{ fontSize: 9, color: C.muted }}>lifetime XP</div>
                   </div>
                 </Row>
+                {sp.player_id === me?.id && (() => {
+                  const xpToNext = getXpToNextDivision(sp.player.lifetime_xp);
+                  return (
+                    <div style={{ background: `${div.color}08`, border: `1px solid ${div.color}20`, borderRadius: 10, padding: "8px 12px", marginBottom: 8, marginTop: -4 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginBottom: 4 }}>
+                        <span style={{ color: div.color, fontWeight: 700 }}>{div.label}</span>
+                        <span style={{ color: C.muted }}>
+                          {xpToNext !== null ? `${xpToNext} XP to next` : "Max Division!"}
+                        </span>
+                      </div>
+                      <div style={{ height: 4, background: C.border, borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ height: "100%", background: div.color, borderRadius: 2, width: `${getDivisionProgress(sp.player.lifetime_xp)}%`, transition: "width 0.5s" }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+                </React.Fragment>
               );
             })}
           </>
@@ -412,8 +473,9 @@ export default function SessionPage() {
         {/* ROUNDS TAB */}
         {tab === "rounds" && (
           <div style={{ fontSize: 12, color: C.muted, textAlign: "center", padding: "24px 0" }}>
-            Round pairings appear here once the session starts.<br />
-            <span style={{ color: C.green }}>Connect to Supabase to see live round data.</span>
+            {session.status === "finished" && "Session complete. All rounds have been played."}
+            {session.status === "active" && "Rounds will appear here once the session begins."}
+            {!["finished", "active"].includes(session.status) && "No rounds generated yet."}
           </div>
         )}
       </div>

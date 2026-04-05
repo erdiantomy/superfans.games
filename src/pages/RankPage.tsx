@@ -10,6 +10,7 @@ import { getDivision } from "@/lib/gamification";
 import { Tag, C } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
+import BottomNav from "@/components/arena/BottomNav";
 
 export default function RankPage() {
   const navigate = useNavigate();
@@ -302,34 +303,7 @@ export default function RankPage() {
       </div>
 
       {/* BOTTOM NAV */}
-      <div style={{
-        display: "flex", borderTop: `1px solid ${C.border}`,
-        flexShrink: 0, background: C.bg, position: "sticky", bottom: 0,
-      }}>
-        {[
-          { icon: "🏠", label: "Home",    action: () => navigate("/")      },
-          { icon: "🏆", label: "Rankings",action: () => {},                  active: true },
-          { icon: "🎾", label: "Sessions",action: () => navigate("/")      },
-          ...(user ? [{ icon: "👤", label: userProfile ? "My Page" : "Profile", action: () => userProfile ? navigate(`/${userProfile}`) : navigate("/auth") }] : []),
-        ].map((t, i) => (
-          <button key={i} onClick={t.action as any} style={{
-            flex: 1, display: "flex", flexDirection: "column",
-            alignItems: "center", gap: 2, background: "none", border: "none",
-            padding: "8px 0 14px", cursor: "pointer", position: "relative",
-          }}>
-            <span style={{ fontSize: 18, opacity: (t as any).active ? 1 : 0.4 }}>{t.icon}</span>
-            <span className="font-display" style={{
-              fontSize: 9, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-              color: (t as any).active ? C.green : C.dim,
-            }}>{t.label}</span>
-            {t.label === "Claim Page" && (
-              <div style={{ position: "absolute", top: 4, right: "30%", width: 6, height: 6, borderRadius: "50%", background: C.green }} />
-            )}
-          </button>
-        ))}
-      </div>
-
-      
+      <BottomNav />
     </motion.div>
   );
 }
