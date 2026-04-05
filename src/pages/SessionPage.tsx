@@ -416,7 +416,7 @@ export default function SessionPage() {
             <span style={{ color: C.green }}>Connect to Supabase to see live round data.</span>
           </div>
         )}
-      </div>
+    </motion.div>
     </div>
   );
 }
