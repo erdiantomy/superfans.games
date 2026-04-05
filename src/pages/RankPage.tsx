@@ -49,11 +49,24 @@ export default function RankPage() {
   const podiumRank   = [2, 1, 3];
 
   return (
-    <div style={{
-      minHeight: "100dvh", background: C.bg, color: C.fg,
-      fontFamily: "'DM Sans', sans-serif", maxWidth: 480,
-      margin: "0 auto", display: "flex", flexDirection: "column",
-    }}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 26 }}
+      style={{
+        minHeight: "100dvh", background: C.bg, color: C.fg,
+        fontFamily: "'DM Sans', sans-serif", maxWidth: 480,
+        margin: "0 auto", display: "flex", flexDirection: "column",
+      }}
+    >
+      {/* Entrance glow */}
+      <motion.div
+        className="pointer-events-none fixed inset-0 z-50"
+        style={{ background: "radial-gradient(circle at 50% 30%, hsl(var(--green) / 0.12), transparent 70%)" }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
       {/* HEADER */}
       <div style={{
         padding: "14px 18px 12px",
