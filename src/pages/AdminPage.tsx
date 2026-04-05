@@ -214,14 +214,15 @@ export default function AdminPage() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
+      <div style={{ display: "flex", borderBottom: `1px solid ${C.border}`, flexShrink: 0, overflowX: "auto" }}>
         {([
+          { v: "overview" as const, l: "📊 Overview" },
           { v: "sessions" as const, l: "📋 Sessions", n: pendingSessions.length },
           { v: "scores" as const, l: "⚽ Scores", n: pendingScores.length },
           { v: "tracker" as const, l: "👁 Tracker" },
           { v: "settings" as const, l: "⚙️ Settings" },
         ]).map(t => (
-          <button key={t.v} onClick={() => setAdminTab(t.v)} style={{ flex: 1, padding: "10px 0", background: adminTab === t.v ? "#0E0D0A" : C.bg, border: "none", borderBottom: adminTab === t.v ? `2px solid ${accent}` : "2px solid transparent", color: adminTab === t.v ? accent : C.muted, fontFamily: "'Barlow Condensed'", fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
+          <button key={t.v} onClick={() => setAdminTab(t.v)} style={{ flex: 1, padding: "10px 0", background: adminTab === t.v ? "#0E0D0A" : C.bg, border: "none", borderBottom: adminTab === t.v ? `2px solid ${accent}` : "2px solid transparent", color: adminTab === t.v ? accent : C.muted, fontFamily: "'Barlow Condensed'", fontSize: 11, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0, minWidth: 0 }}>
             {t.l}
             {"n" in t && (t as any).n > 0 && <span style={{ background: C.red, color: "#fff", fontSize: 9, fontWeight: 900, borderRadius: 10, padding: "1px 4px", marginLeft: 4 }}>{(t as any).n}</span>}
           </button>
