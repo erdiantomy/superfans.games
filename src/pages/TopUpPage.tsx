@@ -128,7 +128,7 @@ export default function TopUpPage() {
         {player && (
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Balance</div>
-            <div className="text-sm font-bold text-primary">Cr {fmtCr(player.credits)}</div>
+            <div className="text-sm font-bold text-foreground">Cr {fmtCr(player.credits)}</div>
           </div>
         )}
       </div>
