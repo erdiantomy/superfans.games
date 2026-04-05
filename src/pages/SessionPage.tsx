@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
 import { useSessionRealtime } from "@/hooks/useRealtime";
-import { getDivision, cr, resolveSupports } from "@/lib/gamification";
+import { getDivision, getDivisionProgress, getXpToNextDivision, cr, resolveSupports } from "@/lib/gamification";
 import { Av, Tag, StatusTag, CountdownBadge, Divider, Row, C, fmtLabel, shareUrl, fmtTs } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import { toast } from "sonner";
