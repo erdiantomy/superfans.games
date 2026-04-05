@@ -33,17 +33,23 @@ interface AvProps {
   style?: React.CSSProperties;
 }
 export function Av({ initials, size = 36, color = C.green, glow = false, style }: AvProps) {
+  const isUrl = initials && (initials.startsWith("http") || initials.startsWith("data:"));
   return (
     <div style={{
       width: size, height: size, borderRadius: "50%", flexShrink: 0,
-      background: `linear-gradient(135deg,${color}35,${color}10)`,
+      background: isUrl ? "transparent" : `linear-gradient(135deg,${color}35,${color}10)`,
       border: `1.5px solid ${color}35`,
       display: "flex", alignItems: "center", justifyContent: "center",
       fontWeight: 800, fontSize: size * 0.32, color,
       fontFamily: "'Barlow Condensed', sans-serif",
       boxShadow: glow ? `0 0 14px ${color}30` : "none",
+      overflow: "hidden",
       ...style,
-    }}>{initials}</div>
+    }}>
+      {isUrl ? (
+        <img src={initials} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} referrerPolicy="no-referrer" />
+      ) : initials}
+    </div>
   );
 }
 
