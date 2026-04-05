@@ -312,8 +312,10 @@ export default function SessionPage() {
         {/* LIVE TAB */}
         {tab === "live" && (
           <div style={{ fontSize: 12, color: C.muted, textAlign: "center", padding: "24px 0" }}>
-            Live match scores appear here when rounds are in progress.<br />
-            <span style={{ color: C.green }}>Connect to Supabase to see real-time scores.</span>
+            {session.status === "active" && "⏳ Session hasn't started yet. Matches will appear here once the host begins Round 1."}
+            {session.status === "finished" && "✅ This session has ended. Check the Standings tab for final results."}
+            {session.status === "live" && "No matches in progress. The host will start rounds when all players are ready."}
+            {!["active", "finished", "live"].includes(session.status) && "No matches in progress. The host will start rounds when all players are ready."}
           </div>
         )}
 
