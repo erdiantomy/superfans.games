@@ -237,6 +237,47 @@ export default function SessionPage() {
 
       <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px 90px" }}>
 
+        {/* POST-SESSION RECAP */}
+        {session.status === "finished" && canSee && (
+          <div style={{ background: "linear-gradient(135deg, #0B1A0C, #0B0E16)", border: `1px solid ${C.green}30`, borderRadius: 16, padding: 20, marginBottom: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 36, marginBottom: 8 }}>🏆</div>
+            <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green, marginBottom: 4 }}>SESSION COMPLETE</div>
+            <div style={{ fontSize: 12, color: C.muted, marginBottom: 16 }}>{session.name}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.green }}>{approved.length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Players</div>
+              </div>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.gold }}>{cr(pool)}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Pool</div>
+              </div>
+              <div style={{ background: C.raised, borderRadius: 10, padding: "10px 6px" }}>
+                <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.blue }}>{supports.length}</div>
+                <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase" }}>Supporters</div>
+              </div>
+            </div>
+            {me && approved.find(sp => sp.player_id === me.id) && (() => {
+              const div = getDivision(me.lifetime_xp);
+              const xpToNext = getXpToNextDivision(me.lifetime_xp);
+              return (
+                <div style={{ background: C.raised, borderRadius: 12, padding: "12px 14px", textAlign: "left" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: div.color }}>{div.label} Division</span>
+                    <span className="font-display" style={{ fontSize: 16, fontWeight: 900, color: C.green }}>{me.lifetime_xp.toLocaleString()} XP</span>
+                  </div>
+                  <div style={{ height: 4, background: C.border, borderRadius: 2, overflow: "hidden", marginBottom: 4 }}>
+                    <div style={{ height: "100%", background: div.color, borderRadius: 2, width: `${getDivisionProgress(me.lifetime_xp)}%` }} />
+                  </div>
+                  <div style={{ fontSize: 10, color: C.muted }}>
+                    {xpToNext !== null ? `${xpToNext} XP to next division` : "You've reached the highest division!"}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
         {/* HOST: PLAYERS TAB */}
         {tab === "players" && isHost && (
           <>
