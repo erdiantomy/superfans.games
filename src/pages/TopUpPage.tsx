@@ -196,7 +196,7 @@ export default function TopUpPage() {
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">{pkg.name}</span>
                         {pkg.bonus_pct > 0 && (
-                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-foreground bg-muted px-2 py-0.5 rounded-full border border-border">
                             +{pkg.bonus_pct}% BONUS
                           </span>
                         )}
