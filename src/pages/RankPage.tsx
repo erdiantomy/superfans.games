@@ -330,6 +330,6 @@ export default function RankPage() {
       </div>
 
       
-    </div>
+    </motion.div>
   );
 }
