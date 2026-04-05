@@ -157,7 +157,7 @@ export default function VenuePage() {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 90px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 120px" }}>
         {/* Claim profile banner */}
         {user && <ClaimProfileBanner />}
 
