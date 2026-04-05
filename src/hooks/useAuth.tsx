@@ -23,14 +23,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const ensurePadelPlayer = async (user: User) => {
+      try {
+        await (supabase.rpc as any)("upsert_padel_player", {
+          p_user_id: user.id,
+          p_name: user.user_metadata?.full_name || user.user_metadata?.name || user.email || "",
+          p_email: user.email || "",
+          p_avatar: user.user_metadata?.avatar_url || "",
+        });
+      } catch (e) {
+        console.warn("Failed to upsert padel player:", e);
+      }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setLoading(false);
+      if (session?.user) {
+        ensurePadelPlayer(session.user);
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+      if (session?.user) {
+        ensurePadelPlayer(session.user);
+      }
     });
 
     return () => subscription.unsubscribe();
