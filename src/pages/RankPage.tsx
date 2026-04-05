@@ -10,6 +10,7 @@ import { getDivision } from "@/lib/gamification";
 import { Tag, C } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
+import BottomNav from "@/components/arena/BottomNav";
 
 export default function RankPage() {
   const navigate = useNavigate();

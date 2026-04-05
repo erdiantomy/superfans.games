@@ -99,7 +99,7 @@ export default function HostDashboard() {
                   <div style={{ fontSize:10, color:C.muted, marginBottom:3 }}>✅ Approved · Share this invite link</div>
                   <div className="font-display" style={{ fontSize:13, fontWeight:700, color:C.green }}>https://{shareUrl(s.code)}</div>
                 </div>
-                <div style={{ display:"flex", gap:8 }}>
+            <div style={{ display:"flex", gap:8 }}>
                   <button onClick={() => { navigator.clipboard?.writeText(`https://${shareUrl(s.code)}`); toast.success("Link copied!"); }} style={{ flex:1, background:`${C.green}18`, border:`1px solid ${C.green}40`, color:C.green, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>🔗 Copy Link</button>
                   <button onClick={() => navigate(`/session/${s.code}`)} style={{ flex:1, background:C.raised, border:`1px solid ${C.border}`, color:C.fg, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>View →</button>
                 </div>
