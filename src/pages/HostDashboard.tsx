@@ -105,9 +105,20 @@ export default function HostDashboard() {
                 </div>
               </>
             )}
-            <div style={{ fontSize:10, color:C.dim, marginTop:8 }}>Code: {s.code} · {s.courts} courts · {s.max_players} max players</div>
+            <div style={{ fontSize:10, color:C.dim, marginTop:8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span>Code: {s.code} · {s.courts} courts · {s.max_players} max players</span>
+              {["finished", "active"].includes(s.status) && (
+                <button
+                  title="Create a new session with the same settings"
+                  onClick={() => { setPrefill({ format: s.format, partner_type: s.partner_type, name: s.name, courts: s.courts, total_rounds: s.total_rounds, max_players: s.max_players }); setView("create"); }}
+                  style={{ background: C.raised, border: `1px solid ${C.border}`, color: C.muted, padding: "5px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
+                >↻ Repeat</button>
+              )}
+            </div>
           </div>
         ))}
+        </>
+        )}
       </div>
     </div>
   );
