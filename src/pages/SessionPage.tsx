@@ -414,8 +414,9 @@ export default function SessionPage() {
         {/* ROUNDS TAB */}
         {tab === "rounds" && (
           <div style={{ fontSize: 12, color: C.muted, textAlign: "center", padding: "24px 0" }}>
-            Round pairings appear here once the session starts.<br />
-            <span style={{ color: C.green }}>Connect to Supabase to see live round data.</span>
+            {session.status === "finished" && "Session complete. All rounds have been played."}
+            {session.status === "active" && "Rounds will appear here once the session begins."}
+            {!["finished", "active"].includes(session.status) && "No rounds generated yet."}
           </div>
         )}
       </div>
