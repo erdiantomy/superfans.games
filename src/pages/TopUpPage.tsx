@@ -171,12 +171,8 @@ export default function TopUpPage() {
                   disabled={!!processing}
                   className="relative text-left w-full"
                   style={{
-                    background: isMostPopular
-                      ? "linear-gradient(135deg, hsl(145 100% 45% / 0.1), hsl(145 100% 45% / 0.05))"
-                      : "hsl(var(--card))",
-                    border: isMostPopular
-                      ? "2px solid hsl(145 100% 45% / 0.5)"
-                      : "1px solid hsl(var(--border))",
+                    background: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
                     borderRadius: 16,
                     padding: "14px 16px",
                     cursor: processing ? "wait" : "pointer",
@@ -184,21 +180,16 @@ export default function TopUpPage() {
                   }}
                 >
                   {isMostPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-muted text-muted-foreground text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider border border-border">
                       MOST POPULAR
                     </div>
                   )}
 
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                      style={{
-                        background: isMostPopular
-                          ? "hsl(145 100% 45% / 0.2)"
-                          : "hsl(var(--muted))",
-                      }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-muted"
                     >
-                      <Icon size={20} className={isMostPopular ? "text-primary" : "text-muted-foreground"} />
+                      <Icon size={20} className="text-muted-foreground" />
                     </div>
 
                     <div className="flex-1 min-w-0">
