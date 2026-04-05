@@ -125,11 +125,11 @@ export default function HostDashboard() {
 }
 
 // ─── CREATE SESSION FORM ──────────────────────────────
-function CreateSessionForm({ onDone, hostId, venueId }: { onDone: () => void; hostId: string; venueId?: string }) {
-  const [step,   setStep]   = useState(1);
-  const [fmt,    setFmt]    = useState<"americano"|"mexicano"|null>(null);
-  const [pt,     setPt]     = useState<"random"|"fixed"|null>(null);
-  const [name,   setName]   = useState("");
+function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () => void; hostId: string; venueId?: string; prefill?: any }) {
+  const [step,   setStep]   = useState(prefill?.format && prefill?.partner_type ? 3 : 1);
+  const [fmt,    setFmt]    = useState<"americano"|"mexicano"|null>(prefill?.format || null);
+  const [pt,     setPt]     = useState<"random"|"fixed"|null>(prefill?.partner_type || null);
+  const [name,   setName]   = useState(prefill?.name ? `${prefill.name} (copy)` : "");
   const [date,   setDate]   = useState("");
   const [time,   setTime]   = useState("");
   const [courts, setCourts] = useState(2);
