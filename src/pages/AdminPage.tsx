@@ -14,7 +14,7 @@ export default function AdminPage() {
   const { venue, loading: venueLoading, slug } = useVenue();
   const [authed, setAuthed] = useState(false);
   const [pass, setPass] = useState("");
-  const [adminTab, setAdminTab] = useState<"sessions" | "scores" | "tracker" | "settings">("sessions");
+  const [adminTab, setAdminTab] = useState<"overview" | "sessions" | "scores" | "tracker" | "settings">("overview");
 
   useArenaRealtime();
 
