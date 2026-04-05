@@ -17,6 +17,7 @@ export default function HostDashboard() {
   const { data: allSessions = [] } = useSessions();
   const [view, setView]   = useState<"list" | "create">("list");
   const [ensuring, setEnsuring] = useState(false);
+  const [prefill, setPrefill] = useState<any>(null);
 
   // Auto-create padel_players record if it doesn't exist yet
   useEffect(() => {
