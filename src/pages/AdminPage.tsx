@@ -409,6 +409,61 @@ export default function AdminPage() {
   );
 }
 
+// ─── OVERVIEW TAB ───────────────────────────────────────
+function OverviewTab({ venueId, authed, accent, onNav }: { venueId?: string; authed: boolean; accent: string; onNav: (tab: any) => void }) {
+  const { data: analytics } = useQuery({
+    queryKey: ["venue-analytics", venueId],
+    enabled: !!venueId && authed,
+    queryFn: async () => {
+      const { data: venueSessions } = await (supabase.from as any)("sessions").select("id").eq("venue_id", venueId!);
+      const sessionIds = (venueSessions ?? []).map((s: any) => s.id);
+      let totalPlayers = 0, totalSessions = sessionIds.length, finishedSessions = 0, supportVolume = 0;
+      if (sessionIds.length > 0) {
+        const { data: sp } = await (supabase.from as any)("session_players").select("player_id").in("session_id", sessionIds).eq("status", "approved");
+        totalPlayers = new Set((sp ?? []).map((p: any) => p.player_id)).size;
+        const { data: fin } = await (supabase.from as any)("sessions").select("id").eq("venue_id", venueId!).eq("status", "finished");
+        finishedSessions = (fin ?? []).length;
+        const { data: supports } = await (supabase.from as any)("session_supports").select("amount").in("session_id", sessionIds);
+        supportVolume = (supports ?? []).reduce((t: number, s: any) => t + (s.amount || 0), 0);
+      }
+      return { totalPlayers, totalSessions, finishedSessions, supportVolume };
+    },
+  });
+
+  return (
+    <>
+      <Divider label="📊 Venue Overview" />
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+        {[
+          { label: "Total Players", value: analytics?.totalPlayers ?? 0, icon: "👥", color: C.green },
+          { label: "Total Sessions", value: analytics?.totalSessions ?? 0, icon: "📋", color: C.blue },
+          { label: "Completed", value: analytics?.finishedSessions ?? 0, icon: "✅", color: C.green },
+          { label: "Support Volume", value: `Cr ${(analytics?.supportVolume ?? 0).toLocaleString()}`, icon: "💰", color: C.gold },
+        ].map(stat => (
+          <div key={stat.label} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 14px" }}>
+            <div style={{ fontSize: 22, marginBottom: 6 }}>{stat.icon}</div>
+            <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: stat.color }}>{stat.value}</div>
+            <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5, marginTop: 2 }}>{stat.label}</div>
+          </div>
+        ))}
+      </div>
+      <Divider label="Quick Actions" />
+      <div style={{ display: "grid", gap: 8 }}>
+        <button onClick={() => onNav("sessions")} style={{ display: "flex", alignItems: "center", gap: 10, background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 16px", cursor: "pointer", textAlign: "left", width: "100%" }}>
+          <span style={{ fontSize: 20 }}>📋</span>
+          <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 700, color: C.fg }}>Manage Sessions</div><div style={{ fontSize: 11, color: C.muted }}>Approve pending sessions, manage active ones</div></div>
+          <span style={{ color: C.muted }}>›</span>
+        </button>
+        <button onClick={() => onNav("scores")} style={{ display: "flex", alignItems: "center", gap: 10, background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 16px", cursor: "pointer", textAlign: "left", width: "100%" }}>
+          <span style={{ fontSize: 20 }}>✅</span>
+          <div style={{ flex: 1 }}><div style={{ fontSize: 13, fontWeight: 700, color: C.fg }}>Verify Scores</div><div style={{ fontSize: 11, color: C.muted }}>Approve or reject submitted match scores</div></div>
+          <span style={{ color: C.muted }}>›</span>
+        </button>
+      </div>
+    </>
+  );
+}
+
 // ─── HELPER COMPONENTS ──────────────────────────────────
 function ConfigRow({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
