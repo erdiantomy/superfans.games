@@ -371,7 +371,8 @@ export default function SessionPage() {
               if (!sp.player) return null;
               const div = getDivision(sp.player.lifetime_xp);
               return (
-                <Row key={sp.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <React.Fragment key={sp.id}>
+                <Row style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <span style={{ width: 22, textAlign: "center", fontSize: i < 3 ? 15 : 11, fontWeight: 700, color: i < 3 ? C.green : C.dim }}>{["👑","🥈","🥉"][i] || i + 1}</span>
                   <Av initials={sp.player.avatar} size={34} color={div.color} />
                   <div style={{ flex: 1 }}>
@@ -383,6 +384,23 @@ export default function SessionPage() {
                     <div style={{ fontSize: 9, color: C.muted }}>lifetime XP</div>
                   </div>
                 </Row>
+                {sp.player_id === me?.id && (() => {
+                  const xpToNext = getXpToNextDivision(sp.player.lifetime_xp);
+                  return (
+                    <div style={{ background: `${div.color}08`, border: `1px solid ${div.color}20`, borderRadius: 10, padding: "8px 12px", marginBottom: 8, marginTop: -4 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, marginBottom: 4 }}>
+                        <span style={{ color: div.color, fontWeight: 700 }}>{div.label}</span>
+                        <span style={{ color: C.muted }}>
+                          {xpToNext !== null ? `${xpToNext} XP to next` : "Max Division!"}
+                        </span>
+                      </div>
+                      <div style={{ height: 4, background: C.border, borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ height: "100%", background: div.color, borderRadius: 2, width: `${getDivisionProgress(sp.player.lifetime_xp)}%`, transition: "width 0.5s" }} />
+                      </div>
+                    </div>
+                  );
+                })()}
+                </React.Fragment>
               );
             })}
           </>
