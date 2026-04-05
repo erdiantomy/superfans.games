@@ -208,7 +208,7 @@ export default function TopUpPage() {
 
                     <div className="text-right shrink-0">
                       {isProcessing ? (
-                        <Loader2 size={18} className="animate-spin text-primary" />
+                        <Loader2 size={18} className="animate-spin text-muted-foreground" />
                       ) : (
                         <>
                           <div className="text-sm font-bold">{fmtRp(pkg.price_idr)}</div>
