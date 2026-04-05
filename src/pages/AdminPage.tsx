@@ -171,7 +171,7 @@ export default function AdminPage() {
     };
 
     return (
-      <div style={{ height: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+      <div style={{ minHeight: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
         <div style={{ width: "100%", maxWidth: 360, textAlign: "center" }}>
           <div style={{ fontSize: 44, marginBottom: 12 }}>🛡️</div>
           <div className="font-display" style={{ fontSize: 26, fontWeight: 900, color: accent, letterSpacing: 1 }}>STAFF ACCESS</div>
