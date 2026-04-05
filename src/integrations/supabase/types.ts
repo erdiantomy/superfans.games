@@ -1064,6 +1064,10 @@ export type Database = {
     }
     Functions: {
       check_slug_available: { Args: { p_slug: string }; Returns: boolean }
+      credit_player_balance: {
+        Args: { p_credits: number; p_player_id: string }
+        Returns: undefined
+      }
       credit_xp_for_score: {
         Args: { submission_id: string }
         Returns: undefined
