@@ -43,7 +43,16 @@ export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
       variants={container}
       initial="hidden"
       animate="show"
+      transition={{ delayChildren: 0.1 }}
     >
+    {/* Entrance overlay flash */}
+    <motion.div
+      className="pointer-events-none fixed inset-0 z-50"
+      style={{ background: "radial-gradient(circle at 50% 30%, hsl(var(--green) / 0.15), transparent 70%)" }}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+    />
       {/* Header */}
       <motion.div variants={item} className="flex justify-between items-center mb-6">
         <div>
