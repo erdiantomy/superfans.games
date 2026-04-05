@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { lovable } from "@/integrations/lovable";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import logo from "@/assets/superfans-logo.png";
@@ -22,7 +23,12 @@ export default function AuthScreen() {
       navigate("/fanprize", { replace: true });
     }
   }, [user, loading, navigate]);
+
   const [signingIn, setSigningIn] = useState(false);
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
@@ -33,6 +39,33 @@ export default function AuthScreen() {
       console.error("Google sign-in error:", error);
       toast.error("Sign-in failed. Please try again.");
       setSigningIn(false);
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.error("Please enter email and password");
+      return;
+    }
+    setEmailLoading(true);
+    try {
+      if (mode === "signup") {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast.success("Check your email to confirm your account!");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Authentication failed");
+    } finally {
+      setEmailLoading(false);
     }
   };
 
@@ -85,13 +118,16 @@ export default function AuthScreen() {
 
         <div style={{ marginBottom: 24 }}>
           <div className="font-display" style={{ fontSize: 28, fontWeight: 900, color: "#00E676", letterSpacing: 2, marginBottom: 6 }}>
-            SIGN IN
+            {mode === "signin" ? "SIGN IN" : "SIGN UP"}
           </div>
           <div style={{ fontSize: 13, color: "#7A8AAA", lineHeight: 1.6 }}>
-            Sign in with Google to create sessions,<br />join games, and track your rankings.
+            {mode === "signin"
+              ? "Sign in to create sessions, join games, and track your rankings."
+              : "Create an account to get started."}
           </div>
         </div>
 
+        {/* Google */}
         <button
           onClick={handleGoogleSignIn}
           style={{
@@ -111,9 +147,48 @@ export default function AuthScreen() {
           Continue with Google
         </button>
 
+        {/* Divider */}
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-border" />
+          <span style={{ fontSize: 11, color: "#7A8AAA", textTransform: "uppercase", letterSpacing: 1 }}>or</span>
+          <div className="flex-1 h-px bg-border" />
+        </div>
+
+        {/* Email/password form */}
+        <form onSubmit={handleEmailAuth} className="flex flex-col gap-3">
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            className="w-full bg-card border border-border rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+          <button
+            type="submit"
+            disabled={emailLoading}
+            className="w-full bg-primary text-primary-foreground font-semibold text-sm py-3 rounded-xl disabled:opacity-50"
+          >
+            {emailLoading ? "Loading…" : mode === "signin" ? "Sign In" : "Create Account"}
+          </button>
+        </form>
+
+        {/* Toggle mode */}
+        <button
+          onClick={() => setMode(m => m === "signin" ? "signup" : "signin")}
+          className="mt-4 text-xs text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {mode === "signin" ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+        </button>
+
         <div style={{ fontSize: 10, color: "#3A4560", marginTop: 16, lineHeight: 1.6 }}>
-          By signing in you agree to SuperFans terms.<br />
-          Your Google account is linked to your player profile.
+          By signing in you agree to SuperFans terms.
         </div>
       </motion.div>
     </div>
