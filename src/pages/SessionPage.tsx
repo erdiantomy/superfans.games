@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
@@ -196,7 +197,19 @@ export default function SessionPage() {
 
   // FULL SESSION VIEW (host or approved player)
   return (
-    <div style={{ height: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "'DM Sans', sans-serif" }}>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 260, damping: 26 }}
+      style={{ height: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "'DM Sans', sans-serif" }}
+    >
+      <motion.div
+        className="pointer-events-none fixed inset-0 z-50"
+        style={{ background: "radial-gradient(circle at 50% 30%, hsl(var(--green) / 0.12), transparent 70%)" }}
+        initial={{ opacity: 1 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
       {/* Header */}
       <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
@@ -404,6 +417,6 @@ export default function SessionPage() {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
