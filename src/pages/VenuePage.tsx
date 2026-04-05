@@ -266,6 +266,7 @@ export default function VenuePage() {
           })
         )}
       </div>
+      <BottomNav />
     </div>
   );
 }
