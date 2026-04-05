@@ -231,6 +231,11 @@ export default function AdminPage() {
 
       <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px 90px" }}>
 
+        {/* OVERVIEW TAB */}
+        {adminTab === "overview" && (
+          <OverviewTab venueId={venueId} authed={authed} accent={accent} onNav={setAdminTab} />
+        )}
+
         {/* SESSION QUEUE */}
         {adminTab === "sessions" && (
           <>
