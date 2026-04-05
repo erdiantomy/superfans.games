@@ -128,7 +128,7 @@ export default function TopUpPage() {
         {player && (
           <div className="text-right">
             <div className="text-xs text-muted-foreground">Balance</div>
-            <div className="text-sm font-bold text-primary">Cr {fmtCr(player.credits)}</div>
+            <div className="text-sm font-bold text-foreground">Cr {fmtCr(player.credits)}</div>
           </div>
         )}
       </div>
@@ -171,12 +171,8 @@ export default function TopUpPage() {
                   disabled={!!processing}
                   className="relative text-left w-full"
                   style={{
-                    background: isMostPopular
-                      ? "linear-gradient(135deg, hsl(145 100% 45% / 0.1), hsl(145 100% 45% / 0.05))"
-                      : "hsl(var(--card))",
-                    border: isMostPopular
-                      ? "2px solid hsl(145 100% 45% / 0.5)"
-                      : "1px solid hsl(var(--border))",
+                    background: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
                     borderRadius: 16,
                     padding: "14px 16px",
                     cursor: processing ? "wait" : "pointer",
@@ -184,28 +180,23 @@ export default function TopUpPage() {
                   }}
                 >
                   {isMostPopular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider">
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-muted text-muted-foreground text-[10px] font-bold px-3 py-0.5 rounded-full tracking-wider border border-border">
                       MOST POPULAR
                     </div>
                   )}
 
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                      style={{
-                        background: isMostPopular
-                          ? "hsl(145 100% 45% / 0.2)"
-                          : "hsl(var(--muted))",
-                      }}
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-muted"
                     >
-                      <Icon size={20} className={isMostPopular ? "text-primary" : "text-muted-foreground"} />
+                      <Icon size={20} className="text-muted-foreground" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">{pkg.name}</span>
                         {pkg.bonus_pct > 0 && (
-                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-foreground bg-muted px-2 py-0.5 rounded-full border border-border">
                             +{pkg.bonus_pct}% BONUS
                           </span>
                         )}
@@ -217,7 +208,7 @@ export default function TopUpPage() {
 
                     <div className="text-right shrink-0">
                       {isProcessing ? (
-                        <Loader2 size={18} className="animate-spin text-primary" />
+                        <Loader2 size={18} className="animate-spin text-muted-foreground" />
                       ) : (
                         <>
                           <div className="text-sm font-bold">{fmtRp(pkg.price_idr)}</div>
