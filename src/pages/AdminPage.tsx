@@ -161,11 +161,11 @@ export default function AdminPage() {
         if (data) {
           setAuthed(true);
         } else {
-          alert("Incorrect password");
+          toast.error("Incorrect password");
           setPass("");
         }
       } catch {
-        alert("Error verifying password");
+        toast.error("Error verifying password");
         setPass("");
       }
     };

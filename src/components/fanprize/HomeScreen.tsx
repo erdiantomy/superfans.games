@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useAuth } from "@/hooks/useAuth";
 import { useMatches, useLeaderboard, type Match } from "@/hooks/useData";
 import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
@@ -17,12 +15,8 @@ interface HomeProps {
 export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
   const { data: matches = [], isLoading } = useMatches();
   const { data: leaderboard = [] } = useLeaderboard();
-  const [pool, setPool] = useState(2450000);
-
-  useEffect(() => {
-    const iv = setInterval(() => setPool(p => p + Math.floor(Math.random() * 6000) + 1000), 2800);
-    return () => clearInterval(iv);
-  }, []);
+  // Compute total prize pool from all live matches
+  const totalPool = matches.reduce((sum, m) => m.status === "live" ? sum + m.pool : sum, 0) || 0;
 
   const live = matches.filter(m => m.status === "live");
   const up = matches.filter(m => m.status === "upcoming");
@@ -115,7 +109,7 @@ export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
           <div className="bg-accent rounded-lg p-3 text-center mb-3">
             <div className="text-label text-[10px] uppercase tracking-widest mb-0.5">Prize Pool</div>
             <div className="font-display text-[28px] font-black text-green leading-tight">
-              <Odometer value={pool} />
+              <Odometer value={totalPool} />
             </div>
             <div className="text-label text-[10px]">{m.fans} supporters · 90% to winner</div>
           </div>

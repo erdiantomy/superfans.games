@@ -1,4 +1,6 @@
+import { useCallback } from "react";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { type Match } from "@/hooks/useData";
 import { idr } from "@/data/constants";
 import { Avatar, SupportBar, SectionHead } from "./UIElements";
@@ -47,8 +49,26 @@ export default function MatchResultScreen({ m, onBack }: Props) {
   const winnerPayout = Math.floor(m.pool * 0.9);
   const platformFee = Math.floor(m.pool * 0.1);
 
-  const userBackedWinner = true;
+  // Derive support outcome from match data
+  const totalSupport = m.supA + m.supB;
+  const winnerIsA = winner && winner.id === m.pA.id;
+  const userBackedWinner = totalSupport > 0 ? (winnerIsA ? m.supA > m.supB : m.supB > m.supA) : false;
   const userPointsChange = userBackedWinner ? "+150 SP" : "-50 SP";
+
+  const shareText = `🏆 ${winner?.name} wins! ${m.pA.name} vs ${m.pB.name} — ${m.title} (${m.sA}:${m.sB})`;
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const handleShare = useCallback((method: string) => {
+    if (method === "WhatsApp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`, "_blank");
+    } else if (method === "Instagram") {
+      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast.success("Result copied! Paste it in your Instagram story or DM.");
+    } else if (method === "Copy Link") {
+      navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
+  }, [shareText, shareUrl]);
 
   // Guard: if match is finished but winner is not set yet, show fallback
   if (!winner) {
@@ -157,7 +177,7 @@ export default function MatchResultScreen({ m, onBack }: Props) {
                   {userBackedWinner ? "You backed the winner!" : "Better luck next time"}
                 </div>
                 <div className="text-label text-[11px]">
-                  You supported {winner.name.split(" ")[0]} with Rp 50.000
+                  You supported {winner.name.split(" ")[0]} with {idr(m.pool > 0 ? Math.floor(m.pool / Math.max(m.fans, 1)) : 0)}
                 </div>
                 <div className={`text-[12px] font-bold mt-0.5 ${userBackedWinner ? "text-green" : "text-destructive"}`}>
                   {userPointsChange}
@@ -172,7 +192,7 @@ export default function MatchResultScreen({ m, onBack }: Props) {
           <SectionHead title="SHARE RESULTS" />
           <div className="flex gap-2">
             {[["💬", "WhatsApp", "#25D366"], ["📸", "Instagram", "#E1306C"], ["🔗", "Copy Link", "#5A6374"]].map(([ic, lb, c]) => (
-              <button key={lb} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
+              <button key={lb} onClick={() => handleShare(lb)} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
                 {ic} {lb}
               </button>
             ))}

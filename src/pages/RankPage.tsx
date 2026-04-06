@@ -11,10 +11,18 @@ import { Tag, C } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
 import BottomNav from "@/components/arena/BottomNav";
+import { useVenue } from "@/hooks/useVenue";
+
+function fmtPrize(n: number): string {
+  if (n >= 1_000_000) return `Rp ${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}jt`;
+  if (n >= 1_000) return `Rp ${Math.round(n / 1_000)}k`;
+  return `Rp ${n.toLocaleString("id-ID")}`;
+}
 
 export default function RankPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { venue } = useVenue();
   const [tab, setTab] = useState<"monthly" | "lifetime">("monthly");
   useArenaRealtime();
 
@@ -122,13 +130,15 @@ export default function RankPage() {
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
             <div>
-              <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>March 2026 · Prize Season</div>
-              <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>Rp 2.000.000</div>
-              <div style={{ fontSize: 10, color: C.muted }}>🥇 Rp 1jt &nbsp;·&nbsp; 🥈 Rp 600k &nbsp;·&nbsp; 🥉 Rp 400k</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 10, color: C.muted }}>ends in</div>
-              <div className="font-display" style={{ fontSize: 32, color: "#FF4444", lineHeight: 1 }}>9D</div>
+              <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>{venue?.name || "Prize"} · Prize Season</div>
+              <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>
+                {venue?.monthly_prize ? `Rp ${venue.monthly_prize.toLocaleString("id-ID")}` : "–"}
+              </div>
+              <div style={{ fontSize: 10, color: C.muted }}>
+                {venue?.prize_split_1st && venue?.prize_split_2nd && venue?.prize_split_3rd
+                  ? `🥇 ${fmtPrize(venue.prize_split_1st)} · 🥈 ${fmtPrize(venue.prize_split_2nd)} · 🥉 ${fmtPrize(venue.prize_split_3rd)}`
+                  : "Prize splits TBD"}
+              </div>
             </div>
           </div>
         )}

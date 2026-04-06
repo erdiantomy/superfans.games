@@ -45,7 +45,7 @@ export default function DonationModal({ open, onClose, player }: Props) {
         amount: finalAmount,
         message: message.trim().slice(0, 200),
         is_anonymous: isAnonymous,
-        status: "paid", // For demo; production would use Xendit webhook
+        status: "pending", // Will be updated to "paid" via Xendit webhook
       });
 
       if (error) throw error;
