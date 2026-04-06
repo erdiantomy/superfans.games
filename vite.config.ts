@@ -7,6 +7,13 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api/chat-assistant": {
+        target: "http://localhost:54321/functions/v1/chat-assistant",
+        changeOrigin: true,
+        rewrite: (p) => p.replace(/^\/api\/chat-assistant/, ""),
+      },
+    },
   },
   plugins: [
     react(),
