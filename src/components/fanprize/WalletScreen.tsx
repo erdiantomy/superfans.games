@@ -129,7 +129,10 @@ export default function WalletScreen() {
         <div className="gradient-card border border-subtle rounded-2xl p-4">
           <div className="text-label text-[10px] mb-1">SUPPORT POINTS</div>
           <div className="font-display text-[22px] font-black text-green">{spBalance} SP</div>
-          <button className="mt-2 w-full bg-secondary/10 border border-secondary/40 rounded-lg py-1.5 text-[11px] text-secondary font-semibold cursor-pointer">
+          <button
+            onClick={() => navigate("/fanprize")}
+            className="mt-2 w-full bg-secondary/10 border border-secondary/40 rounded-lg py-1.5 text-[11px] text-secondary font-semibold cursor-pointer"
+          >
             Redeem
           </button>
         </div>

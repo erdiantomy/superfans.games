@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
+import { useProfile } from "@/hooks/useData";
 import { REWARDS, typeEmoji } from "@/data/constants";
 import { SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
 import { toast } from "sonner";
 
 export default function StoreScreen() {
+  const { user } = useAuth();
+  const { data: profile } = useProfile(user?.id);
+  const spBalance = profile?.points || 0;
   const [cat, setCat] = useState("all");
   const cats = ["all", "voucher", "sports", "experience", "merch"];
   const list = cat === "all" ? REWARDS : REWARDS.filter(r => r.type === cat);
@@ -20,7 +25,7 @@ export default function StoreScreen() {
       <motion.div variants={item}>
         <SectionHead title="REWARD STORE" size={26} mb={4} />
         <div className="text-[12px] text-label mb-3.5">
-          Balance: <span className="text-green font-semibold">5,680 SP</span>
+          Balance: <span className="text-green font-semibold">{spBalance.toLocaleString()} SP</span>
         </div>
       </motion.div>
 
@@ -53,7 +58,13 @@ export default function StoreScreen() {
             <div className="text-label text-[10px] mb-2.5">Stock: {r.stock}</div>
             <button
               className="w-full rounded-lg py-2 font-display text-[13px] font-bold cursor-pointer"
-              onClick={() => toast.info("Redemption coming soon!")}
+              onClick={() => {
+                if (spBalance < r.points) {
+                  toast.error(`Not enough points. You need ${r.points.toLocaleString()} SP but have ${spBalance.toLocaleString()} SP.`);
+                } else {
+                  toast.info("Redemption coming soon! This feature is being built.");
+                }
+              }}
               style={{ backgroundColor: `${r.color}18`, border: `1px solid ${r.color}40`, color: r.color }}
             >
               🪙 {r.points.toLocaleString()} SP
