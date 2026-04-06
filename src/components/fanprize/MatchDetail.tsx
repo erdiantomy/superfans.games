@@ -203,7 +203,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           <SectionHead title="SHARE MATCH" />
           <div className="flex gap-2">
             {[["💬", "WhatsApp", "#25D366"], ["📸", "Instagram", "#E1306C"], ["🔗", "Copy Link", "#5A6374"]].map(([ic, lb, c]) => (
-              <button key={lb} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
+              <button key={lb} onClick={() => handleShare(lb)} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
                 {ic} {lb}
               </button>
             ))}
