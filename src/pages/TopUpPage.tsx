@@ -38,6 +38,7 @@ export default function TopUpPage() {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const [processing, setProcessing] = useState<string | null>(null);
+  const [selectedPkg, setSelectedPkg] = useState<CreditPackage | null>(null);
 
   // Fetch player credits
   const { data: player } = useQuery({
@@ -167,7 +168,7 @@ export default function TopUpPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => !processing && handleBuy(pkg)}
+                  onClick={() => !processing && setSelectedPkg(pkg)}
                   disabled={!!processing}
                   className="relative text-left w-full"
                   style={{
@@ -245,6 +246,67 @@ export default function TopUpPage() {
           </p>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {selectedPkg && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40" onClick={() => !processing && setSelectedPkg(null)}>
+          <motion.div
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md bg-card rounded-t-2xl border-t border-border p-5 pb-8"
+          >
+            <div className="w-10 h-1 rounded-full bg-muted mx-auto mb-5" />
+            <h3 className="text-base font-bold mb-4" style={{ fontFamily: "'Barlow Condensed', sans-serif" }}>
+              CONFIRM TOP UP
+            </h3>
+
+            <div className="bg-accent rounded-xl p-4 mb-4 space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Package</span>
+                <span className="font-semibold">{selectedPkg.name}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Credits</span>
+                <span className="font-semibold">{fmtCr(selectedPkg.credits)}</span>
+              </div>
+              {selectedPkg.bonus_pct > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Bonus</span>
+                  <span className="font-semibold text-green-600">+{selectedPkg.bonus_pct}%</span>
+                </div>
+              )}
+              <div className="border-t border-border pt-3 flex justify-between text-sm">
+                <span className="text-muted-foreground">Total Payment</span>
+                <span className="font-bold text-base">{fmtRp(selectedPkg.price_idr)}</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedPkg(null)}
+                disabled={!!processing}
+                className="flex-1 rounded-xl border border-border py-3 text-sm font-semibold text-muted-foreground"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleBuy(selectedPkg)}
+                disabled={!!processing}
+                className="flex-1 rounded-xl bg-foreground text-background py-3 text-sm font-semibold flex items-center justify-center gap-2"
+              >
+                {processing === selectedPkg.id ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <>Pay {fmtRp(selectedPkg.price_idr)}</>
+                )}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

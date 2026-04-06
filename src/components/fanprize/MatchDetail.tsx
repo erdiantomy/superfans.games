@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { type Match, type Player } from "@/hooks/useData";
 import { idr } from "@/data/constants";
+import { toast } from "sonner";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
 import Odometer from "./Odometer";
@@ -54,6 +55,21 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
   }, [m.id]);
 
   const recent = [["AK", "#FF5252"], ["BR", "#2979FF"], ["CS", "#FF9800"], ["DN", "#9C27B0"], ["EF", "#00BCD4"]];
+
+  const shareText = `🏸 ${m.pA.name} vs ${m.pB.name} — ${m.title}`;
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const handleShare = useCallback((method: string) => {
+    if (method === "WhatsApp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`, "_blank");
+    } else if (method === "Instagram") {
+      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast.success("Match info copied! Paste it in your Instagram story or DM.");
+    } else if (method === "Copy Link") {
+      navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
+  }, [shareText, shareUrl]);
 
   return (
     <div className="h-full flex flex-col">
@@ -187,7 +203,7 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
           <SectionHead title="SHARE MATCH" />
           <div className="flex gap-2">
             {[["💬", "WhatsApp", "#25D366"], ["📸", "Instagram", "#E1306C"], ["🔗", "Copy Link", "#5A6374"]].map(([ic, lb, c]) => (
-              <button key={lb} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
+              <button key={lb} onClick={() => handleShare(lb)} className="flex-1 rounded-lg py-2.5 px-3 text-[11px] font-semibold text-foreground cursor-pointer" style={{ backgroundColor: `${c}18`, border: `1px solid ${c}40` }}>
                 {ic} {lb}
               </button>
             ))}
