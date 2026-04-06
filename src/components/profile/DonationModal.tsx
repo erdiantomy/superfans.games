@@ -28,6 +28,10 @@ export default function DonationModal({ open, onClose, player }: Props) {
   const finalAmount = customAmount ? parseInt(customAmount) || 0 : amount;
 
   const handleSubmit = async () => {
+    if (!user) {
+      toast.error("Please sign in to support this player");
+      return;
+    }
     if (finalAmount < 10_000) {
       toast.error("Minimum donation is Rp 10,000");
       return;
