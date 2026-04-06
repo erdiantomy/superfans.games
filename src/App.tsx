@@ -79,8 +79,8 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatAssistant />
         </BrowserRouter>
-        <ChatAssistant />
         <Toaster richColors position="top-center" />
       </TooltipProvider>
     </AuthProvider>
