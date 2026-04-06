@@ -168,7 +168,7 @@ export default function TopUpPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  onClick={() => !processing && handleBuy(pkg)}
+                  onClick={() => !processing && setSelectedPkg(pkg)}
                   disabled={!!processing}
                   className="relative text-left w-full"
                   style={{
