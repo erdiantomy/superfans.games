@@ -22,6 +22,7 @@ import NotFound           from "@/pages/NotFound";
 import PlayerDashboard    from "@/pages/PlayerDashboard";
 import SlugResolver       from "@/components/profile/SlugResolver";
 
+import ChatAssistant from "@/components/ChatAssistant";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -79,6 +80,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+        <ChatAssistant />
         <Toaster richColors position="top-center" />
       </TooltipProvider>
     </AuthProvider>
