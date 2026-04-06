@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Av, C, Tag } from "@/components/arena";
 import DonationModal from "@/components/profile/DonationModal";
@@ -95,7 +96,7 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
         <button
           onClick={() => {
             navigator.clipboard.writeText(`${window.location.origin}/${slug}`);
-            alert("Link copied!");
+            toast.success("Link copied!");
           }}
           style={{ background: `${C.green}15`, border: `1px solid ${C.green}30`, color: C.green, padding: "5px 12px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}
         >📤 Share</button>
