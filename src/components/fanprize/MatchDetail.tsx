@@ -56,6 +56,21 @@ export default function MatchDetail({ m, onBack, onSupport }: Props) {
 
   const recent = [["AK", "#FF5252"], ["BR", "#2979FF"], ["CS", "#FF9800"], ["DN", "#9C27B0"], ["EF", "#00BCD4"]];
 
+  const shareText = `🏸 ${m.pA.name} vs ${m.pB.name} — ${m.title}`;
+  const shareUrl = typeof window !== "undefined" ? window.location.href : "";
+
+  const handleShare = useCallback((method: string) => {
+    if (method === "WhatsApp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`, "_blank");
+    } else if (method === "Instagram") {
+      navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+      toast.success("Match info copied! Paste it in your Instagram story or DM.");
+    } else if (method === "Copy Link") {
+      navigator.clipboard.writeText(shareUrl);
+      toast.success("Link copied to clipboard!");
+    }
+  }, [shareText, shareUrl]);
+
   return (
     <div className="h-full flex flex-col">
       {/* Topbar */}
