@@ -38,6 +38,7 @@ export default function TopUpPage() {
   const navigate = useNavigate();
   const { user, session } = useAuth();
   const [processing, setProcessing] = useState<string | null>(null);
+  const [selectedPkg, setSelectedPkg] = useState<CreditPackage | null>(null);
 
   // Fetch player credits
   const { data: player } = useQuery({
