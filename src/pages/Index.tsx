@@ -6,11 +6,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { screenTransition, directionalTransition } from "@/components/fanprize/MotionVariants";
 import AuthScreen from "@/pages/AuthScreen";
 import HomeScreen from "@/components/fanprize/HomeScreen";
+import MatchesScreen from "@/components/fanprize/MatchesScreen";
 import MatchDetail from "@/components/fanprize/MatchDetail";
 import MatchResultScreen from "@/components/fanprize/MatchResultScreen";
 import WalletScreen from "@/components/fanprize/WalletScreen";
 import StoreScreen from "@/components/fanprize/StoreScreen";
 import ProfileScreen from "@/components/fanprize/ProfileScreen";
+import EditProfileScreen from "@/components/fanprize/EditProfileScreen";
+import HelpCenterScreen from "@/components/fanprize/HelpCenterScreen";
 import NotificationsScreen from "@/components/fanprize/NotificationsScreen";
 import NotificationPreferences from "@/components/fanprize/NotificationPreferences";
 import AdminPanel from "@/pages/AdminPanel";
@@ -18,7 +21,7 @@ import BottomNav from "@/components/fanprize/BottomNav";
 import SupportModal from "@/components/fanprize/SupportModal";
 import Onboarding from "@/components/Onboarding";
 
-type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "admin" | "notifications" | "notificationPrefs";
+type Screen = "home" | "matches" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "editProfile" | "helpCenter" | "admin" | "notifications" | "notificationPrefs";
 
 const NAV_ORDER: Record<string, number> = { home: 0, matches: 0, wallet: 1, store: 2, profile: 3, admin: 4 };
 
@@ -93,7 +96,7 @@ const Index = () => {
     const newOrder = NAV_ORDER[id] ?? 0;
     setDirection(newOrder >= oldOrder ? 1 : -1);
     setNav(id);
-    const map: Record<string, Screen> = { home: "home", matches: "home", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
+    const map: Record<string, Screen> = { home: "home", matches: "matches", wallet: "wallet", store: "store", profile: "profile", admin: "admin" };
     setScreen(map[id] || "home");
   };
 
@@ -122,7 +125,10 @@ const Index = () => {
     if (screen === "admin") return <AdminPanel key="admin" onBack={() => { setScreen("home"); setNav("home"); }} />;
     if (screen === "wallet") return <WalletScreen key="wallet" />;
     if (screen === "store") return <StoreScreen key="store" />;
-    if (screen === "profile") return <ProfileScreen key="profile" onNotifications={() => setScreen("notifications")} />;
+    if (screen === "editProfile") return <EditProfileScreen key="editProfile" onBack={() => { setScreen("profile"); setNav("profile"); }} />;
+    if (screen === "helpCenter") return <HelpCenterScreen key="helpCenter" onBack={() => { setScreen("profile"); setNav("profile"); }} />;
+    if (screen === "profile") return <ProfileScreen key="profile" onNotifications={() => setScreen("notifications")} onEditProfile={() => setScreen("editProfile")} onHelpCenter={() => setScreen("helpCenter")} />;
+    if (screen === "matches") return <MatchesScreen key="matches" onPick={m => { setMatch(m); setScreen(m.status === "finished" ? "matchResult" : "matchDetail"); }} />;
     return (
       <HomeScreen
         key="home"

@@ -54,7 +54,7 @@ export default function AdminPage() {
     },
   });
 
-  const updateSession = useUpdateSession();
+  // Session approval now handled via edge function (manage-session)
   const approveScore = useApproveScore();
   const rejectScore = useRejectScore();
 
@@ -109,16 +109,32 @@ export default function AdminPage() {
 
   // ─── Session actions ──────────────────────────────────
   const handleApproveSession = async (id: string) => {
-    await updateSession.mutateAsync({ id, updates: { status: "active", approved_at: new Date().toISOString() } });
-    toast.success("Session approved · Host can now share invite link");
-    qc.invalidateQueries({ queryKey: ["venue-admin-sessions"] });
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-session", {
+        body: { venue_slug: slug, password: pass, session_id: id, action: "approve" },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Session approved · Host can now share invite link");
+      qc.invalidateQueries({ queryKey: ["venue-admin-sessions", venueId] });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to approve session");
+    }
   };
 
   const handleRejectSession = async (id: string) => {
     const note = prompt("Rejection reason (optional):") ?? "Session rejected by admin.";
-    await updateSession.mutateAsync({ id, updates: { status: "rejected", admin_note: note } });
-    toast.error("Session rejected");
-    qc.invalidateQueries({ queryKey: ["venue-admin-sessions"] });
+    try {
+      const { data, error } = await supabase.functions.invoke("manage-session", {
+        body: { venue_slug: slug, password: pass, session_id: id, action: "reject", note },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.error("Session rejected");
+      qc.invalidateQueries({ queryKey: ["venue-admin-sessions", venueId] });
+    } catch (err: any) {
+      toast.error(err.message || "Failed to reject session");
+    }
   };
 
   const handleApproveScore = async (scoreId: string) => {
