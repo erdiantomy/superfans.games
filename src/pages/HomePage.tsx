@@ -638,6 +638,9 @@ export default function HomePage() {
           <span style={{ fontSize: 9, color: "#999", letterSpacing: 1 }}>.GAMES</span>
           <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>Built for padel athletes and their fans</div>
           <div style={{ fontSize: 11, color: "#666", marginTop: 6 }}>© 2026 SuperFans. All rights reserved.</div>
+          <div style={{ marginTop: 10 }}>
+            <LanguageToggle />
+          </div>
         </div>
       </footer>
     </div>

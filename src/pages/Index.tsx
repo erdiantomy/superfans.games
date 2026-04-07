@@ -152,6 +152,7 @@ const Index = () => {
           onConfirm={() => setModal(null)}
         />
       )}
+      <Onboarding open={showOnboarding} onClose={() => setShowOnboarding(false)} />
     </div>
   );
 };
