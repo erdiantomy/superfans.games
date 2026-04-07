@@ -39,6 +39,7 @@ export default function SessionPage() {
   const [supAmt,    setSupAmt]    = useState(50000);
   const [supported, setSupported] = useState(false);
   const [locked,    setLocked]    = useState(false);
+  const [justRequested, setJustRequested] = useState(false);
 
   // Derive auth state
   const authState: AuthState = (() => {
@@ -72,6 +73,7 @@ export default function SessionPage() {
     if (!session || !me) return;
     try {
       await requestJoin.mutateAsync({ sessionId: session.id, playerId: me.id });
+      setJustRequested(true);
       toast.success("Join request sent · Waiting for host approval");
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to join"); }
   };
@@ -166,11 +168,23 @@ export default function SessionPage() {
             </div>
           </div>
 
-          {authState === "pending" ? (
+          {authState === "pending" || justRequested ? (
             <div style={{ background: `${C.orange}10`, border: `1px solid ${C.orange}30`, borderRadius: 14, padding: "16px 14px", textAlign: "center" }}>
-              <div style={{ width: 48, height: 48, border: `3px solid ${C.border}`, borderTop: `3px solid ${C.orange}`, borderRadius: "50%", animation: "spin 2s linear infinite", margin: "0 auto 12px" }} />
-              <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.orange }}>PENDING APPROVAL</div>
-              <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>Waiting for host to approve your request</div>
+              <div style={{ fontSize: 40, marginBottom: 8 }}>✅</div>
+              <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.green }}>REQUEST SENT!</div>
+              <div style={{ fontSize: 13, color: C.fg, marginTop: 8, lineHeight: 1.6 }}>Your join request has been sent to the host.</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14, textAlign: "left" }}>
+                {[
+                  { icon: "📩", text: "The host has been notified of your request" },
+                  { icon: "⏳", text: "You'll be added to the session once approved" },
+                  { icon: "🔔", text: "Check back here for status updates" },
+                ].map(item => (
+                  <div key={item.icon} style={{ display: "flex", alignItems: "center", gap: 10, background: "hsl(var(--accent))", borderRadius: 10, padding: "10px 12px" }}>
+                    <span style={{ fontSize: 16 }}>{item.icon}</span>
+                    <span style={{ fontSize: 12, color: C.muted }}>{item.text}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           ) : isActive ? (
             <div style={{ background: "linear-gradient(180deg, hsl(var(--accent)), hsl(var(--card)))", border: "1px solid hsl(var(--green) / 0.28)", borderRadius: 20, padding: "18px 16px", textAlign: "center", position: "relative", overflow: "hidden", boxShadow: "0 18px 42px hsl(var(--green) / 0.12)" }}>
@@ -225,7 +239,7 @@ export default function SessionPage() {
         </div>
 
         {/* Sticky bottom join bar */}
-        {authState !== "pending" && isActive && (
+        {authState !== "pending" && !justRequested && isActive && (
           <div style={{ position: "sticky", bottom: 0, flexShrink: 0, padding: "12px 16px", paddingBottom: "max(12px, env(safe-area-inset-bottom))", background: "linear-gradient(180deg, transparent, hsl(var(--background)) 20%)", borderTop: "1px solid hsl(var(--green) / 0.14)" }}>
             {!user ? (
               <button onClick={() => navigate(`/auth?returnTo=${encodeURIComponent(window.location.pathname)}`)} style={{ width: "100%", background: C.fg, border: "none", color: C.bg, padding: "14px 14px", borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 10, fontFamily: "'Barlow Condensed'", fontSize: 18, fontWeight: 900, letterSpacing: 0.6, cursor: "pointer", boxShadow: "0 10px 28px hsl(var(--foreground) / 0.18)" }}>
