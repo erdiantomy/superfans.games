@@ -11,6 +11,10 @@ export default function AuthScreen() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
+  // Read returnTo from URL search params
+  const searchParams = new URLSearchParams(window.location.search);
+  const returnTo = searchParams.get("returnTo");
+
   useEffect(() => {
     if (!loading && user) {
       const firstName = user.user_metadata?.full_name?.split(" ")[0]
@@ -20,9 +24,9 @@ export default function AuthScreen() {
         description: "Ready to play?",
         duration: 3000,
       });
-      navigate("/fanprize", { replace: true });
+      navigate(returnTo || "/fanprize", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, returnTo]);
 
   const [signingIn, setSigningIn] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");

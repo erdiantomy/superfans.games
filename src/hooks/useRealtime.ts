@@ -18,6 +18,8 @@ export function useArenaRealtime() {
       .on("postgres_changes", { event: "*", schema: "public", table: "sessions" }, () => {
         qc.invalidateQueries({ queryKey: ["sessions"] });
         qc.invalidateQueries({ queryKey: ["session"] });
+        qc.invalidateQueries({ queryKey: ["venue-admin-sessions"] });
+        qc.invalidateQueries({ queryKey: ["venue-sessions"] });
       })
       .subscribe();
 
