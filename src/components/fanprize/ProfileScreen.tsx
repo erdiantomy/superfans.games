@@ -12,7 +12,7 @@ interface ProfileProps {
   onHelpCenter?: () => void;
 }
 
-export default function ProfileScreen({ onNotifications, onEditProfile }: ProfileProps) {
+export default function ProfileScreen({ onNotifications, onEditProfile, onHelpCenter }: ProfileProps) {
   const { user, signOut } = useAuth();
   const { data: profile } = useProfile(user?.id);
   const navigate = useNavigate();
