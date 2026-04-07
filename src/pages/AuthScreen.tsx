@@ -195,7 +195,10 @@ export default function AuthScreen() {
         </button>
 
         <div style={{ fontSize: 10, color: "#3A4560", marginTop: 16, lineHeight: 1.6 }}>
-          By signing in you agree to SuperFans terms.
+          {t("auth.terms")}
+        </div>
+        <div style={{ marginTop: 12, display: "flex", justifyContent: "center" }}>
+          <LanguageToggle />
         </div>
       </motion.div>
     </div>
