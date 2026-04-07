@@ -54,7 +54,7 @@ export default function AdminPage() {
     },
   });
 
-  const updateSession = useUpdateSession();
+  // Session approval now handled via edge function (manage-session)
   const approveScore = useApproveScore();
   const rejectScore = useRejectScore();
 
