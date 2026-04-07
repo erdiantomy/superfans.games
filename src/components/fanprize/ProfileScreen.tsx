@@ -40,17 +40,13 @@ export default function ProfileScreen({ onNotifications, onEditProfile, onHelpCe
     if (menuItem === "Notifications") {
       onNotifications?.();
     } else if (menuItem === "Edit Profile") {
-      if (onEditProfile) {
-        onEditProfile();
-      } else {
-        toast.info("Profile editing coming soon!");
-      }
+      onEditProfile?.();
     } else if (menuItem === "Referral Code") {
       const code = user?.id?.slice(0, 8).toUpperCase() || "SUPERFAN";
       navigator.clipboard.writeText(code);
       toast.success(`Referral code "${code}" copied to clipboard!`);
     } else if (menuItem === "Help Center") {
-      toast.info("Help Center coming soon!");
+      onHelpCenter?.();
     }
   };
 
