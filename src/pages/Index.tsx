@@ -30,6 +30,14 @@ const Index = () => {
   const [direction, setDirection] = useState(0);
   const [modal, setModal] = useState<{ m: Match; p: Player } | null>(null);
   const [showSplash, setShowSplash] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Show onboarding for first-time users
+  useEffect(() => {
+    if (!loading && user && !localStorage.getItem("sf_onboarded")) {
+      setShowOnboarding(true);
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2200);
