@@ -201,7 +201,12 @@ export default function VenuePage() {
                     Host: <strong style={{ color: C.fg }}>{s.host?.name.split(" ")[0]}</strong>
                   </div>
                 </div>
-                <div style={{ fontSize: 11, color: accent, fontWeight: 600 }}>Tap to view session →</div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div style={{ fontSize: 11, color: accent, fontWeight: 600 }}>Tap to view session →</div>
+                  <div style={{ background: `${accent}20`, border: `1px solid ${accent}50`, color: accent, padding: "5px 12px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 11, fontWeight: 800 }}>
+                    🎾 JOIN
+                  </div>
+                </div>
               </div>
             ))}
           </>
@@ -221,9 +226,13 @@ export default function VenuePage() {
                     </div>
                     <div style={{ fontSize: 14, fontWeight: 700 }}>{s.name}</div>
                   </div>
-                  <span style={{ color: C.muted }}>›</span>
                 </div>
-                <CountdownBadge startTime={s.scheduled_at} compact />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+                  <CountdownBadge startTime={s.scheduled_at} compact />
+                  <div style={{ background: `${accent}15`, border: `1px solid ${accent}40`, color: accent, padding: "6px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 800, letterSpacing: 0.5 }}>
+                    🎾 JOIN
+                  </div>
+                </div>
               </div>
             ))}
           </>

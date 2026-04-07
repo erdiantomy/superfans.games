@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import { useMatches, type Match } from "@/hooks/useData";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
 import { container, item } from "./MotionVariants";
@@ -11,9 +14,48 @@ interface MatchesProps {
   onPick: (m: Match) => void;
 }
 
+interface MySession {
+  id: string;
+  session_id: string;
+  status: string;
+  session: {
+    id: string;
+    name: string;
+    code: string;
+    format: string;
+    status: string;
+    scheduled_at: string | null;
+    host: { name: string } | null;
+  };
+}
+
 export default function MatchesScreen({ onPick }: MatchesProps) {
   const { data: matches = [], isLoading } = useMatches();
+  const { user } = useAuth();
   const [filter, setFilter] = useState<Filter>("all");
+
+  // Fetch sessions the current user has joined/requested
+  const { data: mySessions = [] } = useQuery({
+    queryKey: ["my-sessions", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      // Get player id first
+      const { data: player } = await (supabase as any)
+        .from("padel_players")
+        .select("id")
+        .eq("user_id", user!.id)
+        .single();
+      if (!player) return [];
+
+      const { data, error } = await (supabase as any)
+        .from("session_players")
+        .select("id, session_id, status, session:sessions!session_players_session_id_fkey(id, name, code, format, status, scheduled_at, host:padel_players!sessions_host_id_fkey(name))")
+        .eq("player_id", player.id)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as MySession[];
+    },
+  });
 
   const filtered = filter === "all" ? matches : matches.filter(m => m.status === filter);
 
@@ -23,6 +65,24 @@ export default function MatchesScreen({ onPick }: MatchesProps) {
     { id: "upcoming", label: "Upcoming", count: matches.filter(m => m.status === "upcoming").length },
     { id: "finished", label: "Finished", count: matches.filter(m => m.status === "finished").length },
   ];
+
+  const statusColor = (s: string) => {
+    switch (s) {
+      case "approved": return "bg-green/15 text-green border-green/30";
+      case "pending": return "bg-orange-500/15 text-orange-400 border-orange-500/30";
+      case "rejected": return "bg-red-500/15 text-red-400 border-red-500/30";
+      default: return "bg-muted/15 text-muted-foreground border-muted/30";
+    }
+  };
+
+  const sessionStatusColor = (s: string) => {
+    switch (s) {
+      case "live": return "bg-green/15 text-green";
+      case "active": return "bg-blue/15 text-blue";
+      case "finished": return "bg-muted/15 text-muted-foreground";
+      default: return "bg-muted/15 text-muted-foreground";
+    }
+  };
 
   if (isLoading) {
     return (
@@ -44,6 +104,42 @@ export default function MatchesScreen({ onPick }: MatchesProps) {
         <h1 className="font-display text-[24px] font-black">Matches</h1>
         <p className="text-label text-[12px]">{matches.length} total matches</p>
       </motion.div>
+
+      {/* My Sessions */}
+      {user && mySessions.length > 0 && (
+        <motion.div variants={item} className="mb-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[14px]">🎾</span>
+            <h2 className="font-display text-[16px] font-bold">My Sessions</h2>
+            <span className="text-label text-[10px] bg-card border border-subtle rounded-full px-2 py-0.5">{mySessions.length}</span>
+          </div>
+          {mySessions.map(ms => (
+            <div
+              key={ms.id}
+              className="bg-card border border-subtle rounded-[12px] p-3 mb-2"
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="font-display text-[13px] font-bold flex-1 truncate">{ms.session?.name || "Session"}</div>
+                <div className="flex gap-1.5">
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${statusColor(ms.status)}`}>
+                    {ms.status === "approved" ? "✓ JOINED" : ms.status === "pending" ? "⏳ PENDING" : ms.status.toUpperCase()}
+                  </span>
+                  <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${sessionStatusColor(ms.session?.status)}`}>
+                    {ms.session?.status === "active" ? "UPCOMING" : (ms.session?.status || "").toUpperCase()}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 text-label text-[10px]">
+                <span>{ms.session?.format?.toUpperCase()}</span>
+                {ms.session?.host && <span>· Host: {ms.session.host.name.split(" ")[0]}</span>}
+                {ms.session?.scheduled_at && (
+                  <span>· {new Date(ms.session.scheduled_at).toLocaleDateString("en", { month: "short", day: "numeric" })}</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      )}
 
       {/* Filter Tabs */}
       <motion.div variants={item} className="flex gap-2 mb-5 overflow-x-auto no-scrollbar">
