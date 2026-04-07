@@ -190,7 +190,13 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
 
       {/* Sticky CTA */}
       <div style={{ position: "fixed", bottom: 0, left: 0, right: 0, padding: "12px 16px", background: `linear-gradient(transparent, ${C.bg} 30%)`, display: "flex", justifyContent: "center" }}>
-        <button onClick={() => setDonateOpen(true)} style={{ maxWidth: 400, width: "100%", padding: "14px 0", borderRadius: 14, background: C.green, border: "none", color: "#0D0D0D", fontFamily: "'Barlow Condensed'", fontSize: 16, fontWeight: 900, cursor: "pointer", letterSpacing: 0.5 }}>
+        <button onClick={() => {
+          if (!user) {
+            navigate(`/auth?returnTo=/${slug}`);
+            return;
+          }
+          setDonateOpen(true);
+        }} style={{ maxWidth: 400, width: "100%", padding: "14px 0", borderRadius: 14, background: C.green, border: "none", color: "#0D0D0D", fontFamily: "'Barlow Condensed'", fontSize: 16, fontWeight: 900, cursor: "pointer", letterSpacing: 0.5 }}>
           ❤️ Support {profile.display_name}
         </button>
       </div>

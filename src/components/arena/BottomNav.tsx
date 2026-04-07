@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { C } from "@/components/arena";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function BottomNav() {
   const navigate = useNavigate();
@@ -23,14 +24,16 @@ export default function BottomNav() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { t } = useTranslation();
+
   if (!user || !slug) return null;
 
   const path = location.pathname;
   const tabs = [
-    { id: "home", icon: "🏟️", label: "Home", path: `/${slug}` },
-    { id: "rank", icon: "🏆", label: "Rankings", path: `/${slug}/rank` },
-    { id: "profile", icon: "👤", label: profileSlug ? "My Page" : "Profile", path: profileSlug ? `/${profileSlug}` : "/auth" },
-    { id: "topup", icon: "💰", label: "Top Up", path: "/topup" },
+    { id: "home", icon: "🏟️", label: t("nav.home"), path: `/${slug}` },
+    { id: "rank", icon: "🏆", label: t("nav.rankings"), path: `/${slug}/rank` },
+    { id: "profile", icon: "👤", label: profileSlug ? t("nav.myPage") : "Profile", path: profileSlug ? `/${profileSlug}` : "/auth" },
+    { id: "topup", icon: "💰", label: t("nav.topUp"), path: "/topup" },
   ];
 
   const getActive = () => {

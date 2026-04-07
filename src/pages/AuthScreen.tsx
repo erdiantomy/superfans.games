@@ -5,11 +5,17 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "@/components/LanguageToggle";
 import logo from "@/assets/superfans-logo.png";
 
 export default function AuthScreen() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+
+  // Read returnTo from URL search params
+  const searchParams = new URLSearchParams(window.location.search);
+  const returnTo = searchParams.get("returnTo");
 
   useEffect(() => {
     if (!loading && user) {
@@ -20,15 +26,16 @@ export default function AuthScreen() {
         description: "Ready to play?",
         duration: 3000,
       });
-      navigate("/fanprize", { replace: true });
+      navigate(returnTo || "/fanprize", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, returnTo]);
 
   const [signingIn, setSigningIn] = useState(false);
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
@@ -188,7 +195,10 @@ export default function AuthScreen() {
         </button>
 
         <div style={{ fontSize: 10, color: "#3A4560", marginTop: 16, lineHeight: 1.6 }}>
-          By signing in you agree to SuperFans terms.
+          {t("auth.terms")}
+        </div>
+        <div style={{ marginTop: 12, display: "flex", justifyContent: "center" }}>
+          <LanguageToggle />
         </div>
       </motion.div>
     </div>
