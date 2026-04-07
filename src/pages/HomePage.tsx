@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { getDivision } from "@/lib/gamification";
+import LanguageToggle from "@/components/LanguageToggle";
 
 const GREEN = "#00E676";
 
