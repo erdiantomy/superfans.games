@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { C } from "@/components/arena";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export default function BottomNav() {
   const navigate = useNavigate();
