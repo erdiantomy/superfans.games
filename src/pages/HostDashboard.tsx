@@ -152,9 +152,10 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
   const [err,    setErr]    = useState("");
 
   const createSession = useCreateSession();
-  const canSubmit = !!(name.trim() && date && time && fmt && pt && hostId);
+  const canSubmit = !!(name.trim() && date && time && fmt && pt && hostId && venueId);
 
   const submit = async () => {
+    if (!venueId) { setErr("Venue not loaded yet. Please wait a moment and try again."); return; }
     if (!canSubmit) { setErr("Please fill in all fields and make sure you are signed in."); return; }
     setErr("");
     try {
