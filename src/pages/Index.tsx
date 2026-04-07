@@ -16,6 +16,7 @@ import NotificationPreferences from "@/components/fanprize/NotificationPreferenc
 import AdminPanel from "@/pages/AdminPanel";
 import BottomNav from "@/components/fanprize/BottomNav";
 import SupportModal from "@/components/fanprize/SupportModal";
+import Onboarding from "@/components/Onboarding";
 
 type Screen = "home" | "matchDetail" | "matchResult" | "wallet" | "store" | "profile" | "admin" | "notifications" | "notificationPrefs";
 
