@@ -1,113 +1,82 @@
 
 
-# SuperFans — Comprehensive Fix & Improvement Plan
+# Fix Plan: Session Approval, Home vs Matches, and Coming Soon Items
 
-This plan addresses all 7 items from your refined prompts, grouped into phases.
+## Issue 1: Session Approval Not Working (Accept/Reject)
 
----
+**Root cause**: The venue admin page authenticates via a staff password (`verify_venue_password` RPC), but this does NOT establish a Supabase auth session. The `useUpdateSession` mutation calls `supabase.from("sessions").update(...)` which goes through RLS. The UPDATE policy on `sessions` requires either:
+- The user is the host (`host_id` matches `auth.uid()` via `padel_players`)
+- The user has the `admin` app_role
 
-## Phase 1: Auth Guard Fix (Items #1 & #2 — shared root cause)
+Since staff password auth doesn't set `auth.uid()`, the update silently fails (returns no rows, no error thrown by `.single()`... actually it will error on `.single()` with "no rows returned").
 
-**Problem**: "Support Player" button on player profiles (/:slug) doesn't gate on auth properly. Logged-out users either see a 404 or the donation silently fails. The `DonationModal` has a toast guard but the button itself is always visible with no redirect to login.
+Additionally, `useUpdateSession.onSuccess` only invalidates `["sessions"]` and `["session"]` query keys — NOT `["venue-admin-sessions"]`, so even if the mutation succeeded, the admin list wouldn't refresh.
 
 **Fix**:
-- In `PlayerProfilePage.tsx`: When user taps "Support Player" while logged out, redirect to `/auth?returnTo=/{slug}` instead of opening the modal.
-- In `AuthScreen.tsx`: Read `returnTo` from URL search params. After successful login, navigate to `returnTo` instead of the default `/fanprize`.
-- In `useAuth.tsx`: No changes needed — session hydration is already handled via `onAuthStateChange` + `getSession`.
-- Add a loading/skeleton state to `SlugResolver` and `PlayerProfilePage` during auth hydration to prevent the race condition causing intermittent 404s.
+1. Change the session approval/rejection flow in `AdminPage.tsx` to use an RPC function (`approve_session` / `reject_session`) with `SECURITY DEFINER` that bypasses RLS, validated by checking the venue password was verified (or simply checking the venue's `admin_password_hash` matches).
+2. **Simpler alternative**: Add an RLS policy allowing any authenticated user to update sessions where they can verify the venue password. But since admin staff may not be logged in via Supabase Auth at all, the best approach is:
+   - Create a new edge function `manage-session` that accepts `{ venue_slug, password, session_id, action: "approve"|"reject", note? }`, verifies the password server-side, and performs the update using the service role key.
+   - Update `handleApproveSession` and `handleRejectSession` in `AdminPage.tsx` to call this edge function instead of `useUpdateSession`.
+3. After success, invalidate `["venue-admin-sessions", venueId]` with the correct venueId parameter.
 
-**Files**: `PlayerProfilePage.tsx`, `AuthScreen.tsx`, `SlugResolver.tsx`
+**Files**: New edge function `supabase/functions/manage-session/index.ts`, updates to `AdminPage.tsx`.
 
----
-
-## Phase 2: Session Sync Fix (Items #6 & #7)
-
-**Problem**: Sessions created by hosts sometimes don't appear in the admin panel.
-
-**Current state**: The admin query at `AdminPage.tsx:24-35` filters by `venue_id` and orders by `created_at` — no `start_time <= now()` filter exists, so scheduled future sessions are NOT excluded. The previous fix ensured `venue_id` is always set on creation.
-
-**Remaining fix**:
-- Add Supabase Realtime subscription to the admin sessions query so new inserts appear without refresh. Currently `useArenaRealtime()` is called but it may not invalidate the `venue-admin-sessions` query key.
-- In `useRealtime.ts`: Ensure the realtime channel for `sessions` table invalidates `["venue-admin-sessions"]` query key on INSERT events.
-- Add a manual "Refresh" button on the admin sessions tab as a fallback.
-
-**Files**: `src/hooks/useRealtime.ts`, `AdminPage.tsx`
+**Migration**: None needed — no schema changes.
 
 ---
 
-## Phase 3: Indonesian Localization (Item #3)
+## Issue 2: Home & Matches Tab Showing No Difference
 
-**Approach**: Install `react-i18next` + `i18next`. Create translation files for `id` (default) and `en` (fallback).
-
-**Scope — core flows first**:
-- Auth screen (login, signup labels)
-- Home page (hero, role tabs, CTAs)
-- Session join flow (join button, status labels)
-- Wallet/credits (top-up labels, transaction types)
-- Player profile (stats labels, support CTA)
-- Bottom nav labels
-- Toast messages
-
-**Structure**:
-```text
-src/
-  i18n/
-    index.ts          ← i18n init
-    locales/
-      id.json         ← Indonesian strings
-      en.json         ← English strings
+**Root cause**: In `Index.tsx` line 96-97, both `"home"` and `"matches"` nav items map to the same screen:
+```ts
+const map = { home: "home", matches: "home", ... };
 ```
+Both render `HomeScreen` which shows all matches (live, upcoming, finished) mixed with leaderboard.
 
-- Add a language toggle (🇮🇩/🇬🇧) in the profile screen and homepage footer.
-- Wrap app with `I18nextProvider` in `main.tsx`.
-- Replace hardcoded strings incrementally using `useTranslation()` hook.
+**Fix**:
+1. When `nav === "matches"`, render a dedicated matches-only view that shows ALL matches grouped by status (live → upcoming → finished) without the leaderboard, hero banner, or prize pool widget.
+2. Keep `"home"` as the current view (hero + leaderboard + highlights).
+3. Create a new `MatchesScreen` component that shows a filterable list of matches with status tabs (All / Live / Upcoming / Finished).
 
-**Files**: New `src/i18n/` directory, then updates across ~15 component files.
-
----
-
-## Phase 4: UX Restructure — Entry Paths (Item #4)
-
-**Current state**: Everything funnels through `HomePage.tsx` (role tabs) and venue-scoped routes. The homepage already has role-based content (player/venue/host tabs), but all three share one page.
-
-**New structure**:
-- Keep `HomePage.tsx` as the marketing landing with simplified hero + 3 clear CTAs linking to:
-  - `/join` — "I want to play" → shows nearby venues, open sessions, join flow
-  - `/host` — "I want to host" → redirects to `/:slug/host` after venue selection (or shows venue picker)
-  - `/register` — "Register my venue" → existing registration form
-- The existing `/:slug/host` and `/:slug/admin` routes stay as-is (they're venue-scoped).
-- Add role detection: after login, if user has hosted before, show "Host" in bottom nav. If admin role, show "Admin".
-
-**Files**: `HomePage.tsx` (simplify), new `src/pages/JoinPage.tsx`, update `App.tsx` routes.
+**Files**: New `src/components/fanprize/MatchesScreen.tsx`, update `Index.tsx` to add the screen mapping.
 
 ---
 
-## Phase 5: UX Clarity Pass (Item #5)
+## Issue 3: Edit Profile & Help Center "Coming Soon"
 
-**Changes**:
-1. **First-login onboarding**: After first sign-in (detect via `padel_players.created_at` being within last 60 seconds), show a 3-step onboarding modal: "Welcome → Pick your role → Here's what to do next".
-2. **Reduce clutter per screen**: On venue page, collapse secondary actions into a "More" menu. Keep single primary CTA per view.
-3. **Breadcrumbs**: Add lightweight breadcrumb to venue-scoped pages: `Home > Venue Name > Sessions`.
-4. **Step indicators**: Already exist for registration form; extend to session creation form in `HostDashboard.tsx`.
+**Fix**:
+1. **Edit Profile**: Build a simple edit profile screen that lets users update their `display_name` and `avatar_url` in the `profiles` table. Add it as a new screen in the fanprize flow.
+2. **Help Center**: Create a basic FAQ/help screen with common questions (How to earn points, How to support players, How credits work, Contact support). No backend needed — static content.
+3. Remove the "coming soon" toasts and wire up real navigation.
 
-**Files**: New `src/components/Onboarding.tsx`, updates to `VenuePage.tsx`, `HostDashboard.tsx`, `SessionPage.tsx`.
+**Files**: New `src/components/fanprize/EditProfileScreen.tsx`, new `src/components/fanprize/HelpCenterScreen.tsx`, update `ProfileScreen.tsx` and `Index.tsx`.
 
 ---
 
 ## Implementation Order
 
-1. **Phase 1** (Auth guards) — highest impact, fixes broken user flow
-2. **Phase 2** (Realtime sync) — fixes admin workflow
-3. **Phase 3** (i18n) — unlocks Indonesian market
-4. **Phase 4** (Entry paths) — structural UX improvement
-5. **Phase 5** (UX clarity) — polish layer
+1. **Issue 1** — Session approval edge function + AdminPage update (critical bug)
+2. **Issue 2** — MatchesScreen component + Index routing
+3. **Issue 3** — EditProfile + HelpCenter screens
 
----
+## Technical Details
 
-## Technical Notes
+### Edge Function: `manage-session`
+```
+POST /manage-session
+Body: { venue_slug, password, session_id, action, note? }
+→ Verifies password via SQL crypt()
+→ Updates session status using service role
+→ Returns updated session
+```
 
-- No database migrations needed for Phases 1-2.
-- Phase 3 requires `npm install react-i18next i18next` — no backend changes.
-- Phases 4-5 are frontend-only restructuring.
-- All changes maintain existing RLS policies and auth patterns.
+### MatchesScreen
+- Reuses existing `useMatches()` hook
+- Adds filter tabs: All | Live | Upcoming | Finished
+- Same match card components as HomeScreen but without leaderboard/hero
+
+### EditProfileScreen
+- Form with display_name, avatar_url fields
+- Updates `profiles` table (existing RLS allows user to update own profile)
+- Navigate back to ProfileScreen on save
 
