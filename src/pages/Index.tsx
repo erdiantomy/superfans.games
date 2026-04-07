@@ -125,7 +125,10 @@ const Index = () => {
     if (screen === "admin") return <AdminPanel key="admin" onBack={() => { setScreen("home"); setNav("home"); }} />;
     if (screen === "wallet") return <WalletScreen key="wallet" />;
     if (screen === "store") return <StoreScreen key="store" />;
-    if (screen === "profile") return <ProfileScreen key="profile" onNotifications={() => setScreen("notifications")} />;
+    if (screen === "editProfile") return <EditProfileScreen key="editProfile" onBack={() => { setScreen("profile"); setNav("profile"); }} />;
+    if (screen === "helpCenter") return <HelpCenterScreen key="helpCenter" onBack={() => { setScreen("profile"); setNav("profile"); }} />;
+    if (screen === "profile") return <ProfileScreen key="profile" onNotifications={() => setScreen("notifications")} onEditProfile={() => setScreen("editProfile")} onHelpCenter={() => setScreen("helpCenter")} />;
+    if (screen === "matches") return <MatchesScreen key="matches" onPick={m => { setMatch(m); setScreen(m.status === "finished" ? "matchResult" : "matchDetail"); }} />;
     return (
       <HomeScreen
         key="home"
