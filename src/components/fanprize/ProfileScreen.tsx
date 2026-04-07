@@ -9,6 +9,7 @@ import { container, item } from "./MotionVariants";
 interface ProfileProps {
   onNotifications?: () => void;
   onEditProfile?: () => void;
+  onHelpCenter?: () => void;
 }
 
 export default function ProfileScreen({ onNotifications, onEditProfile }: ProfileProps) {
