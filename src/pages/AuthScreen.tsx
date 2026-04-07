@@ -36,8 +36,6 @@ export default function AuthScreen() {
   const [password, setPassword] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const { t } = useTranslation();
-  const [password, setPassword] = useState("");
-  const [emailLoading, setEmailLoading] = useState(false);
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
