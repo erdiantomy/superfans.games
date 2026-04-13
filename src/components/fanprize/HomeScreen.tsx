@@ -63,6 +63,18 @@ export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
         </div>
       </motion.div>
 
+      {/* Fan context header */}
+      <motion.div variants={item} className="bg-card border border-subtle rounded-2xl p-4 mb-5">
+        <div className="text-[15px] font-bold mb-1">❤️ Support Your Favorite Players</div>
+        <div className="text-[12px] text-label leading-relaxed mb-3">Back players in live matches. When they win, you earn rewards together.</div>
+        <button
+          onClick={() => navigate("/sessions")}
+          className="text-[11px] font-semibold text-green hover:underline"
+        >
+          🎾 Looking to join a match instead? → Browse Sessions
+        </button>
+      </motion.div>
+
       {/* Live Hero */}
       {live.map(m => (
         <motion.div
