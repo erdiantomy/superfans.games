@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useMatches, useLeaderboard, type Match } from "@/hooks/useData";
 import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
@@ -13,6 +14,7 @@ interface HomeProps {
 }
 
 export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
+  const navigate = useNavigate();
   const { data: matches = [], isLoading } = useMatches();
   const { data: leaderboard = [] } = useLeaderboard();
   // Compute total prize pool from all live matches
