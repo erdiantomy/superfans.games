@@ -79,25 +79,6 @@ export default function HomePage() {
           The gamification layer for padel venues. XP, leaderboards, fan support — zero app downloads.
         </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.25 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
-          <button
-            onClick={() => navigate("/sessions")}
-            className="bg-primary text-primary-foreground font-bold text-base px-8 py-4 rounded-xl hover:bg-primary/90 transition-colors"
-          >
-            🎾 I Want to Play
-          </button>
-          <button
-            onClick={() => navigate("/top-players")}
-            className="bg-card border border-border text-foreground font-bold text-base px-8 py-4 rounded-xl hover:bg-accent transition-colors"
-          >
-            ❤️ I Want to Support
-          </button>
-        </motion.div>
       </section>
 
       {/* Role Cards */}
