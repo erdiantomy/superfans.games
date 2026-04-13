@@ -79,6 +79,16 @@ export default function HomePage() {
           The gamification layer for padel venues. XP, leaderboards, fan support — zero app downloads.
         </motion.p>
 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 6, 0] }}
+          transition={{ delay: 0.4, y: { repeat: Infinity, duration: 1.8, ease: "easeInOut" } }}
+          className="flex flex-col items-center gap-1 cursor-pointer"
+          onClick={() => document.getElementById("role-cards")?.scrollIntoView({ behavior: "smooth" })}
+        >
+          <span className="text-xs text-muted-foreground tracking-wide">Discover your role</span>
+          <ChevronDown className="text-primary" size={22} />
+        </motion.div>
       </section>
 
       {/* Role Cards */}
