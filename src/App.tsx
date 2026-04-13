@@ -6,21 +6,27 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { VenueProvider } from "@/hooks/useVenue";
 
 import HomePage           from "@/pages/HomePage";
-import VenuePage         from "@/pages/VenuePage";
-import RegisterPage      from "@/pages/RegisterPage";
-import SessionPage       from "@/pages/SessionPage";
-import AdminPage          from "@/pages/AdminPage";
-import SuperAdminPage     from "@/pages/SuperAdminPage";
-import HostDashboard      from "@/pages/HostDashboard";
-import RankPage           from "@/pages/RankPage";
-import AuthScreen         from "@/pages/AuthScreen";
-import Index              from "@/pages/Index";
-import TopUpPage          from "@/pages/TopUpPage";
-import PaymentSuccessPage from "@/pages/PaymentSuccessPage";
-import PaymentFailedPage  from "@/pages/PaymentFailedPage";
-import NotFound           from "@/pages/NotFound";
-import PlayerDashboard    from "@/pages/PlayerDashboard";
-import SlugResolver       from "@/components/profile/SlugResolver";
+import HowItWorksPage     from "@/pages/HowItWorksPage";
+import GamificationPage   from "@/pages/GamificationPage";
+import VenuesPage          from "@/pages/VenuesPage";
+import PricingPage         from "@/pages/PricingPage";
+import TopPlayersPage      from "@/pages/TopPlayersPage";
+import Dashboard           from "@/pages/Dashboard";
+import VenuePage          from "@/pages/VenuePage";
+import RegisterPage       from "@/pages/RegisterPage";
+import SessionPage        from "@/pages/SessionPage";
+import AdminPage           from "@/pages/AdminPage";
+import SuperAdminPage      from "@/pages/SuperAdminPage";
+import HostDashboard       from "@/pages/HostDashboard";
+import RankPage            from "@/pages/RankPage";
+import AuthScreen          from "@/pages/AuthScreen";
+import Index               from "@/pages/Index";
+import TopUpPage           from "@/pages/TopUpPage";
+import PaymentSuccessPage  from "@/pages/PaymentSuccessPage";
+import PaymentFailedPage   from "@/pages/PaymentFailedPage";
+import NotFound            from "@/pages/NotFound";
+import PlayerDashboard     from "@/pages/PlayerDashboard";
+import SlugResolver        from "@/components/profile/SlugResolver";
 
 import ChatAssistant from "@/components/ChatAssistant";
 import "./App.css";
@@ -50,16 +56,24 @@ const App = () => (
       <TooltipProvider>
         <BrowserRouter>
           <Routes>
-            {/* Platform-level routes */}
-            <Route path="/"           element={<HomePage />} />
-            <Route path="/auth"       element={<AuthScreen />} />
-            <Route path="/register"  element={<RegisterPage />} />
-            <Route path="/fanprize"         element={<Index />} />
-            <Route path="/topup"            element={<TopUpPage />} />
-            <Route path="/payment/success"  element={<PaymentSuccessPage />} />
-            <Route path="/payment/failed"   element={<PaymentFailedPage />} />
+            {/* Marketing pages */}
+            <Route path="/"              element={<HomePage />} />
+            <Route path="/how-it-works"  element={<HowItWorksPage />} />
+            <Route path="/gamification"  element={<GamificationPage />} />
+            <Route path="/venues"        element={<VenuesPage />} />
+            <Route path="/pricing"       element={<PricingPage />} />
+            <Route path="/top-players"   element={<TopPlayersPage />} />
 
-            {/* Backwards-compat redirects: old flat routes → /tomspadel/* */}
+            {/* Auth & Dashboard */}
+            <Route path="/auth"          element={<AuthScreen />} />
+            <Route path="/dashboard"     element={<Dashboard />} />
+            <Route path="/register"      element={<RegisterPage />} />
+            <Route path="/fanprize"      element={<Index />} />
+            <Route path="/topup"         element={<TopUpPage />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/payment/failed"  element={<PaymentFailedPage />} />
+
+            {/* Backwards-compat redirects */}
             <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />
             <Route path="/host"            element={<Navigate to="/tomspadel/host" replace />} />
             <Route path="/admin"           element={<Navigate to="/superadmin" replace />} />
@@ -67,14 +81,13 @@ const App = () => (
             <Route path="/session/:code"   element={<LegacySessionRedirect />} />
             <Route path="/match/:code"     element={<LegacyMatchRedirect />} />
 
-            {/* Venue-scoped routes (with explicit sub-paths first) */}
+            {/* Venue-scoped routes */}
             <Route path="/:slug/dashboard"     element={<PlayerDashboard />} />
             <Route path="/:slug/rank"          element={<VenueLayout><RankPage /></VenueLayout>} />
             <Route path="/:slug/host"          element={<VenueLayout><HostDashboard /></VenueLayout>} />
             <Route path="/:slug/admin"         element={<VenueLayout><AdminPage /></VenueLayout>} />
             <Route path="/:slug/session/:code" element={<VenueLayout><SessionPage /></VenueLayout>} />
             <Route path="/:slug/match/:code"   element={<VenueLayout><SessionPage /></VenueLayout>} />
-            {/* Slug resolver: player profile or venue page */}
             <Route path="/:slug"               element={<SlugResolver />} />
 
             <Route path="*" element={<NotFound />} />
