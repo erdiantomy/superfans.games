@@ -6,9 +6,9 @@ import MarketingLayout from "@/components/MarketingLayout";
 const GREEN = "#00C853";
 
 const ROLE_TABS = [
-  { key: "player", label: "🎾 Players", color: GREEN },
-  { key: "venue", label: "🏟️ Venue Owners", color: "#2196F3" },
-  { key: "host", label: "📋 Session Hosts", color: "#FF9800" },
+  { key: "player", label: "🎾 Players", color: GREEN, cta: "Join as a Player", ctaLink: "/auth", ctaDesc: "Sign up free and start earning XP today." },
+  { key: "venue", label: "🏟️ Venue Owners", color: "#2196F3", cta: "Register Your Venue", ctaLink: "/register", ctaDesc: "Get your branded URL and go live in 24 hours." },
+  { key: "host", label: "📋 Session Hosts", color: "#FF9800", cta: "Start Hosting Sessions", ctaLink: "/auth", ctaDesc: "Sign in and create your first session in minutes." },
 ] as const;
 
 type RoleKey = typeof ROLE_TABS[number]["key"];
