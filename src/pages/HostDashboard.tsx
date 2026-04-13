@@ -26,8 +26,6 @@ export default function HostDashboard() {
     if (tabParam === "create") setView("create");
     else setView("list");
   }, [tabParam]);
-  const [ensuring, setEnsuring] = useState(false);
-  const [prefill, setPrefill] = useState<any>(null);
 
   // Auto-create padel_players record if it doesn't exist yet
   useEffect(() => {
