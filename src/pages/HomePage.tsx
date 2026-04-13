@@ -62,18 +62,18 @@ export default function HomePage() {
           {[
             {
               icon: "🎾", accent: "#00C853", title: "I'm a Player",
-              desc: "Join sessions, earn XP, climb divisions, get fan support",
-              cta: "Find Your Venue →", action: () => navigate("/venues"),
+              desc: "Join sessions, earn XP, climb divisions, and get fan support. No app download needed.",
+              cta: "Sign Up & Play Free →", action: () => navigate("/auth"),
             },
             {
               icon: "🏟️", accent: "#2196F3", title: "I Own a Venue",
-              desc: "Free setup. Branded URL. Live leaderboards. Monthly prizes.",
-              cta: "Register Free →", action: () => navigate("/register"),
+              desc: "Free setup in 5 minutes. Get a branded URL, live leaderboards, and monthly prize automation.",
+              cta: "Register Your Venue →", action: () => navigate("/register"),
             },
             {
               icon: "📋", accent: "#FF9800", title: "I Host Sessions",
-              desc: "Create sessions, manage players, auto-generate matches",
-              cta: "Learn How →", action: () => navigate("/how-it-works"),
+              desc: "Create sessions, manage players, auto-generate matches — all from your phone.",
+              cta: "Start Hosting Now →", action: () => navigate("/auth"),
             },
           ].map((card, i) => (
             <motion.div
@@ -81,17 +81,17 @@ export default function HomePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + i * 0.08 }}
-              onClick={card.action}
-              className="bg-card border border-border rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow text-left"
+              className="bg-card border border-border rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow text-left flex flex-col"
               style={{ borderLeft: `4px solid ${card.accent}` }}
+              onClick={card.action}
             >
               <div className="text-3xl mb-4">{card.icon}</div>
               <div className="font-bold text-lg mb-2">{card.title}</div>
-              <div className="text-sm text-muted-foreground leading-relaxed mb-5">{card.desc}</div>
+              <div className="text-sm text-muted-foreground leading-relaxed mb-5 flex-1">{card.desc}</div>
               <button
                 onClick={e => { e.stopPropagation(); card.action(); }}
-                className="text-xs font-bold px-4 py-2 rounded-lg"
-                style={{ background: `${card.accent}12`, color: card.accent, border: `1px solid ${card.accent}30` }}
+                className="w-full text-sm font-bold px-4 py-3 rounded-xl text-white transition-opacity hover:opacity-90"
+                style={{ background: card.accent }}
               >
                 {card.cta}
               </button>
