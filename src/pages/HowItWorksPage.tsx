@@ -106,6 +106,24 @@ export default function HowItWorksPage() {
                 </motion.div>
               </div>
             ))}
+
+            {/* Call to Action */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: flow.length * 0.08 + 0.1 }}
+              className="mt-6 rounded-2xl border-2 p-6 text-center"
+              style={{ borderColor: `${tab.color}40`, background: `${tab.color}08` }}
+            >
+              <p className="text-sm text-muted-foreground mb-3">{tab.ctaDesc}</p>
+              <Link
+                to={tab.ctaLink}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{ background: tab.color }}
+              >
+                {tab.cta} →
+              </Link>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       </section>
