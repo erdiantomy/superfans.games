@@ -159,6 +159,24 @@ export default function VenuePage() {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 120px" }}>
+        {/* Join Session CTA */}
+        <div
+          onClick={() => navigate("/sessions")}
+          style={{
+            background: `linear-gradient(135deg, ${accent}, ${accent}cc)`,
+            borderRadius: 16, padding: "16px 18px", marginBottom: 14,
+            cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>🎾 Join a Session</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 2 }}>
+              {sessions.length > 0 ? `${sessions.length} session${sessions.length > 1 ? "s" : ""} available` : "Browse all open sessions"}
+            </div>
+          </div>
+          <div style={{ fontSize: 24, color: "rgba(255,255,255,0.9)" }}>→</div>
+        </div>
+
         {/* Claim profile banner */}
         {user && <ClaimProfileBanner />}
 
