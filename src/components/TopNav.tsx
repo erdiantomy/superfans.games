@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/superfans-logo.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
@@ -21,8 +22,8 @@ export default function TopNav() {
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
       <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-14">
-        <Link to="/" className="font-display text-xl font-black tracking-wide text-foreground">
-          SUPERFANS<span className="text-xs text-muted-foreground tracking-widest">.GAMES</span>
+        <Link to="/" className="flex items-center">
+          <img src={logo} alt="SuperFans" className="h-8 object-contain" />
         </Link>
 
         {/* Desktop links */}
