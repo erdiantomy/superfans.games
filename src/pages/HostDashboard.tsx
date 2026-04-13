@@ -440,3 +440,97 @@ function HostSignIn() {
     </div>
   );
 }
+
+// ─── MANAGE PLAYERS VIEW ──────────────────────────────
+function ManagePlayersView({ onBack, hostId }: { onBack: () => void; hostId: string }) {
+  const { data: allSessions = [] } = useSessions();
+  const hostSessions = allSessions.filter(s => s.host_id === hostId);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [players, setPlayers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!selectedSession) { setPlayers([]); return; }
+    setLoading(true);
+    supabase
+      .from("session_players")
+      .select("*, padel_players(id, name, avatar)")
+      .eq("session_id", selectedSession)
+      .then(({ data }) => { setPlayers(data || []); setLoading(false); });
+  }, [selectedSession]);
+
+  const updateStatus = async (spId: string, status: string) => {
+    await supabase.from("session_players").update({ status }).eq("id", spId);
+    setPlayers(prev => prev.map(p => p.id === spId ? { ...p, status } : p));
+    toast.success(`Player ${status}`);
+  };
+
+  return (
+    <div style={{ height: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "'DM Sans',sans-serif" }}>
+      <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: "flex", alignItems: "center", gap: 10 }}>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: C.muted, fontSize: 22, cursor: "pointer" }}>←</button>
+        <div className="font-display" style={{ fontSize: 20, fontWeight: 900 }}>MANAGE PLAYERS</div>
+      </div>
+
+      <div style={{ flex: 1, overflowY: "auto", padding: "14px 16px 90px" }}>
+        {/* Session selector */}
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 6, fontWeight: 600 }}>Select a session</div>
+          <select
+            value={selectedSession || ""}
+            onChange={e => setSelectedSession(e.target.value || null)}
+            style={{ width: "100%", background: C.raised, border: `1px solid ${C.border}`, color: C.fg, padding: "10px 14px", borderRadius: 10, fontSize: 14 }}
+          >
+            <option value="">— Choose session —</option>
+            {hostSessions.map(s => (
+              <option key={s.id} value={s.id}>{s.name} ({s.status})</option>
+            ))}
+          </select>
+        </div>
+
+        {!selectedSession && (
+          <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>👥</div>
+            <div style={{ fontSize: 13, color: C.muted }}>Select a session above to manage its players</div>
+          </div>
+        )}
+
+        {selectedSession && loading && (
+          <div style={{ textAlign: "center", padding: "30px 0", fontSize: 12, color: C.muted }}>Loading players...</div>
+        )}
+
+        {selectedSession && !loading && players.length === 0 && (
+          <div style={{ textAlign: "center", padding: "30px 0" }}>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🏖️</div>
+            <div style={{ fontSize: 13, color: C.muted }}>No players have joined this session yet</div>
+          </div>
+        )}
+
+        {selectedSession && !loading && players.length > 0 && (
+          <div>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 10, fontWeight: 600 }}>{players.length} player(s)</div>
+            {players.map(sp => (
+              <div key={sp.id} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.raised, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
+                  {sp.padel_players?.avatar || "👤"}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700 }}>{sp.padel_players?.name || "Unknown"}</div>
+                  <div style={{ fontSize: 11, color: sp.status === "approved" ? C.green : sp.status === "pending" ? C.orange : C.muted, fontWeight: 600 }}>
+                    {sp.status === "approved" ? "✅ Approved" : sp.status === "pending" ? "⏳ Pending" : sp.status}
+                  </div>
+                </div>
+                {sp.status === "pending" && (
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button onClick={() => updateStatus(sp.id, "approved")} style={{ background: `${C.green}18`, border: `1px solid ${C.green}40`, color: C.green, padding: "6px 12px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Approve</button>
+                    <button onClick={() => updateStatus(sp.id, "rejected")} style={{ background: `${C.red}12`, border: `1px solid ${C.red}30`, color: C.red, padding: "6px 12px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>Reject</button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
