@@ -1,7 +1,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useVenue } from "@/hooks/useVenue";
 import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer } from "@/hooks/useArena";
@@ -11,11 +11,21 @@ import logo from "@/assets/superfans-logo.png";
 
 export default function HostDashboard() {
   const navigate          = useNavigate();
+  const [searchParams]    = useSearchParams();
   const { user }          = useAuth();
   const { venue }         = useVenue();
   const { data: me, isLoading: meLoading, refetch: refetchMe } = usePadelPlayer(user?.id);
   const { data: allSessions = [] } = useSessions();
-  const [view, setView]   = useState<"list" | "create">("list");
+  const tabParam = searchParams.get("tab");
+  const [view, setView]   = useState<"list" | "create">(tabParam === "create" ? "create" : "list");
+  const [ensuring, setEnsuring] = useState(false);
+  const [prefill, setPrefill] = useState<any>(null);
+
+  // Sync view with tab param changes
+  useEffect(() => {
+    if (tabParam === "create") setView("create");
+    else setView("list");
+  }, [tabParam]);
   const [ensuring, setEnsuring] = useState(false);
   const [prefill, setPrefill] = useState<any>(null);
 
