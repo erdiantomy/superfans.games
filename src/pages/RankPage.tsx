@@ -171,7 +171,6 @@ export default function RankPage() {
                       background: isPrime
                         ? `hsl(var(--accent))`
                         : C.card,
-                        : C.card,
                       border: `1.5px solid ${isPrime ? C.green + "50" : div.color + "30"}`,
                       borderRadius: 16,
                       padding: isPrime ? "20px 8px 14px" : "14px 8px 10px",
