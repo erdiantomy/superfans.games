@@ -80,7 +80,7 @@ export default function RankPage() {
       <div style={{
         padding: "14px 18px 12px",
         borderBottom: `1px solid ${C.border}`,
-        background: "linear-gradient(180deg, #0D1E14 0%, #0A0C11 100%)",
+        background: "hsl(var(--card))",
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
@@ -124,7 +124,7 @@ export default function RankPage() {
         {tab === "monthly" && (
           <div style={{
             margin: "14px 18px 0",
-            background: "linear-gradient(135deg, #0B1A0C, #0B0E16)",
+            background: "hsl(var(--accent))",
             border: `1px solid ${C.green}25`,
             borderRadius: 16, padding: "12px 16px",
             display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -169,7 +169,7 @@ export default function RankPage() {
                   >
                     <div style={{
                       background: isPrime
-                        ? `linear-gradient(160deg, #0D1E14, #0B1218)`
+                        ? `hsl(var(--accent))`
                         : C.card,
                       border: `1.5px solid ${isPrime ? C.green + "50" : div.color + "30"}`,
                       borderRadius: 16,
@@ -180,7 +180,7 @@ export default function RankPage() {
                         <div style={{
                           position: "absolute", top: -11, left: "50%",
                           transform: "translateX(-50%)",
-                          background: C.green, color: "#0A0C11",
+                          background: C.green, color: "hsl(var(--background))",
                           fontSize: 8, fontWeight: 900, padding: "2px 8px",
                           borderRadius: 20, whiteSpace: "nowrap", letterSpacing: 0.5,
                         }}>LEADER</div>
