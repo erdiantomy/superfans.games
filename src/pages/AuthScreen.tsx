@@ -26,7 +26,7 @@ export default function AuthScreen() {
         description: "Ready to play?",
         duration: 3000,
       });
-      navigate(returnTo || "/fanprize", { replace: true });
+      navigate(returnTo || "/dashboard", { replace: true });
     }
   }, [user, loading, navigate, returnTo]);
 
