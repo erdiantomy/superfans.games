@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import TopNav from "@/components/TopNav";
-import { Zap, Users, Trophy, Heart, Plus, ClipboardList, Shield, BarChart3, Search, Star, LogOut } from "lucide-react";
+import { Zap, Users, Trophy, Heart, Plus, ClipboardList, Shield, BarChart3, Search, Star, LogOut, CalendarDays } from "lucide-react";
 
 interface DashCard {
   icon: React.ReactNode;
@@ -70,11 +70,17 @@ export default function Dashboard() {
 
   const playerCards: DashCard[] = [
     {
+      icon: <CalendarDays className="w-6 h-6" />,
+      title: "Browse Sessions",
+      desc: "Find open sessions across all venues",
+      action: () => navigate("/sessions"),
+      primary: true,
+    },
+    {
       icon: <Zap className="w-6 h-6" />,
       title: "Join a Session",
-      desc: "Find an open session at your venue and jump in",
-      action: () => navigate("/venues"),
-      primary: true,
+      desc: "Find an open session at your venue",
+      action: () => navigate("/sessions"),
     },
     {
       icon: <ClipboardList className="w-6 h-6" />,

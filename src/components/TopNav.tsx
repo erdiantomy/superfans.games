@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const NAV_LINKS = [
+  { to: "/sessions", label: "Sessions" },
   { to: "/how-it-works", label: "How It Works" },
   { to: "/gamification", label: "Gamification" },
   { to: "/venues", label: "Venues" },
