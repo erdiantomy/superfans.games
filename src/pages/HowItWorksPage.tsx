@@ -1,13 +1,14 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import MarketingLayout from "@/components/MarketingLayout";
 
 const GREEN = "#00C853";
 
 const ROLE_TABS = [
-  { key: "player", label: "🎾 Players", color: GREEN },
-  { key: "venue", label: "🏟️ Venue Owners", color: "#2196F3" },
-  { key: "host", label: "📋 Session Hosts", color: "#FF9800" },
+  { key: "player", label: "🎾 Players", color: GREEN, cta: "Join as a Player", ctaLink: "/auth", ctaDesc: "Sign up free and start earning XP today." },
+  { key: "venue", label: "🏟️ Venue Owners", color: "#2196F3", cta: "Register Your Venue", ctaLink: "/register", ctaDesc: "Get your branded URL and go live in 24 hours." },
+  { key: "host", label: "📋 Session Hosts", color: "#FF9800", cta: "Start Hosting Sessions", ctaLink: "/auth", ctaDesc: "Sign in and create your first session in minutes." },
 ] as const;
 
 type RoleKey = typeof ROLE_TABS[number]["key"];
@@ -105,6 +106,24 @@ export default function HowItWorksPage() {
                 </motion.div>
               </div>
             ))}
+
+            {/* Call to Action */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: flow.length * 0.08 + 0.1 }}
+              className="mt-6 rounded-2xl border-2 p-6 text-center"
+              style={{ borderColor: `${tab.color}40`, background: `${tab.color}08` }}
+            >
+              <p className="text-sm text-muted-foreground mb-3">{tab.ctaDesc}</p>
+              <Link
+                to={tab.ctaLink}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
+                style={{ background: tab.color }}
+              >
+                {tab.cta} →
+              </Link>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       </section>
