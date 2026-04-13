@@ -107,20 +107,20 @@ export default function Dashboard() {
       icon: <Plus className="w-6 h-6" />,
       title: "Create a Session",
       desc: "Set up a new match session for your venue",
-      action: () => navigate("/tomspadel/host"),
+      action: () => navigate("/tomspadel/host?tab=create"),
       primary: true,
     },
     {
       icon: <ClipboardList className="w-6 h-6" />,
       title: "My Sessions",
       desc: "View and manage your created sessions",
-      action: () => navigate("/tomspadel/host"),
+      action: () => navigate("/tomspadel/host?tab=sessions"),
     },
     {
       icon: <Users className="w-6 h-6" />,
       title: "Manage Players",
       desc: "Approve join requests and manage rosters",
-      action: () => navigate("/tomspadel/host"),
+      action: () => navigate("/tomspadel/host?tab=players"),
     },
   ];
 

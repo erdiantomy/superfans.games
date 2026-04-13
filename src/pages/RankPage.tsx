@@ -80,7 +80,7 @@ export default function RankPage() {
       <div style={{
         padding: "14px 18px 12px",
         borderBottom: `1px solid ${C.border}`,
-        background: "linear-gradient(180deg, #0D1E14 0%, #0A0C11 100%)",
+        background: "hsl(var(--card))",
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
