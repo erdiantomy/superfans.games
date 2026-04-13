@@ -150,13 +150,36 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
   const [courts, setCourts] = useState(prefill?.courts || 2);
   const [done,   setDone]   = useState(false);
   const [err,    setErr]    = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({});
 
   const createSession = useCreateSession();
-  const canSubmit = !!(name.trim() && date && time && fmt && pt && hostId && venueId);
+
+  const validate = () => {
+    const errors: Record<string, boolean> = {};
+    if (!name.trim()) errors.name = true;
+    if (!date) errors.date = true;
+    if (!time) errors.time = true;
+    if (!fmt) errors.format = true;
+    if (!pt) errors.partner = true;
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const canSubmit = !!(name.trim() && date && time && fmt && pt && hostId);
 
   const submit = async () => {
-    if (!venueId) { setErr("Venue not loaded yet. Please wait a moment and try again."); return; }
-    if (!canSubmit) { setErr("Please fill in all fields and make sure you are signed in."); return; }
+    if (!validate()) {
+      setErr("Please fill in all required fields marked with *");
+      return;
+    }
+    if (!venueId) {
+      setErr("Venue not loaded yet. Please wait a moment and try again.");
+      return;
+    }
+    if (!hostId) {
+      setErr("Your player profile is not ready. Please sign out and sign in again.");
+      return;
+    }
     setErr("");
     try {
       await createSession.mutateAsync({
