@@ -17,13 +17,14 @@ export default function HostDashboard() {
   const { data: me, isLoading: meLoading, refetch: refetchMe } = usePadelPlayer(user?.id);
   const { data: allSessions = [] } = useSessions();
   const tabParam = searchParams.get("tab");
-  const [view, setView]   = useState<"list" | "create">(tabParam === "create" ? "create" : "list");
+  const [view, setView]   = useState<"list" | "create" | "players">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : "list");
   const [ensuring, setEnsuring] = useState(false);
   const [prefill, setPrefill] = useState<any>(null);
 
   // Sync view with tab param changes
   useEffect(() => {
     if (tabParam === "create") setView("create");
+    else if (tabParam === "players") setView("players");
     else setView("list");
   }, [tabParam]);
 
@@ -56,6 +57,7 @@ export default function HostDashboard() {
   }
 
   if (view === "create") return <CreateSessionForm onDone={() => { setView("list"); setPrefill(null); }} hostId={me?.id ?? ""} venueId={venue?.id} prefill={prefill} />;
+  if (view === "players") return <ManagePlayersView onBack={() => setView("list")} hostId={me?.id ?? ""} />;
 
   return (
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
