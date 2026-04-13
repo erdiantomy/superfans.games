@@ -300,18 +300,21 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
                 <div style={{ fontSize:12, color:C.muted, marginBottom:14 }}>Admin will review these before approving</div>
 
                 <div style={{ marginBottom:12 }}>
-                  <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Session Name</div>
-                  <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Sunday Americano" style={{ width:"100%", background:C.raised, border:`1px solid ${C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:14, outline:"none" }}/>
+                  <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Session Name <span style={{ color: "#ef4444" }}>*</span></div>
+                  <input value={name} onChange={e => { setName(e.target.value); setFieldErrors(p => ({ ...p, name: false })); }} placeholder="e.g. Sunday Americano" style={{ width:"100%", background:C.raised, border:`1px solid ${fieldErrors.name ? "#ef4444" : C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:14, outline:"none" }}/>
+                  {fieldErrors.name && <div style={{ fontSize:10, color:"#ef4444", marginTop:4 }}>Session name is required</div>}
                 </div>
 
                 <div style={{ display:"flex", gap:8, marginBottom:12 }}>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Date</div>
-                    <input type="date" value={date} onChange={e => setDate(e.target.value)} style={{ width:"100%", background:C.raised, border:`1px solid ${C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:13, outline:"none" }}/>
+                    <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Date <span style={{ color: "#ef4444" }}>*</span></div>
+                    <input type="date" value={date} onChange={e => { setDate(e.target.value); setFieldErrors(p => ({ ...p, date: false })); }} style={{ width:"100%", background:C.raised, border:`1px solid ${fieldErrors.date ? "#ef4444" : C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:13, outline:"none" }}/>
+                    {fieldErrors.date && <div style={{ fontSize:10, color:"#ef4444", marginTop:4 }}>Required</div>}
                   </div>
                   <div style={{ flex:1 }}>
-                    <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Start Time</div>
-                    <input type="time" value={time} onChange={e => setTime(e.target.value)} style={{ width:"100%", background:C.raised, border:`1px solid ${C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:13, outline:"none" }}/>
+                    <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Start Time <span style={{ color: "#ef4444" }}>*</span></div>
+                    <input type="time" value={time} onChange={e => { setTime(e.target.value); setFieldErrors(p => ({ ...p, time: false })); }} style={{ width:"100%", background:C.raised, border:`1px solid ${fieldErrors.time ? "#ef4444" : C.border}`, borderRadius:12, padding:"11px 14px", color:C.fg, fontSize:13, outline:"none" }}/>
+                    {fieldErrors.time && <div style={{ fontSize:10, color:"#ef4444", marginTop:4 }}>Required</div>}
                   </div>
                 </div>
 
