@@ -42,16 +42,16 @@ export default function HomePage() {
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
           <button
-            onClick={() => navigate("/auth")}
+            onClick={() => navigate("/sessions")}
             className="bg-primary text-primary-foreground font-bold text-base px-8 py-4 rounded-xl hover:bg-primary/90 transition-colors"
           >
-            🎾 Play Padel
+            🎾 I Want to Play
           </button>
           <button
             onClick={() => navigate("/top-players")}
             className="bg-card border border-border text-foreground font-bold text-base px-8 py-4 rounded-xl hover:bg-accent transition-colors"
           >
-            ❤️ Support a Player
+            ❤️ I Want to Support
           </button>
         </motion.div>
       </section>

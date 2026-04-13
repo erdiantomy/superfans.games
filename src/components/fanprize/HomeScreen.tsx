@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { useMatches, useLeaderboard, type Match } from "@/hooks/useData";
 import { idr } from "@/data/constants";
 import { Avatar, LiveDot, SportTag, SupportBar, SectionHead } from "./UIElements";
@@ -13,6 +14,7 @@ interface HomeProps {
 }
 
 export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
+  const navigate = useNavigate();
   const { data: matches = [], isLoading } = useMatches();
   const { data: leaderboard = [] } = useLeaderboard();
   // Compute total prize pool from all live matches
@@ -59,6 +61,18 @@ export default function HomeScreen({ onPick, onNotifications }: HomeProps) {
           <NotificationBell onClick={onNotifications} />
           <Avatar s="TR" size={34} />
         </div>
+      </motion.div>
+
+      {/* Fan context header */}
+      <motion.div variants={item} className="bg-card border border-subtle rounded-2xl p-4 mb-5">
+        <div className="text-[15px] font-bold mb-1">❤️ Support Your Favorite Players</div>
+        <div className="text-[12px] text-label leading-relaxed mb-3">Back players in live matches. When they win, you earn rewards together.</div>
+        <button
+          onClick={() => navigate("/sessions")}
+          className="text-[11px] font-semibold text-green hover:underline"
+        >
+          🎾 Looking to join a match instead? → Browse Sessions
+        </button>
       </motion.div>
 
       {/* Live Hero */}

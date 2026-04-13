@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pass, setPass] = useState("");
   const [adminTab, setAdminTab] = useState<"overview" | "sessions" | "scores" | "tracker" | "settings">("overview");
+  const [sessionFilter, setSessionFilter] = useState<"pending" | "approved" | "rejected">("pending");
 
   useArenaRealtime();
 
@@ -253,18 +254,47 @@ export default function AdminPage() {
         )}
 
         {/* SESSION QUEUE */}
-        {adminTab === "sessions" && (
+        {adminTab === "sessions" && (() => {
+          const approvedSessions = sessions.filter((s: any) => ["active", "live", "finished"].includes(s.status));
+          const rejectedSessions = sessions.filter((s: any) => s.status === "rejected");
+          const filteredSessions = sessionFilter === "pending" ? pendingSessions
+            : sessionFilter === "approved" ? approvedSessions
+            : rejectedSessions;
+
+          return (
           <>
             <div style={{ background: "#0E0D0A", border: `1px solid ${accent}25`, borderRadius: 12, padding: "10px 14px", marginBottom: 14, fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
               🛡️ Sessions need approval before hosts can share invite links.
             </div>
-            {pendingSessions.length === 0 && sessions.filter((s: any) => s.status === "pending_approval").length === 0 && (
+
+            {/* Sub-filter tabs */}
+            <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+              {([
+                { k: "pending" as const, l: "🟡 Pending", n: pendingSessions.length },
+                { k: "approved" as const, l: "🟢 Approved", n: approvedSessions.length },
+                { k: "rejected" as const, l: "🔴 Rejected", n: rejectedSessions.length },
+              ]).map(f => (
+                <button key={f.k} onClick={() => setSessionFilter(f.k)} style={{
+                  flex: 1, padding: "8px 0", borderRadius: 10, fontSize: 11, fontWeight: 700,
+                  fontFamily: "'Barlow Condensed'", cursor: "pointer", border: "none",
+                  background: sessionFilter === f.k ? `${accent}18` : C.raised,
+                  color: sessionFilter === f.k ? accent : C.muted,
+                  borderBottom: sessionFilter === f.k ? `2px solid ${accent}` : "2px solid transparent",
+                }}>
+                  {f.l} ({f.n})
+                </button>
+              ))}
+            </div>
+
+            {filteredSessions.length === 0 && (
               <div style={{ textAlign: "center", padding: "24px 0" }}>
-                <div style={{ fontSize: 32, marginBottom: 8 }}>✅</div>
-                <div className="font-display" style={{ fontSize: 16, fontWeight: 800, color: C.green }}>No pending sessions</div>
+                <div style={{ fontSize: 32, marginBottom: 8 }}>{sessionFilter === "pending" ? "✅" : sessionFilter === "approved" ? "📋" : "📭"}</div>
+                <div className="font-display" style={{ fontSize: 16, fontWeight: 800, color: C.muted }}>
+                  {sessionFilter === "pending" ? "No pending sessions" : sessionFilter === "approved" ? "No approved sessions" : "No rejected sessions"}
+                </div>
               </div>
             )}
-            {sessions.map((s: any) => {
+            {filteredSessions.map((s: any) => {
               const isPending = s.status === "pending_approval";
               const isApproved = ["active", "live", "finished"].includes(s.status);
               const isRejected = s.status === "rejected";
@@ -286,8 +316,8 @@ export default function AdminPage() {
                   {s.scheduled_at && <div style={{ fontSize: 11, color: C.muted, marginBottom: 8 }}>🗓 {new Date(s.scheduled_at).toLocaleString("id-ID")}</div>}
                   <div style={{ fontSize: 10, color: C.dim, marginBottom: 10 }}>Submitted {fmtTs(s.created_at)}</div>
                   {s.admin_note && <div style={{ background: `${accent}10`, border: `1px solid ${accent}25`, borderRadius: 8, padding: "6px 10px", marginBottom: 10, fontSize: 11, color: accent }}>Note: {s.admin_note}</div>}
-                  {isApproved && <div style={{ color: C.green, fontSize: 12, fontWeight: 700 }}>✅ Approved</div>}
-                  {isRejected && <div style={{ color: C.red, fontSize: 12, fontWeight: 700 }}>❌ Rejected · {s.admin_note}</div>}
+                  {isApproved && <div style={{ color: C.green, fontSize: 12, fontWeight: 700 }}>✅ Approved {s.approved_at ? `· ${fmtTs(s.approved_at)}` : ""}</div>}
+                  {isRejected && <div style={{ color: C.red, fontSize: 12, fontWeight: 700 }}>❌ Rejected · {s.admin_note || "No reason given"}</div>}
                   {isPending && (
                     <div style={{ display: "flex", gap: 8 }}>
                       <button onClick={() => handleApproveSession(s.id)} style={{ flex: 2, background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "10px 0", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 14, fontWeight: 800, cursor: "pointer" }}>✓ Approve</button>
@@ -298,7 +328,8 @@ export default function AdminPage() {
               );
             })}
           </>
-        )}
+          );
+        })()}
 
         {/* SCORES QUEUE */}
         {adminTab === "scores" && (
