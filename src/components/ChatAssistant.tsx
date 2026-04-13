@@ -137,13 +137,13 @@ export default function ChatAssistant() {
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-20 right-4 z-50 flex items-center gap-2 rounded-full bg-green-600 text-white shadow-xl hover:bg-green-700 transition-colors px-4 py-3"
+            className="fixed bottom-20 right-4 z-50 flex items-center gap-2 rounded-full bg-green text-primary-foreground shadow-xl hover:opacity-90 transition-opacity px-4 py-3"
             aria-label="Open AI assistant"
           >
             <Bot className="h-5 w-5" />
             <span className="text-sm font-semibold">Ask AI</span>
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green opacity-75" />
               <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500" />
             </span>
           </motion.button>
