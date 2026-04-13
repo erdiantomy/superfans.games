@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useAdmin";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import TopNav from "@/components/TopNav";
 import { Zap, Users, Trophy, Heart, Plus, ClipboardList, Shield, BarChart3, Search, Star, LogOut, CalendarDays } from "lucide-react";
