@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { motion, AnimatePresence } from "framer-motion";
@@ -79,10 +80,20 @@ export default function HomePage() {
           The gamification layer for padel venues. XP, leaderboards, fan support — zero app downloads.
         </motion.p>
 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, y: [0, 6, 0] }}
+          transition={{ delay: 0.4, y: { repeat: Infinity, duration: 1.8, ease: "easeInOut" } }}
+          className="flex flex-col items-center gap-1 cursor-pointer"
+          onClick={() => document.getElementById("role-cards")?.scrollIntoView({ behavior: "smooth" })}
+        >
+          <span className="text-xs text-muted-foreground tracking-wide">Discover your role</span>
+          <ChevronDown className="text-primary" size={22} />
+        </motion.div>
       </section>
 
       {/* Role Cards */}
-      <section className="max-w-4xl mx-auto px-6 pb-16">
+      <section id="role-cards" className="max-w-4xl mx-auto px-6 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {ROLE_CARDS.map((card, i) => {
             const isExpanded = expanded === card.key;
