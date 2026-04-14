@@ -36,14 +36,14 @@ const queryClient = new QueryClient({
   defaultOptions: { queries: { staleTime: 30_000, retry: 1 } },
 });
 
-/** Redirect old /session/:code → /tomspadel/session/:code */
+/** Redirect old /session/:code → universal short link */
 const LegacySessionRedirect = () => {
   const { code } = useParams();
-  return <Navigate to={`/tomspadel/session/${code}`} replace />;
+  return <Navigate to={`/s/${code}`} replace />;
 };
 const LegacyMatchRedirect = () => {
   const { code } = useParams();
-  return <Navigate to={`/tomspadel/match/${code}`} replace />;
+  return <Navigate to={`/s/${code}`} replace />;
 };
 
 /** Wrap venue-scoped pages with VenueProvider */
@@ -76,7 +76,7 @@ const App = () => (
             <Route path="/payment/failed"  element={<PaymentFailedPage />} />
 
             {/* Backwards-compat redirects */}
-            <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />
+            <Route path="/rank"            element={<RankPage />} />
             <Route path="/host"            element={<HostDashboard />} />
             <Route path="/s/:code"         element={<VenueLayout><SessionPage /></VenueLayout>} />
             <Route path="/admin"           element={<Navigate to="/superadmin" replace />} />
