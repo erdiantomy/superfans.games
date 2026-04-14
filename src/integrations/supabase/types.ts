@@ -247,6 +247,8 @@ export type Database = {
       padel_players: {
         Row: {
           avatar: string
+          backs_correct: number
+          backs_total: number
           created_at: string
           credits: number
           division: string
@@ -262,6 +264,8 @@ export type Database = {
         }
         Insert: {
           avatar?: string
+          backs_correct?: number
+          backs_total?: number
           created_at?: string
           credits?: number
           division?: string
@@ -277,6 +281,8 @@ export type Database = {
         }
         Update: {
           avatar?: string
+          backs_correct?: number
+          backs_total?: number
           created_at?: string
           credits?: number
           division?: string
@@ -345,6 +351,55 @@ export type Database = {
           },
         ]
       }
+      player_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          icon: string
+          id: string
+          label: string
+          player_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          icon: string
+          id?: string
+          label: string
+          player_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          icon?: string
+          id?: string
+          label?: string
+          player_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_badges_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_badges_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_badges_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
       player_profiles: {
         Row: {
           avatar_url: string | null
@@ -406,6 +461,71 @@ export type Database = {
           },
         ]
       }
+      player_quests: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          period_key: string
+          player_id: string
+          progress: number
+          quest_id: string
+          reward_claimed: boolean
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_key: string
+          player_id: string
+          progress?: number
+          quest_id: string
+          reward_claimed?: boolean
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_key?: string
+          player_id?: string
+          progress?: number
+          quest_id?: string
+          reward_claimed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_quests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quest_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -439,6 +559,45 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      quest_definitions: {
+        Row: {
+          action_type: string
+          active: boolean
+          cadence: string
+          description: string
+          id: string
+          reward_badge: string | null
+          reward_type: string
+          reward_value: number
+          target_count: number
+          title: string
+        }
+        Insert: {
+          action_type: string
+          active?: boolean
+          cadence: string
+          description: string
+          id: string
+          reward_badge?: string | null
+          reward_type: string
+          reward_value?: number
+          target_count?: number
+          title: string
+        }
+        Update: {
+          action_type?: string
+          active?: boolean
+          cadence?: string
+          description?: string
+          id?: string
+          reward_badge?: string | null
+          reward_type?: string
+          reward_value?: number
+          target_count?: number
+          title?: string
         }
         Relationships: []
       }
@@ -1220,6 +1379,7 @@ export type Database = {
         Args: { submission_id: string }
         Returns: undefined
       }
+      get_host_tier: { Args: { hosting_xp: number }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1237,6 +1397,8 @@ export type Database = {
         }
         Returns: {
           avatar: string
+          backs_correct: number
+          backs_total: number
           created_at: string
           credits: number
           division: string
