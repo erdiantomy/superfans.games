@@ -23,7 +23,7 @@ export default function TopNav() {
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
       <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-14">
         <Link to="/" className="flex items-center">
-          <img src={logo} alt="SuperFans" className="h-22 object-contain" />
+          <img src={logo} alt="SuperFans" className="h-18 object-contain" />
         </Link>
 
         {/* Desktop links */}
