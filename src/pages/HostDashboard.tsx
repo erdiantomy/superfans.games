@@ -26,6 +26,7 @@ export default function HostDashboard() {
   useEffect(() => {
     if (tabParam === "create") setView("create");
     else if (tabParam === "players") setView("players");
+    else if (tabParam === "ranks") setView("ranks");
     else setView("list");
   }, [tabParam]);
 
