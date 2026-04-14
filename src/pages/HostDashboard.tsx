@@ -316,6 +316,16 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
                   {fieldErrors.name && <div style={{ fontSize:10, color:"#ef4444", marginTop:4 }}>Session name is required</div>}
                 </div>
 
+                {/* Venue tagging — only when no venue context */}
+                {!venueId && (
+                  <div style={{ background:C.raised, border:`1px solid ${C.border}`, borderRadius:12, padding:"12px 14px", marginBottom:12 }}>
+                    <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:8 }}>Playing at a venue? (optional)</div>
+                    <input value={venueNameTag} onChange={e => setVenueNameTag(e.target.value)} placeholder="e.g. Padel Republic Kemang" style={{ width:"100%", background:C.bg, border:`1px solid ${C.border}`, borderRadius:10, padding:"10px 14px", color:C.fg, fontSize:13, outline:"none", marginBottom:8 }}/>
+                    <input value={venueCityTag} onChange={e => setVenueCityTag(e.target.value)} placeholder="City" style={{ width:"100%", background:C.bg, border:`1px solid ${C.border}`, borderRadius:10, padding:"10px 14px", color:C.fg, fontSize:13, outline:"none" }}/>
+                    <div style={{ fontSize:10, color:C.dim, marginTop:6 }}>Your session will be visible to that venue. They can join SuperFans to manage it.</div>
+                  </div>
+                )}
+
                 <div style={{ display:"flex", gap:8, marginBottom:12 }}>
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:11, color:C.muted, fontWeight:600, textTransform:"uppercase", letterSpacing:1, marginBottom:6 }}>Date <span style={{ color: "#ef4444" }}>*</span></div>
