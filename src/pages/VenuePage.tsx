@@ -53,6 +53,22 @@ export default function VenuePage() {
     },
   });
 
+  // Sessions tagging this venue (by independent hosts)
+  const { data: taggedSessions = [] } = useQuery({
+    queryKey: ["venue-tagged-sessions", venue?.name],
+    enabled: !!venue?.name,
+    queryFn: async () => {
+      const { data, error } = await (supabase.from as any)("sessions")
+        .select("*, host:padel_players!sessions_host_id_fkey(*)")
+        .ilike("venue_name_tag", venue!.name)
+        .is("venue_id", null)
+        .eq("venue_claim_status", "unlinked")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as Session[];
+    },
+  });
+
   // Monthly leaderboard filtered by venue
   const { data: monthly = [], isLoading: mLoad } = useQuery({
     queryKey: ["venue-leaderboard", "monthly", venueId],
