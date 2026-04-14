@@ -60,6 +60,7 @@ export default function HostDashboard() {
 
   if (view === "create") return <CreateSessionForm onDone={() => { setView("list"); setPrefill(null); }} hostId={me?.id ?? ""} venueId={venue?.id} prefill={prefill} />;
   if (view === "players") return <ManagePlayersView onBack={() => setView("list")} hostId={me?.id ?? ""} />;
+  if (view === "ranks") return <HostLeaderboard onBack={() => setView("list")} myId={me?.id} />;
 
   return (
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
