@@ -77,7 +77,8 @@ const App = () => (
 
             {/* Backwards-compat redirects */}
             <Route path="/rank"            element={<Navigate to="/tomspadel/rank" replace />} />
-            <Route path="/host"            element={<Navigate to="/tomspadel/host" replace />} />
+            <Route path="/host"            element={<HostDashboard />} />
+            <Route path="/s/:code"         element={<VenueLayout><SessionPage /></VenueLayout>} />
             <Route path="/admin"           element={<Navigate to="/superadmin" replace />} />
             <Route path="/superadmin"      element={<SuperAdminPage />} />
             <Route path="/session/:code"   element={<LegacySessionRedirect />} />

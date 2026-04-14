@@ -199,5 +199,28 @@
     "linkCopied": "Link copied!",
     "pts": "pts",
     "xp": "XP"
+  },
+  "host": {
+    "createSession": "Create Session",
+    "independentDashboard": "Independent Host Dashboard",
+    "venueTag": "Playing at a venue? (optional)",
+    "venueTagPlaceholder": "e.g. Padel Republic Kemang",
+    "cityTagPlaceholder": "City",
+    "venueTagHelper": "Your session will be visible to that venue.",
+    "shareEarly": "Share now · Players can preview before approval",
+    "hostingXP": "Hosting XP",
+    "playersHosted": "Players Hosted"
+  },
+  "sessionPublic": {
+    "publicPreviewCTA": "Join This Session",
+    "freeToJoin": "Free to join · Takes 30 seconds",
+    "awaitingApproval": "This session is awaiting approval. Check back soon.",
+    "spotsLeft": "{{count}} spots left",
+    "xpReward": "Join to earn up to {{xp}} XP"
+  },
+  "venueTagged": {
+    "taggedSessions": "Sessions Tagging This Venue",
+    "taggedSessionsSub": "Hosted independently · Not yet linked",
+    "claimSession": "Claim"
   }
 }

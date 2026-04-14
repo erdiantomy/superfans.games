@@ -147,6 +147,13 @@ export type Database = {
             foreignKeyName: "donations_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "donations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
             referencedRelation: "padel_players"
             referencedColumns: ["id"]
           },
@@ -243,6 +250,7 @@ export type Database = {
           created_at: string
           credits: number
           division: string
+          hosting_xp: number
           id: string
           lifetime_xp: number
           matches_played: number
@@ -257,6 +265,7 @@ export type Database = {
           created_at?: string
           credits?: number
           division?: string
+          hosting_xp?: number
           id?: string
           lifetime_xp?: number
           matches_played?: number
@@ -271,6 +280,7 @@ export type Database = {
           created_at?: string
           credits?: number
           division?: string
+          hosting_xp?: number
           id?: string
           lifetime_xp?: number
           matches_played?: number
@@ -373,6 +383,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "player_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
           {
             foreignKeyName: "player_profiles_player_id_fkey"
             columns: ["player_id"]
@@ -491,6 +508,13 @@ export type Database = {
             foreignKeyName: "score_submissions_reported_by_fkey"
             columns: ["reported_by"]
             isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "score_submissions_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
             referencedRelation: "padel_players"
             referencedColumns: ["id"]
           },
@@ -539,6 +563,13 @@ export type Database = {
           status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "session_players_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
           {
             foreignKeyName: "session_players_player_id_fkey"
             columns: ["player_id"]
@@ -598,6 +629,13 @@ export type Database = {
             foreignKeyName: "session_supports_backed_id_fkey"
             columns: ["backed_id"]
             isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "session_supports_backed_id_fkey"
+            columns: ["backed_id"]
+            isOneToOne: false
             referencedRelation: "padel_players"
             referencedColumns: ["id"]
           },
@@ -614,6 +652,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "sessions"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_supports_supporter_id_fkey"
+            columns: ["supporter_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "session_supports_supporter_id_fkey"
@@ -650,7 +695,10 @@ export type Database = {
           scheduled_at: string | null
           status: string
           total_rounds: number
+          venue_city_tag: string | null
+          venue_claim_status: string
           venue_id: string | null
+          venue_name_tag: string | null
         }
         Insert: {
           admin_note?: string | null
@@ -670,7 +718,10 @@ export type Database = {
           scheduled_at?: string | null
           status?: string
           total_rounds?: number
+          venue_city_tag?: string | null
+          venue_claim_status?: string
           venue_id?: string | null
+          venue_name_tag?: string | null
         }
         Update: {
           admin_note?: string | null
@@ -690,9 +741,19 @@ export type Database = {
           scheduled_at?: string | null
           status?: string
           total_rounds?: number
+          venue_city_tag?: string | null
+          venue_claim_status?: string
           venue_id?: string | null
+          venue_name_tag?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sessions_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
           {
             foreignKeyName: "sessions_host_id_fkey"
             columns: ["host_id"]
@@ -859,6 +920,45 @@ export type Database = {
         }
         Relationships: []
       }
+      venue_session_claims: {
+        Row: {
+          created_at: string
+          id: string
+          session_id: string
+          status: string
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          session_id: string
+          status?: string
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          session_id?: string
+          status?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_session_claims_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_session_claims_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       venues: {
         Row: {
           admin_password_hash: string | null
@@ -977,6 +1077,13 @@ export type Database = {
             foreignKeyName: "donations_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "donations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
             referencedRelation: "padel_players"
             referencedColumns: ["id"]
           },
@@ -988,6 +1095,19 @@ export type Database = {
             referencedColumns: ["player_id"]
           },
         ]
+      }
+      host_stats: {
+        Row: {
+          active_sessions: number | null
+          avatar: string | null
+          completed_sessions: number | null
+          host_id: string | null
+          name: string | null
+          total_players_hosted: number | null
+          total_sessions: number | null
+          user_id: string | null
+        }
+        Relationships: []
       }
       leaderboard: {
         Row: {
@@ -1024,6 +1144,13 @@ export type Database = {
           wins: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "player_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
           {
             foreignKeyName: "player_profiles_player_id_fkey"
             columns: ["player_id"]
@@ -1113,6 +1240,7 @@ export type Database = {
           created_at: string
           credits: number
           division: string
+          hosting_xp: number
           id: string
           lifetime_xp: number
           matches_played: number
@@ -1165,7 +1293,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "host" | "venue_owner"
       match_status: "live" | "upcoming" | "finished"
       tx_type: "support" | "reward" | "topup" | "redeem" | "bonus"
     }
@@ -1295,7 +1423,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "host", "venue_owner"],
       match_status: ["live", "upcoming", "finished"],
       tx_type: ["support", "reward", "topup", "redeem", "bonus"],
     },

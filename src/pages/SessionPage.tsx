@@ -63,7 +63,8 @@ export default function SessionPage() {
 
   const copy = () => {
     if (!session) return;
-    navigator.clipboard?.writeText(`https://${shareUrl(session.code)}`);
+    const slug = (window.location.pathname.match(/^\/([^/]+)\/session/) || [])[1];
+    navigator.clipboard?.writeText(shareUrl(session.code, slug));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     toast.success("Link copied!");
@@ -122,6 +123,88 @@ export default function SessionPage() {
           <div className="font-display" style={{ fontSize: 20, fontWeight: 800 }}>Session not found</div>
           <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>This link may be invalid or expired</div>
           <button onClick={() => navigate("/")} style={{ marginTop: 20, background: C.green, border: "none", color: "#0A0C11", padding: "12px 24px", borderRadius: 12, fontFamily: "'Barlow Condensed'", fontSize: 16, fontWeight: 800, cursor: "pointer" }}>← HOME</button>
+        </div>
+      </div>
+    );
+  }
+
+  // PUBLIC PREVIEW (not signed in and session is not draft)
+  if (session && (!user || !me) && (session.status as string) !== 'draft') {
+    const spotsLeft = Math.max(0, session.max_players - approved.length);
+    const xpEstimate = (session as any).points_per_match * 3 || 96;
+    const venueDisplay = (session as any).venue_id
+      ? (session as any).venue?.name
+      : (session as any).venue_name_tag || "Independent Session";
+
+    return (
+      <div style={{ height: "100dvh", background: C.bg, color: C.fg, maxWidth: 480, margin: "0 auto", display: "flex", flexDirection: "column", overflow: "hidden", fontFamily: "'DM Sans', sans-serif" }}>
+        <div style={{ padding: "12px 16px", borderBottom: `1px solid ${C.border}`, flexShrink: 0, display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => navigate("/")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, display: "flex", alignItems: "center" }}>
+            <img src={logo} alt="SuperFans" style={{ height: 28 }} />
+          </button>
+          <div className="font-display" style={{ fontSize: 18, fontWeight: 900 }}>Session Preview</div>
+        </div>
+        <div style={{ flex: 1, overflowY: "auto", padding: "20px 18px 120px" }}>
+          {/* Event Identity */}
+          <div style={{ background: "linear-gradient(160deg,#0D1E14,#0A0C11)", border: `1px solid ${C.green}30`, borderRadius: 20, padding: 20, marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+              <StatusTag status={session.status} />
+              <Tag label={fmtLabel(session.format)} color={session.format === "americano" ? C.green : C.purple} />
+            </div>
+            <div className="font-display" style={{ fontSize: 26, fontWeight: 900, marginBottom: 6 }}>{session.name}</div>
+            {session.scheduled_at && (
+              <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>{fmtTs(session.scheduled_at)}</div>
+            )}
+            <div style={{ fontSize: 12, color: C.muted }}>
+              Hosted by <strong style={{ color: C.fg }}>{session.host?.name || "Unknown"}</strong>
+            </div>
+            <div style={{ fontSize: 11, color: C.dim, marginTop: 4 }}>📍 {venueDisplay}</div>
+          </div>
+
+          {/* Social Proof */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 20 }}>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
+              <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>{approved.length}</div>
+              <div style={{ fontSize: 10, color: C.muted }}>players joined</div>
+            </div>
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
+              {spotsLeft > 0 ? (
+                <>
+                  <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>{spotsLeft}</div>
+                  <div style={{ fontSize: 10, color: C.muted }}>spots left</div>
+                </>
+              ) : (
+                <>
+                  <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.red }}>FULL</div>
+                  <div style={{ fontSize: 10, color: C.muted }}>no spots left</div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {spotsLeft > 0 && session.status !== "pending_approval" && (
+            <div style={{ background: `${C.green}10`, border: `1px solid ${C.green}25`, borderRadius: 12, padding: "10px 14px", marginBottom: 20, textAlign: "center", fontSize: 13, color: C.green, fontWeight: 700 }}>
+              ⚡ Join to earn up to {xpEstimate} XP
+            </div>
+          )}
+
+          {/* CTA */}
+          {session.status === "pending_approval" ? (
+            <div style={{ background: `${C.orange}10`, border: `1px solid ${C.orange}30`, borderRadius: 14, padding: "16px 14px", textAlign: "center" }}>
+              <div style={{ fontSize: 24, marginBottom: 8 }}>🔒</div>
+              <div style={{ fontSize: 13, color: C.orange, fontWeight: 700 }}>This session is awaiting approval. Check back soon.</div>
+            </div>
+          ) : (
+            <div style={{ textAlign: "center" }}>
+              <button
+                onClick={() => navigate(`/auth?returnTo=${encodeURIComponent(window.location.pathname)}`)}
+                style={{ width: "100%", background: `linear-gradient(135deg, ${C.green}, ${C.green}cc)`, border: "none", color: "#0A0C11", padding: "16px 0", borderRadius: 16, fontFamily: "'Barlow Condensed'", fontSize: 20, fontWeight: 900, cursor: "pointer", boxShadow: `0 14px 34px ${C.green}30`, letterSpacing: 0.8 }}
+              >
+                JOIN THIS SESSION
+              </button>
+              <div style={{ fontSize: 11, color: C.muted, marginTop: 10 }}>Free to join · Takes 30 seconds</div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -400,7 +483,7 @@ export default function SessionPage() {
               <div style={{ fontSize: 12, color: C.muted, marginBottom: 14, lineHeight: 1.6 }}>Only you (the host) can share this link. Players request to join — you approve or decline each one.</div>
               <div style={{ background: C.raised, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 14px", marginBottom: 12, textAlign: "left", wordBreak: "break-all" }}>
                 <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>Session Link</div>
-                <div className="font-display" style={{ fontSize: 13, fontWeight: 700, color: C.green }}>https://{shareUrl(session.code)}</div>
+                <div className="font-display" style={{ fontSize: 13, fontWeight: 700, color: C.green }}>{shareUrl(session.code, (window.location.pathname.match(/^\/([^/]+)\/session/) || [])[1])}</div>
               </div>
               <button onClick={copy} style={{ width: "100%", background: copied ? `${C.green}20` : C.card, border: `1px solid ${copied ? C.green + "50" : C.border}`, color: copied ? C.green : C.fg, padding: "12px 0", borderRadius: 12, fontFamily: "'Barlow Condensed'", fontSize: 15, fontWeight: 800, cursor: "pointer", transition: "all .2s" }}>
                 {copied ? "✓ Copied!" : "🔗 Copy Invite Link"}
