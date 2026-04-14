@@ -13,6 +13,33 @@ import logo from "@/assets/superfans-logo.png";
 
 type AuthState = "loading" | "preview" | "unauthenticated" | "pending" | "approved" | "host";
 
+const QUEST_HINTS = [
+  { icon: "🏸", label: "Play a Match", desc: "Progress on daily & weekly match quests" },
+  { icon: "🔥", label: "Build Streak", desc: "Win consecutive matches for streak quests" },
+  { icon: "⭐", label: "Earn XP", desc: "Climb divisions with every game played" },
+];
+
+function QuestHints() {
+  return (
+    <div style={{ marginTop: 16 }}>
+      <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: 1.2, marginBottom: 8 }}>
+        🎯 Quest progress by joining
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        {QUEST_HINTS.map(q => (
+          <div key={q.label} style={{ display: "flex", alignItems: "center", gap: 10, background: `${C.green}08`, border: `1px solid ${C.green}14`, borderRadius: 10, padding: "8px 12px" }}>
+            <span style={{ fontSize: 16 }}>{q.icon}</span>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.fg }}>{q.label}</div>
+              <div style={{ fontSize: 10, color: C.muted }}>{q.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function SessionPage() {
   const { code }      = useParams<{ code: string }>();
   const navigate      = useNavigate();
@@ -206,6 +233,9 @@ export default function SessionPage() {
               <div style={{ fontSize: 11, color: C.muted, marginTop: 10 }}>Free to join · Takes 30 seconds</div>
             </div>
           )}
+
+          {/* Quest hints */}
+          <QuestHints />
         </div>
       </div>
     );
@@ -320,6 +350,9 @@ export default function SessionPage() {
               </div>
             </div>
           ) : null}
+
+          {/* Quest hints */}
+          <QuestHints />
         </div>
 
         {/* Sticky bottom join bar */}
