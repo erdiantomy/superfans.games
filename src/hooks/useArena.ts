@@ -374,3 +374,28 @@ export function usePlaceSupport() {
       qc.invalidateQueries({ queryKey: ["supports", sessionId] }),
   });
 }
+
+// ─── HOST STATS ───────────────────────────────────────
+export function useHostStats(hostId?: string) {
+  return useQuery({
+    queryKey: ["host_stats", hostId],
+    enabled: !!hostId,
+    queryFn: async () => {
+      const { data, error } = await (supabase.from as any)("host_stats")
+        .select("*")
+        .eq("host_id", hostId!)
+        .single();
+      if (error) throw error;
+      return data as {
+        host_id: string;
+        name: string;
+        avatar: string;
+        user_id: string;
+        total_sessions: number;
+        completed_sessions: number;
+        active_sessions: number;
+        total_players_hosted: number;
+      };
+    },
+  });
+}
