@@ -99,13 +99,32 @@ export function usePlayerNotificationRealtime(playerId: string | undefined) {
           table: "player_notifications",
           filter: `player_id=eq.${playerId}`,
         },
-        (payload: any) => {
+        async (payload: any) => {
           qc.invalidateQueries({ queryKey: ["player_notifications", playerId] });
           qc.invalidateQueries({ queryKey: ["player_notifications_unread", playerId] });
 
           const n = payload.new as PlayerNotification | undefined;
           if (n?.title) {
             toast(n.title, { description: n.body });
+          }
+
+          // Trigger email for rank_change notifications
+          if (n?.type === "rank_change") {
+            try {
+              await supabase.functions.invoke("send-notification-email", {
+                body: {
+                  record: {
+                    user_id: null, // resolved server-side from player
+                    player_id: playerId,
+                    title: n.title,
+                    body: n.body,
+                    type: n.type,
+                  },
+                },
+              });
+            } catch {
+              // Email send is best-effort
+            }
           }
         }
       )
