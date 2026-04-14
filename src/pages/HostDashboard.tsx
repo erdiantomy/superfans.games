@@ -265,14 +265,19 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
             <div style={{ fontSize:44, marginBottom:12 }}>📋</div>
             <div className="font-display" style={{ fontSize:24, fontWeight:900, color:C.orange, marginBottom:6 }}>SUBMITTED!</div>
             <div style={{ fontSize:12, color:C.muted, lineHeight:1.7, marginBottom:16 }}>
-              Your session is now waiting for Tom's staff to approve it.<br/>
+              Your session is now waiting for {venueId ? "venue staff" : "SuperFans admin"} to approve it.<br/>
               <strong style={{ color:C.fg }}>Once approved, you'll get your shareable invite link.</strong>
             </div>
+            {!venueId && (
+              <div style={{ background:`${C.blue}12`, border:`1px solid ${C.blue}30`, borderRadius:12, padding:"10px 14px", marginBottom:12, fontSize:11, color:C.blue, lineHeight:1.7 }}>
+                ℹ️ Since this session isn't linked to a registered venue, it will be reviewed by <strong>SuperFans admin</strong> directly.
+              </div>
+            )}
             <div style={{ background:C.raised, border:`1px solid ${C.border}`, borderRadius:12, padding:"12px 14px", textAlign:"left", marginBottom:16 }}>
               <div style={{ fontSize:10, color:C.orange, fontWeight:700, letterSpacing:1, marginBottom:6 }}>WHAT HAPPENS NEXT</div>
               <div style={{ fontSize:11, color:C.muted, lineHeight:1.8 }}>
-                1. Admin reviews your session request<br/>
-                2. Admin approves or rejects it<br/>
+                1. {venueId ? "Venue staff" : "Admin"} reviews your session request<br/>
+                2. {venueId ? "Venue staff" : "Admin"} approves or rejects it<br/>
                 3. Approved → you get a shareable invite link<br/>
                 4. Share link → players request to join<br/>
                 5. You approve each player individually

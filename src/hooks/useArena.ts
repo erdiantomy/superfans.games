@@ -209,17 +209,22 @@ export function useCreateSession() {
         .single();
       if (error) throw error;
       // Notify super admin about new session request
+      const s = session as any;
       import("@/lib/notifyAdmin").then(({ notifyAdmin }) => {
+        const venueInfo = s.venue_name_tag ? ` at ${s.venue_name_tag}${s.venue_city_tag ? `, ${s.venue_city_tag}` : ""}` : "";
         notifyAdmin({
           type: "session_request",
-          subject: `New Session Request: ${session.name}`,
-          body: `A host requested a new "${session.format}" session "${session.name}" scheduled for ${new Date(session.scheduled_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.`,
+          subject: `New Session Request: ${session.name}${!session.venue_id ? " (Independent)" : ""}`,
+          body: `A host requested a new "${session.format}" session "${session.name}"${venueInfo} scheduled for ${new Date(session.scheduled_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}.${!session.venue_id ? " ⚠️ No registered venue — requires super admin approval." : ""}`,
           metadata: {
             "Session": session.name,
             "Format": session.format,
             "Partner Type": session.partner_type,
             "Courts": String(session.courts),
             "Max Players": String(session.max_players),
+            ...(s.venue_name_tag ? { "Venue (tagged)": s.venue_name_tag } : {}),
+            ...(s.venue_city_tag ? { "City": s.venue_city_tag } : {}),
+            ...(!session.venue_id ? { "Approval": "Super Admin (no venue linked)" } : {}),
           },
         });
       });
