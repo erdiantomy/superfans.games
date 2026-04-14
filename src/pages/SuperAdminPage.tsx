@@ -588,6 +588,92 @@ function Dashboard() {
           </>
         )}
 
+        {/* ── SESSIONS ───────────────────────────── */}
+        {tab === "sessions" && (
+          <>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 12 }}>
+              {sessions.length} total sessions · <span style={{ color: C.orange, fontWeight: 700 }}>{independentSessions.length} independent</span> (not linked to a venue)
+            </div>
+
+            {/* Independent sessions first */}
+            {independentSessions.length > 0 && (
+              <>
+                <div className="font-display" style={{ fontSize: 14, fontWeight: 800, color: C.orange, marginBottom: 8 }}>⚠️ Independent Sessions</div>
+                {independentSessions.map((s: any) => {
+                  const isLinking = linkingSession === s.id;
+                  return (
+                    <div key={s.id} style={{ background: "#14161E", border: `1px solid ${C.orange}30`, borderRadius: 14, padding: 14, marginBottom: 10 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                        <div>
+                          <div style={{ fontSize: 15, fontWeight: 700 }}>{s.name}</div>
+                          <div style={{ fontSize: 11, color: C.muted }}>
+                            Code: <strong style={{ color: C.fg }}>{s.code}</strong> · {s.format} · {s.courts} courts · Max {s.max_players}
+                          </div>
+                        </div>
+                        <Tag label={s.status?.toUpperCase() ?? "?"} color={s.status === "active" ? C.green : s.status === "pending_approval" ? C.orange : s.status === "rejected" ? C.red : C.muted} />
+                      </div>
+                      <div style={{ background: "#0A0C11", borderRadius: 10, padding: "8px 12px", marginBottom: 8, fontSize: 11, color: C.muted, lineHeight: 1.8 }}>
+                        👤 Host: <strong style={{ color: C.fg }}>{s.host?.name || "—"}</strong><br />
+                        🏟️ Venue Tag: <strong style={{ color: C.fg }}>{s.venue_name_tag || "—"}</strong><br />
+                        🌆 City Tag: <strong style={{ color: C.fg }}>{s.venue_city_tag || "—"}</strong><br />
+                        📅 Scheduled: {s.scheduled_at ? new Date(s.scheduled_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                      </div>
+
+                      {isLinking ? (
+                        <div style={{ background: "#0A0C11", borderRadius: 10, padding: 12 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: C.fg, marginBottom: 8 }}>🔗 Link to a registered venue:</div>
+                          <select
+                            value={selectedVenueId}
+                            onChange={e => setSelectedVenueId(e.target.value)}
+                            style={{ width: "100%", background: "#14161E", border: "1px solid #1E2235", borderRadius: 8, padding: "10px 12px", color: C.fg, fontSize: 13, outline: "none", marginBottom: 8, cursor: "pointer" }}
+                          >
+                            <option value="">Select a venue…</option>
+                            {activeVenues.map((v: Venue) => (
+                              <option key={v.id} value={v.id}>{v.name} — {v.city || "?"} (/{v.slug})</option>
+                            ))}
+                          </select>
+                          <div style={{ display: "flex", gap: 8 }}>
+                            <button onClick={() => { setLinkingSession(null); setSelectedVenueId(""); }} style={{ flex: 1, background: "#1E2235", border: "none", color: C.muted, padding: "9px 0", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Cancel</button>
+                            <button
+                              onClick={() => selectedVenueId && linkSessionToVenue(s.id, selectedVenueId)}
+                              disabled={!selectedVenueId}
+                              style={{ flex: 2, background: selectedVenueId ? C.green : "#1E2235", border: "none", color: selectedVenueId ? "#0A0C11" : C.muted, padding: "9px 0", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: selectedVenueId ? "pointer" : "not-allowed", opacity: selectedVenueId ? 1 : 0.5 }}
+                            >✓ Link Venue</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button onClick={() => { setLinkingSession(s.id); setSelectedVenueId(""); }} style={{ flex: 1, background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "9px 0", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer" }}>🔗 Link to Venue</button>
+                          <button onClick={() => navigate(`/s/${s.code}`)} style={{ flex: 1, background: "#1E2235", border: "none", color: C.muted, padding: "9px 0", borderRadius: 8, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>View Session →</button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            {/* Linked sessions */}
+            <div className="font-display" style={{ fontSize: 14, fontWeight: 800, color: C.fg, marginTop: 16, marginBottom: 8 }}>✅ All Sessions</div>
+            {sessions.filter((s: any) => s.venue_id).length === 0 ? (
+              <div style={{ textAlign: "center", padding: "24px 0", color: C.muted, fontSize: 13 }}>No venue-linked sessions yet</div>
+            ) : sessions.filter((s: any) => s.venue_id).map((s: any) => {
+              const venue = venues.find((v: Venue) => v.id === s.venue_id);
+              return (
+                <div key={s.id} style={{ background: "#14161E", border: "1px solid #1E2235", borderRadius: 12, padding: "10px 14px", marginBottom: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700 }}>{s.name}</div>
+                    <div style={{ fontSize: 10, color: C.muted }}>
+                      {s.code} · {venue?.name || "Unknown venue"} · {s.format} · {s.scheduled_at ? new Date(s.scheduled_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" }) : "—"}
+                    </div>
+                  </div>
+                  <Tag label={s.status?.toUpperCase() ?? "?"} color={s.status === "active" || s.status === "live" ? C.green : s.status === "pending_approval" ? C.orange : s.status === "finished" ? C.muted : C.red} />
+                </div>
+              );
+            })}
+          </>
+        )}
+
         {/* ── MATCHES ────────────────────────────── */}
         {tab === "matches" && (
           <>
