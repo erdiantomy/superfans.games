@@ -108,7 +108,6 @@ export default function HostDashboard() {
                 </div>
               )}
             </div>
-            </div>
 
             {myOwnSessions.map(s => (
               <div key={s.id} style={{ background:C.card, border:`1px solid ${C.border}`, borderRadius:14, padding:14, marginBottom:10 }}>
