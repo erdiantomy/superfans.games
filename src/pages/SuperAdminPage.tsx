@@ -267,6 +267,22 @@ function Dashboard() {
     },
   });
 
+  // Sessions (all, with host info)
+  const { data: sessions = [] } = useQuery({
+    queryKey: ["sa-sessions"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("sessions")
+        .select("*, host:padel_players!sessions_host_id_fkey(name, avatar)")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const independentSessions = sessions.filter((s: any) => !s.venue_id);
+  const [linkingSession, setLinkingSession] = useState<string | null>(null);
+  const [selectedVenueId, setSelectedVenueId] = useState<string>("");
+
   const [playerSort, setPlayerSort] = useState<{ col: string; asc: boolean }>({ col: "profile_created_at", asc: false });
 
   const sortedPlayers = useMemo(() => {
@@ -350,10 +366,23 @@ function Dashboard() {
 
   const fmtDate = (d: string) => new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 
+  const linkSessionToVenue = async (sessionId: string, venueId: string) => {
+    try {
+      const venue = venues.find((v: Venue) => v.id === venueId);
+      const { error } = await (supabase as any).from("sessions").update({ venue_id: venueId, venue_claim_status: "linked" }).eq("id", sessionId);
+      if (error) throw error;
+      toast.success(`Session linked to ${venue?.name ?? "venue"}!`);
+      qc.invalidateQueries({ queryKey: ["sa-sessions"] });
+      setLinkingSession(null);
+      setSelectedVenueId("");
+    } catch (err: any) { toast.error(err.message || "Failed to link session"); }
+  };
+
   const tabs: { v: TabKey; l: string; n?: number }[] = [
     { v: "overview", l: "📊 Overview" },
     { v: "registrations", l: "📝 Reg", n: pendingRegs.length },
     { v: "venues", l: "🏟️ Venues" },
+    { v: "sessions", l: "🎾 Sessions", n: independentSessions.length || undefined },
     { v: "matches", l: "⚽ Matches" },
     { v: "users", l: "👥 Users" },
     { v: "players", l: "🎮 Players" },
