@@ -138,7 +138,7 @@ export default function SessionsPage() {
               { key: "all", label: "All" },
               { key: "open", label: "Open" },
               { key: "live", label: "🔴 Live" },
-              { key: "finished", label: "Finished" },
+              { key: "past", label: "Past Sessions" },
             ] as const).map(f => (
               <button
                 key={f.key}
@@ -158,9 +158,10 @@ export default function SessionsPage() {
         {/* Status pills always visible */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "all", label: "All", count: sessions.length },
-            { key: "open", label: "Open", count: sessions.filter(s => s.status === "active").length },
+            { key: "all", label: "Active", count: sessions.filter(s => s.status !== "finished" && !isExpired(s)).length },
+            { key: "open", label: "Open", count: sessions.filter(s => s.status === "active" && !isExpired(s)).length },
             { key: "live", label: "Live", count: sessions.filter(s => s.status === "live").length },
+            { key: "past", label: "Past", count: sessions.filter(s => s.status === "finished" || isExpired(s)).length },
           ] as const).map(f => (
             <button
               key={f.key}
