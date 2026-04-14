@@ -18,7 +18,7 @@ export default function HostDashboard() {
   const { data: allSessions = [] } = useSessions();
   const { data: hostStats } = useHostStats(me?.id);
   const tabParam = searchParams.get("tab");
-  const [view, setView]   = useState<"list" | "create" | "players">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : "list");
+  const [view, setView]   = useState<"list" | "create" | "players" | "ranks">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : tabParam === "ranks" ? "ranks" : "list");
   const [ensuring, setEnsuring] = useState(false);
   const [prefill, setPrefill] = useState<any>(null);
 
@@ -26,6 +26,7 @@ export default function HostDashboard() {
   useEffect(() => {
     if (tabParam === "create") setView("create");
     else if (tabParam === "players") setView("players");
+    else if (tabParam === "ranks") setView("ranks");
     else setView("list");
   }, [tabParam]);
 
@@ -59,6 +60,7 @@ export default function HostDashboard() {
 
   if (view === "create") return <CreateSessionForm onDone={() => { setView("list"); setPrefill(null); }} hostId={me?.id ?? ""} venueId={venue?.id} prefill={prefill} />;
   if (view === "players") return <ManagePlayersView onBack={() => setView("list")} hostId={me?.id ?? ""} />;
+  if (view === "ranks") return <HostLeaderboard onBack={() => setView("list")} myId={me?.id} />;
 
   return (
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
@@ -92,6 +94,16 @@ export default function HostDashboard() {
               </>
             );
           })()}
+        </div>
+        {/* Tab bar */}
+        <div style={{ display:"flex", gap:4, marginTop:10 }}>
+          {([
+            { k: "list" as const, l: "📋 Sessions" },
+            { k: "players" as const, l: "👥 Players" },
+            { k: "ranks" as const, l: "🏆 Ranks" },
+          ]).map(t => (
+            <button key={t.k} onClick={() => setView(t.k as any)} style={{ flex:1, padding:"7px 0", borderRadius:8, border: view === t.k ? `1px solid ${C.green}50` : `1px solid ${C.border}`, background: view === t.k ? `${C.green}14` : "transparent", color: view === t.k ? C.green : C.muted, fontFamily:"'Barlow Condensed'", fontSize:12, fontWeight:700, cursor:"pointer" }}>{t.l}</button>
+          ))}
         </div>
       </div>
 
@@ -565,6 +577,105 @@ function ManagePlayersView({ onBack, hostId }: { onBack: () => void; hostId: str
               </div>
             ))}
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── HOST LEADERBOARD ─────────────────────────────────
+function HostLeaderboard({ onBack, myId }: { onBack: () => void; myId?: string }) {
+  const [hosts, setHosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      // Get top hosts by hosting_xp from host_stats view
+      const { data } = await supabase
+        .from("host_stats" as any)
+        .select("*")
+        .order("total_sessions", { ascending: false })
+        .limit(10);
+
+      // Also get hosting_xp from padel_players for these hosts
+      if (data && data.length > 0) {
+        const ids = data.map((h: any) => h.host_id).filter(Boolean);
+        const { data: players } = await supabase
+          .from("padel_players")
+          .select("id, hosting_xp, name, avatar")
+          .in("id", ids);
+
+        const playerMap = new Map((players || []).map((p: any) => [p.id, p]));
+        const merged = data.map((h: any) => ({
+          ...h,
+          hosting_xp: playerMap.get(h.host_id)?.hosting_xp || 0,
+        })).sort((a: any, b: any) => b.hosting_xp - a.hosting_xp);
+        setHosts(merged);
+      } else {
+        setHosts([]);
+      }
+      setLoading(false);
+    })();
+  }, []);
+
+  const getTier = (xp: number) => xp >= 2000 ? "Pro Host" : xp >= 500 ? "Active Host" : "Rookie Host";
+  const getTierColor = (xp: number) => xp >= 2000 ? C.green : xp >= 500 ? C.purple : C.muted;
+
+  return (
+    <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
+      <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.border}`, flexShrink:0, display:"flex", alignItems:"center", gap:10 }}>
+        <button onClick={onBack} style={{ background:"none", border:"none", color:C.muted, fontSize:22, cursor:"pointer" }}>←</button>
+        <div className="font-display" style={{ fontSize:20, fontWeight:900 }}>🏆 HOST RANKS</div>
+      </div>
+
+      <div style={{ flex:1, overflowY:"auto", padding:"16px 16px 40px" }}>
+        {loading ? (
+          <div style={{ textAlign:"center", padding:"40px 0" }}>
+            <div style={{ width:32, height:32, border:`3px solid ${C.border}`, borderTop:`3px solid ${C.green}`, borderRadius:"50%", animation:"spin 1s linear infinite", margin:"0 auto 12px" }} />
+            <div style={{ fontSize:12, color:C.muted }}>Loading leaderboard...</div>
+          </div>
+        ) : hosts.length === 0 ? (
+          <div style={{ textAlign:"center", padding:"40px 0" }}>
+            <div style={{ fontSize:40, marginBottom:12 }}>🎙️</div>
+            <div className="font-display" style={{ fontSize:18, fontWeight:800 }}>No hosts yet</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:6 }}>Be the first to host a session and climb the ranks!</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize:11, color:C.muted, marginBottom:12, textAlign:"center" }}>Top hosts ranked by Hosting XP</div>
+            {hosts.map((h: any, i: number) => {
+              const isMe = h.host_id === myId;
+              const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null;
+              return (
+                <div key={h.host_id} style={{
+                  background: isMe ? `${C.green}10` : C.card,
+                  border: `1px solid ${isMe ? C.green + "40" : C.border}`,
+                  borderRadius: 14, padding: "12px 14px", marginBottom: 8,
+                  display: "flex", alignItems: "center", gap: 12,
+                }}>
+                  <div style={{ width:28, textAlign:"center", fontSize: medal ? 20 : 14, fontWeight:900, color: medal ? undefined : C.muted, fontFamily:"'Barlow Condensed'" }}>
+                    {medal || `#${i + 1}`}
+                  </div>
+                  <div style={{ width:38, height:38, borderRadius:"50%", background: C.raised, border:`2px solid ${getTierColor(h.hosting_xp)}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, fontWeight:700, color:C.fg }}>
+                    {h.avatar || "🎙️"}
+                  </div>
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:14, fontWeight:700 }}>
+                      {h.name || "Host"} {isMe && <span style={{ fontSize:10, color:C.green, fontWeight:800 }}>(YOU)</span>}
+                    </div>
+                    <div style={{ display:"flex", gap:8, alignItems:"center", marginTop:2 }}>
+                      <span style={{ fontSize:10, fontWeight:800, color: getTierColor(h.hosting_xp) }}>{getTier(h.hosting_xp)}</span>
+                      <span style={{ fontSize:10, color:C.dim }}>·</span>
+                      <span style={{ fontSize:10, color:C.muted }}>{h.hosting_xp} XP</span>
+                      <span style={{ fontSize:10, color:C.dim }}>·</span>
+                      <span style={{ fontSize:10, color:C.muted }}>{h.total_sessions || 0} sessions</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </>
         )}
       </div>
     </div>
