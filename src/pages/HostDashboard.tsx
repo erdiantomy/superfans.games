@@ -88,7 +88,7 @@ export default function HostDashboard() {
         ) : (
           <>
             {/* Host Stats */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+            <div style={{ display: "grid", gridTemplateColumns: hostStats && hostStats.total_players_hosted > 0 ? "1fr 1fr 1fr 1fr" : "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
               <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
                 <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.green }}>{myOwnSessions.length}</div>
                 <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Sessions</div>
@@ -101,6 +101,13 @@ export default function HostDashboard() {
                 <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.orange }}>{myOwnSessions.filter(s => ["active", "live"].includes(s.status)).length}</div>
                 <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Active</div>
               </div>
+              {hostStats && hostStats.total_players_hosted > 0 && (
+                <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
+                  <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: C.purple }}>{hostStats.total_players_hosted}</div>
+                  <div style={{ fontSize: 9, color: C.muted, textTransform: "uppercase", letterSpacing: 0.5 }}>Players Hosted</div>
+                </div>
+              )}
+            </div>
             </div>
 
             {myOwnSessions.map(s => (

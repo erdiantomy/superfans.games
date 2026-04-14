@@ -93,7 +93,85 @@ export default function HomePage() {
       </section>
 
       {/* Role Cards */}
-      <section id="role-cards" className="max-w-4xl mx-auto px-6 pb-16">
+      <section id="role-cards" className="max-w-4xl mx-auto px-6 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {ROLE_CARDS.map((card, i) => {
+            const isExpanded = expanded === card.key;
+            return (
+              <motion.div
+                key={card.key}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.08 }}
+                className="bg-card border border-border rounded-2xl p-6 cursor-pointer hover:shadow-lg transition-shadow text-left flex flex-col"
+                style={{ borderLeft: `4px solid ${card.accent}` }}
+                onClick={() => setExpanded(isExpanded ? null : card.key)}
+              >
+                {/* ... role card content same as before ... */}
+                <div className="text-3xl mb-4">{card.icon}</div>
+                <div className="font-bold text-lg mb-2">{card.title}</div>
+                <div className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">{card.desc}</div>
+
+                <button
+                  onClick={(e) => { e.stopPropagation(); setExpanded(isExpanded ? null : card.key); }}
+                  className="w-full text-sm font-bold px-4 py-3 rounded-xl text-white transition-all hover:opacity-90 flex items-center justify-center gap-2"
+                  style={{ background: card.accent }}
+                >
+                  {isExpanded ? "Close" : "How It Works"}
+                  <motion.span animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }} className="inline-block">▾</motion.span>
+                </button>
+
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: "easeInOut" }} className="overflow-hidden">
+                      <div className="pt-5 space-y-0">
+                        {card.steps.map((step, si) => (
+                          <div key={si} className="flex gap-3">
+                            <div className="flex flex-col items-center w-8 shrink-0">
+                              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: si * 0.06, type: "spring", stiffness: 300 }} className="w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0" style={{ background: `${card.accent}15`, border: `2px solid ${card.accent}40` }}>{step.icon}</motion.div>
+                              {si < card.steps.length - 1 && <div className="w-0.5 flex-1 min-h-3" style={{ background: `${card.accent}25` }} />}
+                            </div>
+                            <motion.div initial={{ opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: si * 0.06 + 0.03 }} className="flex-1 mb-2">
+                              <div className="font-bold text-xs mb-0.5">{step.title}</div>
+                              <div className="text-[11px] text-muted-foreground leading-relaxed">{step.desc}</div>
+                            </motion.div>
+                          </div>
+                        ))}
+                        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: card.steps.length * 0.06 + 0.1 }} className="pt-4">
+                          <button onClick={(e) => { e.stopPropagation(); navigate(card.ctaLink); }} className="w-full text-sm font-bold px-4 py-3 rounded-xl text-white transition-opacity hover:opacity-90" style={{ background: card.accent }}>{card.cta} →</button>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Host a Session CTA */}
+      <section className="max-w-4xl mx-auto px-6 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-card border border-border rounded-2xl p-6 flex items-center justify-between gap-4"
+          style={{ borderLeft: "4px solid hsl(var(--green))" }}
+        >
+          <div>
+            <div className="font-bold text-lg mb-1">🎾 HOST A SESSION</div>
+            <div className="text-sm text-muted-foreground">Organize a game for your crew. No venue needed to start.</div>
+          </div>
+          <button
+            onClick={() => navigate("/host")}
+            className="shrink-0 text-sm font-bold px-5 py-3 rounded-xl transition-opacity hover:opacity-90"
+            style={{ background: "hsl(var(--green))", color: "#0A0C11" }}
+          >
+            Create Session →
+          </button>
+        </motion.div>
+      </section>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {ROLE_CARDS.map((card, i) => {
             const isExpanded = expanded === card.key;
