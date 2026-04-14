@@ -16,6 +16,7 @@ export default function HostDashboard() {
   const { venue }         = useVenue();
   const { data: me, isLoading: meLoading, refetch: refetchMe } = usePadelPlayer(user?.id);
   const { data: allSessions = [] } = useSessions();
+  const { data: hostStats } = useHostStats(me?.id);
   const tabParam = searchParams.get("tab");
   const [view, setView]   = useState<"list" | "create" | "players">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : "list");
   const [ensuring, setEnsuring] = useState(false);
