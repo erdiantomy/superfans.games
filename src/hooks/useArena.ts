@@ -390,7 +390,7 @@ export function useHostStats(hostId?: string) {
       const { data, error } = await (supabase.from as any)("host_stats")
         .select("*")
         .eq("host_id", hostId!)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data as {
         host_id: string;
