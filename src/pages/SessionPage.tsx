@@ -129,10 +129,10 @@ export default function SessionPage() {
   }
 
   // PUBLIC PREVIEW (not signed in and session is not draft)
-  if (session && (!user || !me) && session.status !== 'draft') {
+  if (session && (!user || !me) && (session.status as string) !== 'draft') {
     const spotsLeft = Math.max(0, session.max_players - approved.length);
     const xpEstimate = (session as any).points_per_match * 3 || 96;
-    const venueDisplay = session.venue_id
+    const venueDisplay = (session as any).venue_id
       ? (session as any).venue?.name
       : (session as any).venue_name_tag || "Independent Session";
 
