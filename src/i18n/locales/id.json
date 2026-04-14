@@ -199,5 +199,28 @@
     "linkCopied": "Link disalin!",
     "pts": "poin",
     "xp": "XP"
+  },
+  "host": {
+    "createSession": "Buat Sesi",
+    "independentDashboard": "Dashboard Host Mandiri",
+    "venueTag": "Bermain di venue? (opsional)",
+    "venueTagPlaceholder": "mis. Padel Republic Kemang",
+    "cityTagPlaceholder": "Kota",
+    "venueTagHelper": "Sesi Anda akan terlihat oleh venue tersebut.",
+    "shareEarly": "Bagikan sekarang · Pemain bisa lihat sebelum disetujui",
+    "hostingXP": "Hosting XP",
+    "playersHosted": "Pemain Dihosting"
+  },
+  "sessionPublic": {
+    "publicPreviewCTA": "Gabung Sesi Ini",
+    "freeToJoin": "Gratis · Hanya 30 detik",
+    "awaitingApproval": "Sesi ini sedang menunggu persetujuan.",
+    "spotsLeft": "{{count}} tempat tersisa",
+    "xpReward": "Bergabung untuk mendapat {{xp}} XP"
+  },
+  "venueTagged": {
+    "taggedSessions": "Sesi yang Menandai Venue Ini",
+    "taggedSessionsSub": "Dihost mandiri · Belum terhubung",
+    "claimSession": "Klaim"
   }
 }
