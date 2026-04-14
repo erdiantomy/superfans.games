@@ -39,8 +39,11 @@ export default function AuthScreen() {
 
   const handleGoogleSignIn = async () => {
     setSigningIn(true);
+    const redirectUrl = returnTo
+      ? `${window.location.origin}/auth?returnTo=${encodeURIComponent(returnTo)}`
+      : window.location.origin;
     const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: redirectUrl,
     });
     if (error) {
       console.error("Google sign-in error:", error);
