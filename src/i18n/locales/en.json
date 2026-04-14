@@ -222,5 +222,25 @@
     "taggedSessions": "Sessions Tagging This Venue",
     "taggedSessionsSub": "Hosted independently · Not yet linked",
     "claimSession": "Claim"
+  },
+  "gamification": {
+    "yourDivision": "Your Division",
+    "xpToNext": "{{xp}} XP to {{division}}",
+    "maxDivision": "Maximum Division",
+    "activeQuests": "Active Quests",
+    "claimReward": "Claim",
+    "claimed": "Claimed",
+    "yourBadges": "Your Badges",
+    "noBadges": "Complete quests to earn badges",
+    "backerRep": "Backer Reputation",
+    "accuracy": "{{pct}}% accuracy",
+    "protectRank": "Protect your rank — play this week",
+    "hotVenue": "Hot Venue",
+    "prizePool": "Monthly Prize Pool",
+    "sessionsPowered": "Powered by {{count}} sessions",
+    "hostTierRookie": "Rookie Host",
+    "hostTierActive": "Active Host",
+    "hostTierPro": "Pro Host",
+    "completeQuests": "Joining completes:"
   }
 }

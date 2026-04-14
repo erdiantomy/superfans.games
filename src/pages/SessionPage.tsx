@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
+import { incrementQuestProgress } from "@/hooks/useQuests";
 import { useSessionRealtime } from "@/hooks/useRealtime";
 import { getDivision, getDivisionProgress, getXpToNextDivision, cr, resolveSupports } from "@/lib/gamification";
 import { Av, Tag, StatusTag, CountdownBadge, Divider, Row, C, fmtLabel, shareUrl, fmtTs } from "@/components/arena";

@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useMonthlyLeaderboard, useLifetimeLeaderboard } from "@/hooks/useArena";
+import { useMonthlyLeaderboard, useLifetimeLeaderboard, usePadelPlayer } from "@/hooks/useArena";
 import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision } from "@/lib/gamification";
 import { Tag, C } from "@/components/arena";
@@ -47,10 +47,32 @@ export default function RankPage() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: me } = usePadelPlayer(user?.id);
+
   const list    = tab === "monthly" ? monthly : lifetime;
   const loading = tab === "monthly" ? mLoad : lLoad;
   const top3    = list.slice(0, 3);
   const rest    = list.slice(3);
+
+  // Find current user in list
+  const myRank = (() => {
+    if (!me) return null;
+    const idx = list.findIndex((p: any) => p.id === me.id);
+    return idx >= 0 ? { rank: idx + 1, player: list[idx] } : null;
+  })();
+
+  // Hot streaks
+  const { data: hotStreaks = [] } = useQuery({
+    queryKey: ["hot-streaks"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("padel_players")
+        .select("id, name, avatar, streak")
+        .gte("streak", 3)
+        .order("streak", { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+  });
 
   const podiumOrder = [top3[1], top3[0], top3[2]];
   const podiumHeight = [80, 110, 60];
@@ -143,6 +165,32 @@ export default function RankPage() {
           </div>
         )}
 
+        {/* YOUR RANK banner */}
+        {user && me && !loading && (
+          <div style={{
+            margin: "14px 18px 0", padding: "12px 16px",
+            background: C.card, border: `1px solid ${C.border}`,
+            borderLeft: `4px solid ${C.green}`, borderRadius: 14,
+          }}>
+            {myRank ? (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>YOUR RANK</div>
+                  <div className="font-display" style={{ fontSize: 24, fontWeight: 900, color: C.green }}>#{myRank.rank}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.muted }}>
+                    {tab === "monthly" ? (myRank.player as any).monthly_pts : (myRank.player as any).lifetime_xp}
+                  </div>
+                  <div style={{ fontSize: 9, color: C.dim }}>{tab === "monthly" ? "pts" : "XP"}</div>
+                </div>
+                <Tag label={getDivision((myRank.player as any).lifetime_xp).label} color={getDivision((myRank.player as any).lifetime_xp).color} />
+              </div>
+            ) : (
+              <div style={{ fontSize: 12, color: C.muted }}>Unranked this month — play to get ranked</div>
+            )}
+          </div>
+        )}
         {/* LOADING */}
         {loading && (
           <div style={{ textAlign: "center", padding: "48px 0", color: C.muted, fontSize: 12 }}>
@@ -286,6 +334,33 @@ export default function RankPage() {
             {/* Claim Your Page Banner */}
             {user && userProfile === null && (
               <ClaimProfileBanner />
+            )}
+
+            {/* Hot Streaks */}
+            {hotStreaks.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "4px 0 10px" }}>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                  <span style={{ fontSize: 10, color: C.dim, fontWeight: 700, letterSpacing: 1 }}>🔥 HOT STREAKS</span>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                </div>
+                {hotStreaks.map((p: any, i: number) => (
+                  <div key={p.id} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 14px", borderRadius: 14, marginBottom: 6,
+                    background: C.card, border: `1px solid ${C.border}`,
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: "50%",
+                      background: `${C.orange}15`, border: `1.5px solid ${C.orange}30`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 12, fontWeight: 800, color: C.orange,
+                    }}>{p.avatar?.slice(0, 2) || "??"}</div>
+                    <div style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{p.name}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: "#FF8C00" }}>🔥 {p.streak} week streak</div>
+                  </div>
+                ))}
+              </div>
             )}
 
             {/* Bottom CTA */}

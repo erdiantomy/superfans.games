@@ -73,7 +73,25 @@ export default function HostDashboard() {
         <div>
           <div className="font-display" style={{ fontSize:16, fontWeight:900, color:C.green }}>MY SESSIONS</div>
           <div style={{ fontSize:10, color:C.dim }}>{venue ? `Host Dashboard · ${me?.name}` : "Independent Host Dashboard"}</div>
-          {(me as any)?.hosting_xp > 0 && <div style={{ fontSize:10, color:C.green }}>⚡ {(me as any).hosting_xp} Hosting XP</div>}
+          {(() => {
+            const hxp = (me as any)?.hosting_xp || 0;
+            const tier = hxp >= 2000 ? "Pro Host" : hxp >= 500 ? "Active Host" : "Rookie Host";
+            const nextThreshold = hxp >= 2000 ? null : hxp >= 500 ? 2000 : 500;
+            const tierProgress = nextThreshold ? Math.min((hxp / nextThreshold) * 100, 100) : 100;
+            const nextTier = hxp >= 2000 ? null : hxp >= 500 ? "Pro Host" : "Active Host";
+            return (
+              <>
+                <div style={{ display:"flex", alignItems:"center", gap:6, marginTop:4 }}>
+                  <span style={{ fontSize:11, fontWeight:800, color:C.purple }}>🎙️ {tier}</span>
+                  <span style={{ fontSize:10, color:C.muted }}>· {hxp} Hosting XP</span>
+                </div>
+                <div style={{ height:3, borderRadius:3, background:C.border, marginTop:4, overflow:"hidden" }}>
+                  <div style={{ height:"100%", borderRadius:3, background:C.purple, width:`${tierProgress}%`, transition:"width .3s" }} />
+                </div>
+                {nextTier && <div style={{ fontSize:9, color:C.dim, marginTop:2 }}>{nextThreshold! - hxp} XP to {nextTier}</div>}
+              </>
+            );
+          })()}
         </div>
       </div>
 

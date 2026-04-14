@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -20,6 +20,85 @@ function fmtRp(n: number) {
 
 function calcSplit(total: number, pct: number) {
   return Math.round((total * pct) / 100);
+}
+
+function useCountUp(target: number, duration = 1500) {
+  const [value, setValue] = useState(0);
+  const rafRef = useRef<number>();
+  useEffect(() => {
+    let start: number | null = null;
+    const animate = (ts: number) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      setValue(Math.round(target * progress));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+    rafRef.current = requestAnimationFrame(animate);
+    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+  }, [target, duration]);
+  return value;
+}
+
+function PrizePoolCard({ prize, s1, s2, s3, accent, monthName, daysLeft, venueId }: {
+  prize: number; s1: number; s2: number; s3: number;
+  accent: string; monthName: string; daysLeft: number; venueId?: string;
+}) {
+  const animatedPrize = useCountUp(prize);
+
+  const { data: sessionsCount = 0 } = useQuery({
+    queryKey: ["venue-finished-sessions-count", venueId],
+    enabled: !!venueId,
+    queryFn: async () => {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+      const { count } = await (supabase.from as any)("sessions")
+        .select("id", { count: "exact", head: true })
+        .eq("venue_id", venueId!)
+        .eq("status", "finished")
+        .gte("created_at", startOfMonth.toISOString());
+      return count ?? 0;
+    },
+  });
+
+  const isHot = sessionsCount >= 3;
+
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #00C85310, #00C85300)",
+      border: "1px solid #00C85330",
+      borderRadius: 16, padding: "16px 18px", marginBottom: 14,
+    }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>
+              {monthName} · Monthly Prize Pool
+            </span>
+            {isHot && (
+              <span style={{
+                fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 6,
+                background: "#FF980015", color: "#FF9800",
+              }}>🔥 Hot Venue</span>
+            )}
+          </div>
+          <div className="font-display" style={{ fontSize: 28, fontWeight: 900, color: accent }}>
+            {fmtRp(animatedPrize)}
+          </div>
+          <div style={{ fontSize: 10, color: C.muted, marginTop: 4 }}>
+            🥇 {s1}% · 🥈 {s2}% · 🥉 {s3}%
+          </div>
+          <div style={{ fontSize: 10, color: C.dim, marginTop: 4 }}>
+            Powered by {sessionsCount} session{sessionsCount !== 1 ? "s" : ""} this month
+          </div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 10, color: C.muted }}>ends in</div>
+          <div className="font-display" style={{ fontSize: 28, color: C.red, lineHeight: 1 }}>{daysLeft}D</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function VenuePage() {
@@ -202,20 +281,8 @@ export default function VenuePage() {
           <span style={{ fontSize: 11, color: C.muted }}>Rankings update live when matches are approved by staff</span>
         </div>
 
-        {/* Prize banner */}
-        {prize > 0 && (
-          <div style={{ background: "linear-gradient(135deg,#0B1A0C,#0B0E16)", border: `1px solid ${accent}25`, borderRadius: 14, padding: "12px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <div>
-              <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>{monthName} · Prize Season</div>
-              <div className="font-display" style={{ fontSize: 24, fontWeight: 900, color: accent }}>{fmtRp(prize)}</div>
-              <div style={{ fontSize: 10, color: C.muted }}>🥇 {fmtRp(calcSplit(prize, s1))} · 🥈 {fmtRp(calcSplit(prize, s2))} · 🥉 {fmtRp(calcSplit(prize, s3))}</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 10, color: C.muted }}>ends in</div>
-              <div className="font-display" style={{ fontSize: 28, color: C.red, lineHeight: 1 }}>{daysLeft}D</div>
-            </div>
-          </div>
-        )}
+        {/* Prize Pool Card */}
+        {prize > 0 && <PrizePoolCard prize={prize} s1={s1} s2={s2} s3={s3} accent={accent} monthName={monthName} daysLeft={daysLeft} venueId={venueId} />}
 
         {/* Live sessions */}
         {live.length > 0 && (
