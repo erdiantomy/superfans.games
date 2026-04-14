@@ -4,7 +4,7 @@ import { lovable } from "@/integrations/lovable";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useVenue } from "@/hooks/useVenue";
-import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer } from "@/hooks/useArena";
+import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer, useHostStats } from "@/hooks/useArena";
 import { Tag, StatusTag, C, fmtLabel, shareUrl } from "@/components/arena";
 import { toast } from "sonner";
 import logo from "@/assets/superfans-logo.png";
