@@ -244,6 +244,36 @@ export type Database = {
         }
         Relationships: []
       }
+      monthly_leaderboard_archives: {
+        Row: {
+          created_at: string
+          final_rank: number
+          id: string
+          month_key: string
+          monthly_pts: number
+          player_id: string
+          player_name: string
+        }
+        Insert: {
+          created_at?: string
+          final_rank?: number
+          id?: string
+          month_key: string
+          monthly_pts?: number
+          player_id: string
+          player_name?: string
+        }
+        Update: {
+          created_at?: string
+          final_rank?: number
+          id?: string
+          month_key?: string
+          monthly_pts?: number
+          player_id?: string
+          player_name?: string
+        }
+        Relationships: []
+      }
       padel_players: {
         Row: {
           avatar: string
@@ -1428,6 +1458,7 @@ export type Database = {
       }
     }
     Functions: {
+      archive_and_reset_monthly_pts: { Args: never; Returns: undefined }
       check_slug_available: { Args: { p_slug: string }; Returns: boolean }
       credit_player_balance: {
         Args: { p_credits: number; p_player_id: string }
