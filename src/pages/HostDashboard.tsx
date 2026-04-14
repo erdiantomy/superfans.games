@@ -71,7 +71,8 @@ export default function HostDashboard() {
         </div>
         <div>
           <div className="font-display" style={{ fontSize:16, fontWeight:900, color:C.green }}>MY SESSIONS</div>
-          <div style={{ fontSize:10, color:C.dim }}>Host Dashboard · {me?.name}</div>
+          <div style={{ fontSize:10, color:C.dim }}>{venue ? `Host Dashboard · ${me?.name}` : "Independent Host Dashboard"}</div>
+          {(me as any)?.hosting_xp > 0 && <div style={{ fontSize:10, color:C.green }}>⚡ {(me as any).hosting_xp} Hosting XP</div>}
         </div>
       </div>
 
@@ -110,7 +111,7 @@ export default function HostDashboard() {
                 <div style={{ fontSize:15, fontWeight:700, marginBottom:4 }}>{s.name}</div>
                 {s.status === "pending_approval" && (
                   <div style={{ background:`${C.orange}12`, border:`1px solid ${C.orange}30`, borderRadius:10, padding:"8px 12px", marginBottom:8, fontSize:11, color:C.orange, lineHeight:1.6 }}>
-                    ⏳ Waiting for admin to approve this session.<br/>You cannot share the invite link yet.
+                    ⏳ Pending approval · Share the link now — players can see it but can't join until it's approved.
                   </div>
                 )}
                 {s.status === "rejected" && (
@@ -118,15 +119,15 @@ export default function HostDashboard() {
                     ❌ Rejected by admin.{s.admin_note ? ` Reason: ${s.admin_note}` : ""}
                   </div>
                 )}
-                {(s.status === "active" || s.status === "live") && (
+                {s.status !== "rejected" && (
                   <>
                     <div style={{ background:C.raised, borderRadius:10, padding:"8px 12px", marginBottom:8 }}>
-                      <div style={{ fontSize:10, color:C.muted, marginBottom:3 }}>✅ Approved · Share this invite link</div>
-                      <div className="font-display" style={{ fontSize:13, fontWeight:700, color:C.green }}>https://{shareUrl(s.code)}</div>
+                      <div style={{ fontSize:10, color:C.muted, marginBottom:3 }}>{s.status === "pending_approval" ? "📤 Share preview link" : "✅ Approved · Share this invite link"}</div>
+                      <div className="font-display" style={{ fontSize:13, fontWeight:700, color:s.status === "pending_approval" ? C.muted : C.green }}>{shareUrl(s.code, venue?.slug)}</div>
                     </div>
                     <div style={{ display:"flex", gap:8 }}>
-                      <button onClick={() => { navigator.clipboard?.writeText(`https://${shareUrl(s.code)}`); toast.success("Link copied!"); }} style={{ flex:1, background:`${C.green}18`, border:`1px solid ${C.green}40`, color:C.green, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>🔗 Copy Link</button>
-                      <button onClick={() => navigate(`/session/${s.code}`)} style={{ flex:1, background:C.raised, border:`1px solid ${C.border}`, color:C.fg, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>View →</button>
+                      <button onClick={() => { navigator.clipboard?.writeText(shareUrl(s.code, venue?.slug)); toast.success("Link copied!"); }} style={{ flex:1, background:s.status === "pending_approval" ? `${C.muted}18` : `${C.green}18`, border:`1px solid ${s.status === "pending_approval" ? C.muted + "40" : C.green + "40"}`, color:s.status === "pending_approval" ? C.muted : C.green, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>🔗 Copy Link</button>
+                      <button onClick={() => navigate(venue?.slug ? `/${venue.slug}/session/${s.code}` : `/s/${s.code}`)} style={{ flex:1, background:C.raised, border:`1px solid ${C.border}`, color:C.fg, padding:"10px 0", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:800, cursor:"pointer" }}>View →</button>
                     </div>
                   </>
                 )}
@@ -151,6 +152,8 @@ export default function HostDashboard() {
 
 // ─── CREATE SESSION FORM ──────────────────────────────
 function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () => void; hostId: string; venueId?: string; prefill?: any }) {
+  const [venueNameTag, setVenueNameTag] = useState("");
+  const [venueCityTag, setVenueCityTag] = useState("");
   const [step,   setStep]   = useState(prefill?.format && prefill?.partner_type ? 3 : 1);
   const [fmt,    setFmt]    = useState<"americano"|"mexicano"|null>(prefill?.format || null);
   const [pt,     setPt]     = useState<"random"|"fixed"|null>(prefill?.partner_type || null);
@@ -182,10 +185,7 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
       setErr("Please fill in all required fields marked with *");
       return;
     }
-    if (!venueId) {
-      setErr("Venue not loaded yet. Please wait a moment and try again.");
-      return;
-    }
+    // venueId is optional — hosts can create sessions without a venue
     if (!hostId) {
       setErr("Your player profile is not ready. Please sign out and sign in again.");
       return;
@@ -205,7 +205,8 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
         scheduled_at: new Date(`${date}T${time}`).toISOString(),
         admin_note:   null,
         approved_at:  null,
-      });
+        ...((!venueId && venueNameTag.trim()) ? { venue_name_tag: venueNameTag.trim(), venue_city_tag: venueCityTag.trim() || null } : {}),
+      } as any);
       setDone(true);
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Something went wrong. Please try again.");
