@@ -222,5 +222,25 @@
     "taggedSessions": "Sesi yang Menandai Venue Ini",
     "taggedSessionsSub": "Dihost mandiri · Belum terhubung",
     "claimSession": "Klaim"
+  },
+  "gamification": {
+    "yourDivision": "Divisi Kamu",
+    "xpToNext": "{{xp}} XP ke {{division}}",
+    "maxDivision": "Divisi Tertinggi",
+    "activeQuests": "Quest Aktif",
+    "claimReward": "Ambil",
+    "claimed": "Sudah Diambil",
+    "yourBadges": "Lencana Kamu",
+    "noBadges": "Selesaikan quest untuk mendapat lencana",
+    "backerRep": "Reputasi Pendukung",
+    "accuracy": "Akurasi {{pct}}%",
+    "protectRank": "Jaga rankingmu — main minggu ini",
+    "hotVenue": "Venue Populer",
+    "prizePool": "Hadiah Bulanan",
+    "sessionsPowered": "Didukung {{count}} sesi",
+    "hostTierRookie": "Host Pemula",
+    "hostTierActive": "Host Aktif",
+    "hostTierPro": "Host Pro",
+    "completeQuests": "Bergabung menyelesaikan:"
   }
 }

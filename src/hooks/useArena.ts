@@ -6,6 +6,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { calcXP } from "@/lib/gamification";
+export { incrementQuestProgress } from "./useQuests";
 
 // ─── TYPES ────────────────────────────────────────────
 export interface PadelPlayer {
