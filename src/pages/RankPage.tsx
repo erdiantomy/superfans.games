@@ -417,6 +417,45 @@ export default function RankPage() {
               </div>
             )}
 
+            {/* Past Seasons */}
+            {Object.keys(seasonsByMonth).length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "4px 0 10px" }}>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                  <span style={{ fontSize: 10, color: C.dim, fontWeight: 700, letterSpacing: 1 }}>📜 PAST SEASONS</span>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                </div>
+                {Object.entries(seasonsByMonth).map(([month, players]: [string, any[]]) => {
+                  const [y, m] = month.split("-");
+                  const label = new Date(Number(y), Number(m) - 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
+                  const medals = ["🥇", "🥈", "🥉"];
+                  return (
+                    <div key={month} style={{
+                      background: C.card, border: `1px solid ${C.border}`,
+                      borderRadius: 14, padding: "12px 14px", marginBottom: 8,
+                    }}>
+                      <div className="font-display" style={{ fontSize: 12, fontWeight: 800, color: C.muted, marginBottom: 8, letterSpacing: 0.5 }}>
+                        {label}
+                      </div>
+                      {players.map((p: any) => (
+                        <div key={p.id} style={{
+                          display: "flex", alignItems: "center", gap: 10,
+                          padding: "6px 0",
+                          borderTop: p.final_rank > 1 ? `1px solid ${C.border}` : "none",
+                        }}>
+                          <span style={{ fontSize: 16 }}>{medals[p.final_rank - 1] || `#${p.final_rank}`}</span>
+                          <span style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{p.player_name}</span>
+                          <span className="font-display" style={{ fontSize: 14, fontWeight: 800, color: C.green }}>
+                            {p.monthly_pts.toLocaleString()} pts
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Bottom CTA */}
             {list.length > 0 && (
               <div style={{
