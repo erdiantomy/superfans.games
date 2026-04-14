@@ -254,6 +254,7 @@ export type Database = {
           division: string
           hosting_xp: number
           id: string
+          last_known_rank: number | null
           lifetime_xp: number
           matches_played: number
           matches_won: number
@@ -271,6 +272,7 @@ export type Database = {
           division?: string
           hosting_xp?: number
           id?: string
+          last_known_rank?: number | null
           lifetime_xp?: number
           matches_played?: number
           matches_won?: number
@@ -288,6 +290,7 @@ export type Database = {
           division?: string
           hosting_xp?: number
           id?: string
+          last_known_rank?: number | null
           lifetime_xp?: number
           matches_played?: number
           matches_won?: number
@@ -393,6 +396,61 @@ export type Database = {
           },
           {
             foreignKeyName: "player_badges_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      player_notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          metadata: Json
+          player_id: string
+          read: boolean
+          title: string
+          type: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          player_id: string
+          read?: boolean
+          title: string
+          type?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          player_id?: string
+          read?: boolean
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "player_stats"
@@ -1404,6 +1462,7 @@ export type Database = {
           division: string
           hosting_xp: number
           id: string
+          last_known_rank: number | null
           lifetime_xp: number
           matches_played: number
           matches_won: number
