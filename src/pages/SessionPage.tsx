@@ -206,6 +206,9 @@ export default function SessionPage() {
               <div style={{ fontSize: 11, color: C.muted, marginTop: 10 }}>Free to join · Takes 30 seconds</div>
             </div>
           )}
+
+          {/* Quest hints */}
+          <QuestHints />
         </div>
       </div>
     );
@@ -320,6 +323,9 @@ export default function SessionPage() {
               </div>
             </div>
           ) : null}
+
+          {/* Quest hints */}
+          <QuestHints />
         </div>
 
         {/* Sticky bottom join bar */}
