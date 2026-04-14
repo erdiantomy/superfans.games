@@ -7,6 +7,8 @@ import { Av, C, Tag } from "@/components/arena";
 import DonationModal from "@/components/profile/DonationModal";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { getDivision, getDivisionProgress, getXpToNextDivision, DIVISION_ORDER, DIVISIONS } from "@/lib/gamification";
+import { Progress } from "@/components/ui/progress";
 
 interface Props {
   playerId: string;
@@ -130,6 +132,9 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
           )}
         </motion.div>
 
+        {/* Division Progress Block */}
+        <DivisionProgressBlock playerId={playerId} lifetimeXp={profile.lifetime_xp || 0} />
+
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
           {stats.map((s) => (
@@ -140,6 +145,9 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
             </motion.div>
           ))}
         </div>
+
+        {/* Badge Row */}
+        <BadgeRow playerId={playerId} />
 
         {/* Superfans section */}
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 24 }}>
