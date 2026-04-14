@@ -191,6 +191,35 @@ export default function RankPage() {
             )}
           </div>
         )}
+
+        {/* Sign-in prompt for unauthenticated users */}
+        {!user && !loading && (
+          <div style={{
+            margin: "14px 18px 0", padding: "16px",
+            background: "linear-gradient(135deg, hsl(var(--accent)), hsl(var(--card)))",
+            border: `1px solid ${C.green}25`, borderRadius: 16,
+            textAlign: "center",
+          }}>
+            <div style={{ fontSize: 28, marginBottom: 8 }}>🏆</div>
+            <div className="font-display" style={{ fontSize: 16, fontWeight: 900, marginBottom: 4 }}>Where do you rank?</div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6, marginBottom: 14 }}>
+              Sign in to see your position, track your progress, and compete for monthly prizes.
+            </div>
+            <button
+              onClick={() => navigate(`/auth?returnTo=${encodeURIComponent("/rank")}`)}
+              style={{
+                width: "100%", background: `linear-gradient(135deg, ${C.green}, ${C.green}cc)`,
+                border: "none", color: "#0A0C11", padding: "12px 0", borderRadius: 12,
+                fontFamily: "'Barlow Condensed'", fontSize: 16, fontWeight: 900,
+                cursor: "pointer", boxShadow: `0 8px 24px ${C.green}30`, letterSpacing: 0.6,
+              }}
+            >
+              SIGN IN TO SEE YOUR RANK
+            </button>
+            <div style={{ fontSize: 10, color: C.dim, marginTop: 8 }}>Free account · Takes 30 seconds</div>
+          </div>
+        )}
+
         {/* LOADING */}
         {loading && (
           <div style={{ textAlign: "center", padding: "48px 0", color: C.muted, fontSize: 12 }}>
