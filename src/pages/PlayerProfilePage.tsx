@@ -217,3 +217,71 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
     </div>
   );
 }
+
+// ─── Division Progress Block ─────────────────────────
+function DivisionProgressBlock({ playerId, lifetimeXp }: { playerId: string; lifetimeXp: number }) {
+  const div = getDivision(lifetimeXp);
+  const progress = getDivisionProgress(lifetimeXp);
+  const xpToNext = getXpToNextDivision(lifetimeXp);
+  const icons: Record<string, string> = { Diamond: "💎", Platinum: "⚪", Gold: "🥇", Silver: "🥈", Bronze: "🥉" };
+
+  const nextDivName = (() => {
+    if (!div.next) return null;
+    for (const key of DIVISION_ORDER) {
+      if (DIVISIONS[key].min === div.next) return DIVISIONS[key].label;
+    }
+    return null;
+  })();
+
+  return (
+    <div style={{
+      background: `${div.color}08`, border: `1px solid ${div.color}25`,
+      borderRadius: 14, padding: "12px 14px", marginBottom: 20,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+        <span style={{ fontSize: 20 }}>{icons[div.label] || "🥉"}</span>
+        <span className="font-display" style={{ fontSize: 15, fontWeight: 900, color: div.color }}>{div.label}</span>
+      </div>
+      <Progress value={progress} className="h-1.5" />
+      <div style={{ fontSize: 11, color: C.muted, marginTop: 6 }}>
+        {lifetimeXp.toLocaleString()} XP
+        {xpToNext !== null ? ` · ${xpToNext} to ${nextDivName}` : " · MAX"}
+      </div>
+    </div>
+  );
+}
+
+// ─── Badge Row ───────────────────────────────────────
+function BadgeRow({ playerId }: { playerId: string }) {
+  const { data: badges = [] } = useQuery({
+    queryKey: ["player-badges-profile", playerId],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from("player_badges")
+        .select("*")
+        .eq("player_id", playerId)
+        .order("earned_at", { ascending: false })
+        .limit(6);
+      return data ?? [];
+    },
+  });
+
+  if (badges.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div className="font-display" style={{ fontSize: 13, fontWeight: 800, marginBottom: 8 }}>🏅 Badges</div>
+      <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+        {badges.map((b: any) => (
+          <div key={b.id} style={{
+            background: C.card, border: `1px solid ${C.border}`, borderRadius: 12,
+            padding: "8px 12px", textAlign: "center", flexShrink: 0,
+          }}>
+            <div style={{ fontSize: 22 }}>{b.icon}</div>
+            <div style={{ fontSize: 9, fontWeight: 700, marginTop: 2 }}>{b.label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
