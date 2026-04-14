@@ -67,7 +67,7 @@ export default function HostDashboard() {
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
       <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.border}`, flexShrink:0 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-          <img src={logo} alt="SuperFans" style={{ width:80, objectFit:"contain", cursor:"pointer" }} onClick={() => navigate("/")} />
+          <img src={logo} alt="SuperFans" style={{ width:110, objectFit:"contain", cursor:"pointer" }} onClick={() => navigate("/")} title="Go to homepage" />
           <div style={{ display:"flex", gap:6, alignItems:"center" }}>
             <PlayerNotificationBell />
             <button onClick={() => setView("create")} style={{ background:C.green, border:"none", color:"#0A0C11", padding:"7px 14px", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:13, fontWeight:800, cursor:"pointer" }}>+ CREATE</button>
