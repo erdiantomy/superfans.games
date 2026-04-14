@@ -47,6 +47,13 @@ export default function RankPage() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: me } = usePadelPlayer(user?.id);
+
+  const list    = tab === "monthly" ? monthly : lifetime;
+  const loading = tab === "monthly" ? mLoad : lLoad;
+  const top3    = list.slice(0, 3);
+  const rest    = list.slice(3);
+
   // Find current user in list
   const myRank = (() => {
     if (!me) return null;
@@ -66,13 +73,6 @@ export default function RankPage() {
       return data ?? [];
     },
   });
-
-  const { data: me } = usePadelPlayer(user?.id);
-
-  const list    = tab === "monthly" ? monthly : lifetime;
-  const loading = tab === "monthly" ? mLoad : lLoad;
-  const top3    = list.slice(0, 3);
-  const rest    = list.slice(3);
 
   const podiumOrder = [top3[1], top3[0], top3[2]];
   const podiumHeight = [80, 110, 60];
