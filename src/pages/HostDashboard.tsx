@@ -394,11 +394,6 @@ function CreateSessionForm({ onDone, hostId, venueId, prefill }: { onDone: () =>
                   <div style={{ fontSize:10, color:C.dim, marginTop:4 }}>{courts} court{courts>1?"s":""} = {courts*4} players/round · doubles</div>
                 </div>
 
-                <div style={{ background:"#0E0D0A", border:`1px solid ${C.orange}30`, borderRadius:12, padding:"10px 14px", marginBottom:14, fontSize:11, color:C.muted, lineHeight:1.7 }}>
-                  🛡️ <strong style={{ color:C.orange }}>Requires admin approval</strong><br/>
-                  Tom's staff must approve before you can invite players. This prevents unauthorized sessions.
-                </div>
-
                 <div style={{ display:"flex", gap:8 }}>
                   <button onClick={() => setStep(2)} style={{ flex:1, background:C.raised, border:"none", color:C.muted, padding:"12px 0", borderRadius:12, fontFamily:"'Barlow Condensed'", fontSize:14, fontWeight:700, cursor:"pointer" }}>← Back</button>
                   <button
