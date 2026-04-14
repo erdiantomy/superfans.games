@@ -8,6 +8,7 @@ import { usePadelPlayer, useCreateSession, useSessions, ensurePadelPlayer, useHo
 import { Tag, StatusTag, C, fmtLabel, shareUrl } from "@/components/arena";
 import { toast } from "sonner";
 import logo from "@/assets/superfans-logo.png";
+import PlayerNotificationBell from "@/components/ui/PlayerNotificationBell";
 
 export default function HostDashboard() {
   const navigate          = useNavigate();
@@ -67,7 +68,8 @@ export default function HostDashboard() {
       <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.border}`, flexShrink:0 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
           <img src={logo} alt="SuperFans" style={{ width:80, objectFit:"contain", cursor:"pointer" }} onClick={() => navigate("/")} />
-          <div style={{ display:"flex", gap:6 }}>
+          <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+            <PlayerNotificationBell />
             <button onClick={() => setView("create")} style={{ background:C.green, border:"none", color:"#0A0C11", padding:"7px 14px", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:13, fontWeight:800, cursor:"pointer" }}>+ CREATE</button>
             <button onClick={() => navigate("/")} style={{ background:C.raised, border:`1px solid ${C.border}`, color:C.muted, padding:"7px 10px", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:12, fontWeight:700, cursor:"pointer" }}>← Home</button>
           </div>
