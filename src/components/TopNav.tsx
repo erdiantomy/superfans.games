@@ -21,9 +21,9 @@ export default function TopNav() {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 h-14">
-        <Link to="/" className="flex items-center">
-          <img src={logo} alt="SuperFans" className="h-16 object-contain" />
+      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 min-h-[4.75rem] py-2">
+        <Link to="/" className="flex items-center shrink-0">
+          <img src={logo} alt="SuperFans" className="h-[4.25rem] w-auto object-contain" />
         </Link>
 
         {/* Desktop links */}
