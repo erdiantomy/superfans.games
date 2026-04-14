@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useMonthlyLeaderboard, useLifetimeLeaderboard } from "@/hooks/useArena";
+import { useMonthlyLeaderboard, useLifetimeLeaderboard, usePadelPlayer } from "@/hooks/useArena";
 import { useArenaRealtime } from "@/hooks/useRealtime";
 import { getDivision } from "@/lib/gamification";
 import { Tag, C } from "@/components/arena";
@@ -46,6 +46,28 @@ export default function RankPage() {
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Find current user in list
+  const myRank = (() => {
+    if (!me) return null;
+    const idx = list.findIndex((p: any) => p.id === me.id);
+    return idx >= 0 ? { rank: idx + 1, player: list[idx] } : null;
+  })();
+
+  // Hot streaks
+  const { data: hotStreaks = [] } = useQuery({
+    queryKey: ["hot-streaks"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("padel_players")
+        .select("id, name, avatar, streak")
+        .gte("streak", 3)
+        .order("streak", { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+  });
+
+  const { data: me } = usePadelPlayer(user?.id);
 
   const list    = tab === "monthly" ? monthly : lifetime;
   const loading = tab === "monthly" ? mLoad : lLoad;
@@ -143,6 +165,32 @@ export default function RankPage() {
           </div>
         )}
 
+        {/* YOUR RANK banner */}
+        {user && me && !loading && (
+          <div style={{
+            margin: "14px 18px 0", padding: "12px 16px",
+            background: C.card, border: `1px solid ${C.border}`,
+            borderLeft: `4px solid ${C.green}`, borderRadius: 14,
+          }}>
+            {myRank ? (
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                  <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, textTransform: "uppercase" }}>YOUR RANK</div>
+                  <div className="font-display" style={{ fontSize: 24, fontWeight: 900, color: C.green }}>#{myRank.rank}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div className="font-display" style={{ fontSize: 18, fontWeight: 900, color: C.muted }}>
+                    {tab === "monthly" ? (myRank.player as any).monthly_pts : (myRank.player as any).lifetime_xp}
+                  </div>
+                  <div style={{ fontSize: 9, color: C.dim }}>{tab === "monthly" ? "pts" : "XP"}</div>
+                </div>
+                <Tag label={getDivision((myRank.player as any).lifetime_xp).label} color={getDivision((myRank.player as any).lifetime_xp).color} />
+              </div>
+            ) : (
+              <div style={{ fontSize: 12, color: C.muted }}>Unranked this month — play to get ranked</div>
+            )}
+          </div>
+        )}
         {/* LOADING */}
         {loading && (
           <div style={{ textAlign: "center", padding: "48px 0", color: C.muted, fontSize: 12 }}>
