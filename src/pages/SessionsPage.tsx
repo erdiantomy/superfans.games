@@ -18,7 +18,7 @@ export default function SessionsPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "open" | "live" | "finished">("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | "open" | "live" | "past">("all");
   const [showFilters, setShowFilters] = useState(false);
 
   const { data: sessions = [], isLoading } = useQuery({
@@ -54,10 +54,23 @@ export default function SessionsPage() {
     },
   });
 
+  const now = new Date();
+  const isExpired = (s: SessionWithVenue) => {
+    if (!s.scheduled_at) return false;
+    const scheduled = new Date(s.scheduled_at);
+    // Consider expired if scheduled time + 3 hours has passed
+    return scheduled.getTime() + 3 * 60 * 60 * 1000 < now.getTime();
+  };
+
   const filtered = sessions.filter(s => {
-    if (statusFilter === "open" && s.status !== "active") return false;
-    if (statusFilter === "live" && s.status !== "live") return false;
-    if (statusFilter === "finished" && s.status !== "finished") return false;
+    if (statusFilter === "past") {
+      if (!isExpired(s) && s.status !== "finished") return false;
+    } else {
+      // Hide expired/finished sessions from default views unless "past" is selected
+      if (statusFilter === "all" && (isExpired(s) || s.status === "finished")) return false;
+      if (statusFilter === "open" && s.status !== "active") return false;
+      if (statusFilter === "live" && s.status !== "live") return false;
+    }
     if (search) {
       const q = search.toLowerCase();
       const matchesSearch =
@@ -125,7 +138,7 @@ export default function SessionsPage() {
               { key: "all", label: "All" },
               { key: "open", label: "Open" },
               { key: "live", label: "🔴 Live" },
-              { key: "finished", label: "Finished" },
+              { key: "past", label: "Past Sessions" },
             ] as const).map(f => (
               <button
                 key={f.key}
@@ -145,9 +158,10 @@ export default function SessionsPage() {
         {/* Status pills always visible */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "all", label: "All", count: sessions.length },
-            { key: "open", label: "Open", count: sessions.filter(s => s.status === "active").length },
+            { key: "all", label: "Active", count: sessions.filter(s => s.status !== "finished" && !isExpired(s)).length },
+            { key: "open", label: "Open", count: sessions.filter(s => s.status === "active" && !isExpired(s)).length },
             { key: "live", label: "Live", count: sessions.filter(s => s.status === "live").length },
+            { key: "past", label: "Past", count: sessions.filter(s => s.status === "finished" || isExpired(s)).length },
           ] as const).map(f => (
             <button
               key={f.key}

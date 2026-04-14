@@ -67,7 +67,7 @@ export default function HostDashboard() {
     <div style={{ height:"100dvh", background:C.bg, color:C.fg, maxWidth:480, margin:"0 auto", display:"flex", flexDirection:"column", overflow:"hidden", fontFamily:"'DM Sans',sans-serif" }}>
       <div style={{ padding:"12px 16px", borderBottom:`1px solid ${C.border}`, flexShrink:0 }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:8 }}>
-          <img src={logo} alt="SuperFans" style={{ width:80, objectFit:"contain", cursor:"pointer" }} onClick={() => navigate("/")} />
+          <img src={logo} alt="SuperFans" style={{ width:110, objectFit:"contain", cursor:"pointer" }} onClick={() => navigate("/")} title="Go to homepage" />
           <div style={{ display:"flex", gap:6, alignItems:"center" }}>
             <PlayerNotificationBell />
             <button onClick={() => setView("create")} style={{ background:C.green, border:"none", color:"#0A0C11", padding:"7px 14px", borderRadius:10, fontFamily:"'Barlow Condensed'", fontSize:13, fontWeight:800, cursor:"pointer" }}>+ CREATE</button>
@@ -561,9 +561,13 @@ function ManagePlayersView({ onBack, hostId }: { onBack: () => void; hostId: str
             <div style={{ fontSize: 11, color: C.muted, marginBottom: 10, fontWeight: 600 }}>{players.length} player(s)</div>
             {players.map(sp => (
               <div key={sp.id} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 12, marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.raised, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>
-                  {sp.padel_players?.avatar || "👤"}
-                </div>
+                {sp.padel_players?.avatar?.startsWith("http") ? (
+                  <img src={sp.padel_players.avatar} alt="" style={{ width: 36, height: 36, borderRadius: "50%", objectFit: "cover" }} />
+                ) : (
+                  <div style={{ width: 36, height: 36, borderRadius: "50%", background: C.raised, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700 }}>
+                    {sp.padel_players?.avatar || "👤"}
+                  </div>
+                )}
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>{sp.padel_players?.name || "Unknown"}</div>
                   <div style={{ fontSize: 11, color: sp.status === "approved" ? C.green : sp.status === "pending" ? C.orange : C.muted, fontWeight: 600 }}>
@@ -659,9 +663,13 @@ function HostLeaderboard({ onBack, myId }: { onBack: () => void; myId?: string }
                   <div style={{ width:28, textAlign:"center", fontSize: medal ? 20 : 14, fontWeight:900, color: medal ? undefined : C.muted, fontFamily:"'Barlow Condensed'" }}>
                     {medal || `#${i + 1}`}
                   </div>
-                  <div style={{ width:38, height:38, borderRadius:"50%", background: C.raised, border:`2px solid ${getTierColor(h.hosting_xp)}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, fontWeight:700, color:C.fg }}>
-                    {h.avatar || "🎙️"}
-                  </div>
+                  {h.avatar?.startsWith("http") ? (
+                    <img src={h.avatar} alt="" style={{ width: 38, height: 38, borderRadius: "50%", objectFit: "cover", border: `2px solid ${getTierColor(h.hosting_xp)}` }} />
+                  ) : (
+                    <div style={{ width:38, height:38, borderRadius:"50%", background: C.raised, border:`2px solid ${getTierColor(h.hosting_xp)}`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:700, color:C.fg }}>
+                      {h.avatar || "🎙️"}
+                    </div>
+                  )}
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:14, fontWeight:700 }}>
                       {h.name || "Host"} {isMe && <span style={{ fontSize:10, color:C.green, fontWeight:800 }}>(YOU)</span>}
