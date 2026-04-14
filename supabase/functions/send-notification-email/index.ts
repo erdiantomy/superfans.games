@@ -23,49 +23,63 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || "";
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
 
 Deno.serve(async (req) => {
+  // CORS
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+      },
+    });
+  }
+
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json",
+  };
+
   try {
     const payload = await req.json();
     const notification = payload.record;
 
-    if (!notification?.user_id || !notification?.title) {
+    if (!notification?.title) {
       return new Response(JSON.stringify({ skipped: true, reason: "invalid payload" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+        status: 200, headers: corsHeaders,
       });
     }
 
-    // Skip if no Resend key configured
     if (!RESEND_API_KEY) {
       return new Response(JSON.stringify({ skipped: true, reason: "no RESEND_API_KEY" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+        status: 200, headers: corsHeaders,
       });
     }
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Check if user has email notifications enabled
-    const { data: prefs } = await supabase
-      .from("notification_preferences")
-      .select("email_enabled")
-      .eq("user_id", notification.user_id)
-      .maybeSingle();
+    // Resolve user_id from player_id if needed
+    let userId = notification.user_id;
+    if (!userId && notification.player_id) {
+      const { data: player } = await supabase
+        .from("padel_players")
+        .select("user_id")
+        .eq("id", notification.player_id)
+        .single();
+      userId = player?.user_id;
+    }
 
-    if (!prefs?.email_enabled) {
-      return new Response(JSON.stringify({ skipped: true, reason: "email disabled" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+    if (!userId) {
+      return new Response(JSON.stringify({ skipped: true, reason: "no user_id" }), {
+        status: 200, headers: corsHeaders,
       });
     }
 
     // Get user email
-    const { data: userData } = await supabase.auth.admin.getUserById(notification.user_id);
+    const { data: userData } = await supabase.auth.admin.getUserById(userId);
     const email = userData?.user?.email;
 
     if (!email) {
       return new Response(JSON.stringify({ skipped: true, reason: "no email" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+        status: 200, headers: corsHeaders,
       });
     }
 
