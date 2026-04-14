@@ -21,9 +21,9 @@ export default function TopNav() {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur border-b border-border">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 min-h-[4.75rem] py-2">
+      <div className="max-w-5xl mx-auto flex items-center justify-between px-5 min-h-[5.25rem] py-3">
         <Link to="/" className="flex items-center shrink-0">
-          <img src={logo} alt="SuperFans" className="h-[4.25rem] w-auto object-contain" />
+          <img src={logo} alt="SuperFans" className="h-[4.5rem] w-auto object-contain" />
         </Link>
 
         {/* Desktop links */}
@@ -47,14 +47,14 @@ export default function TopNav() {
           {user ? (
             <button
               onClick={() => navigate("/dashboard")}
-              className="bg-primary text-primary-foreground font-semibold text-sm px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+              className="bg-primary text-primary-foreground font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors"
             >
               Dashboard
             </button>
           ) : (
             <button
               onClick={() => navigate("/auth")}
-              className="bg-primary text-primary-foreground font-semibold text-sm px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
+              className="bg-primary text-primary-foreground font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-colors"
             >
               Sign In
             </button>
