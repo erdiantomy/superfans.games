@@ -28,7 +28,7 @@ export default function PlayerDashboard() {
         .from("player_profiles")
         .select("*, padel_players!player_profiles_player_id_fkey(user_id)")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!slug,
@@ -42,7 +42,7 @@ export default function PlayerDashboard() {
         .from("player_profile_full")
         .select("*")
         .eq("player_id", profile!.player_id)
-        .single();
+        .maybeSingle();
       return data;
     },
     enabled: !!profile?.player_id,
