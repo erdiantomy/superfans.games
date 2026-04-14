@@ -75,6 +75,27 @@ export default function RankPage() {
     },
   });
 
+  // Past season archives
+  const { data: pastSeasons = [] } = useQuery({
+    queryKey: ["past-seasons"],
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("monthly_leaderboard_archives")
+        .select("*")
+        .lte("final_rank", 3)
+        .order("month_key", { ascending: false })
+        .order("final_rank", { ascending: true })
+        .limit(30);
+      return data ?? [];
+    },
+  });
+
+  // Group past seasons by month
+  const seasonsByMonth = pastSeasons.reduce((acc: Record<string, any[]>, entry: any) => {
+    if (!acc[entry.month_key]) acc[entry.month_key] = [];
+    acc[entry.month_key].push(entry);
+    return acc;
+  }, {} as Record<string, any[]>);
+
   const podiumOrder = [top3[1], top3[0], top3[2]];
   const podiumHeight = [80, 110, 60];
   const podiumEmoji  = ["🥈", "👑", "🥉"];
