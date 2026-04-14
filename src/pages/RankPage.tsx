@@ -336,6 +336,33 @@ export default function RankPage() {
               <ClaimProfileBanner />
             )}
 
+            {/* Hot Streaks */}
+            {hotStreaks.length > 0 && (
+              <div style={{ marginTop: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "4px 0 10px" }}>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                  <span style={{ fontSize: 10, color: C.dim, fontWeight: 700, letterSpacing: 1 }}>🔥 HOT STREAKS</span>
+                  <div style={{ flex: 1, height: 1, background: C.border }} />
+                </div>
+                {hotStreaks.map((p: any, i: number) => (
+                  <div key={p.id} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 14px", borderRadius: 14, marginBottom: 6,
+                    background: C.card, border: `1px solid ${C.border}`,
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: "50%",
+                      background: `${C.orange}15`, border: `1.5px solid ${C.orange}30`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 12, fontWeight: 800, color: C.orange,
+                    }}>{p.avatar?.slice(0, 2) || "??"}</div>
+                    <div style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{p.name}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: "#FF8C00" }}>🔥 {p.streak} week streak</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Bottom CTA */}
             {list.length > 0 && (
               <div style={{
