@@ -95,6 +95,16 @@ export default function HostDashboard() {
             );
           })()}
         </div>
+        {/* Tab bar */}
+        <div style={{ display:"flex", gap:4, marginTop:10 }}>
+          {([
+            { k: "list" as const, l: "📋 Sessions" },
+            { k: "players" as const, l: "👥 Players" },
+            { k: "ranks" as const, l: "🏆 Ranks" },
+          ]).map(t => (
+            <button key={t.k} onClick={() => setView(t.k as any)} style={{ flex:1, padding:"7px 0", borderRadius:8, border: view === t.k ? `1px solid ${C.green}50` : `1px solid ${C.border}`, background: view === t.k ? `${C.green}14` : "transparent", color: view === t.k ? C.green : C.muted, fontFamily:"'Barlow Condensed'", fontSize:12, fontWeight:700, cursor:"pointer" }}>{t.l}</button>
+          ))}
+        </div>
       </div>
 
       <div style={{ flex:1, overflowY:"auto", padding:"14px 16px 90px" }}>
