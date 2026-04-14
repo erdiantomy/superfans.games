@@ -6,7 +6,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { VenueProvider } from "@/hooks/useVenue";
 
 import HomePage           from "@/pages/HomePage";
-import HowItWorksPage     from "@/pages/HowItWorksPage";
+
 import GamificationPage   from "@/pages/GamificationPage";
 import SessionsPage       from "@/pages/SessionsPage";
 import VenuesPage          from "@/pages/VenuesPage";
@@ -59,7 +59,7 @@ const App = () => (
           <Routes>
             {/* Marketing pages */}
             <Route path="/"              element={<HomePage />} />
-            <Route path="/how-it-works"  element={<HowItWorksPage />} />
+            
             <Route path="/gamification"  element={<GamificationPage />} />
             <Route path="/sessions"      element={<SessionsPage />} />
             <Route path="/venues"        element={<VenuesPage />} />
