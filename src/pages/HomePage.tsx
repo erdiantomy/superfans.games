@@ -68,8 +68,8 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           className="font-display text-4xl md:text-5xl font-black leading-tight mb-5"
         >
-          Turn Every Match<br />
-          <span className="text-primary">Into a Story</span>
+          Where Padel Players<br />
+          <span className="text-primary">Become Legends</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -77,7 +77,7 @@ export default function HomePage() {
           transition={{ delay: 0.15 }}
           className="text-base text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed"
         >
-          The gamification layer for padel venues. XP, leaderboards, fan support — zero app downloads.
+          Join a growing community of players competing, climbing leaderboards, and building their fan base — no app download needed.
         </motion.p>
 
         <motion.div
