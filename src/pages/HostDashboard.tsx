@@ -18,7 +18,7 @@ export default function HostDashboard() {
   const { data: allSessions = [] } = useSessions();
   const { data: hostStats } = useHostStats(me?.id);
   const tabParam = searchParams.get("tab");
-  const [view, setView]   = useState<"list" | "create" | "players">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : "list");
+  const [view, setView]   = useState<"list" | "create" | "players" | "ranks">(tabParam === "create" ? "create" : tabParam === "players" ? "players" : tabParam === "ranks" ? "ranks" : "list");
   const [ensuring, setEnsuring] = useState(false);
   const [prefill, setPrefill] = useState<any>(null);
 
