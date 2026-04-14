@@ -309,6 +309,32 @@ export default function VenuePage() {
             );
           })
         )}
+
+        {/* Sessions tagging this venue */}
+        {taggedSessions.length > 0 && (
+          <>
+            <Divider label="Sessions Tagging This Venue" />
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 10 }}>Hosted independently · Not yet linked</div>
+            {taggedSessions.map(s => (
+              <div key={s.id} style={{ background: C.card, border: `1px dashed ${C.border}`, borderRadius: 14, padding: "12px 14px", marginBottom: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{s.name}</div>
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 4 }}>
+                      <Tag label={fmtLabel(s.format)} color={s.format === "americano" ? accent : C.purple} />
+                      <Tag label={`Host: ${s.host?.name?.split(" ")[0] || "Unknown"}`} color={C.orange} />
+                    </div>
+                    {s.scheduled_at && (
+                      <div style={{ fontSize: 10, color: C.dim }}>
+                        {new Date(s.scheduled_at).toLocaleDateString("id-ID", { day: "numeric", month: "short" })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </div>
       <BottomNav />
     </div>
