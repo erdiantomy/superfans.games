@@ -10,6 +10,7 @@ import { getDivision } from "@/lib/gamification";
 import { Tag, C } from "@/components/arena";
 import PlayerLink from "@/components/arena/PlayerLink";
 import ClaimProfileBanner from "@/components/profile/ClaimProfileBanner";
+import PlayerNotificationBell from "@/components/ui/PlayerNotificationBell";
 import BottomNav from "@/components/arena/BottomNav";
 import { useVenue } from "@/hooks/useVenue";
 
@@ -114,9 +115,12 @@ export default function RankPage() {
               superfans.games · LIVE
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.green, animation: "pulse 2s infinite" }} />
-            <span style={{ fontSize: 10, color: C.muted }}>Auto-updates</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.green, animation: "pulse 2s infinite" }} />
+              <span style={{ fontSize: 10, color: C.muted }}>Auto-updates</span>
+            </div>
+            <PlayerNotificationBell />
           </div>
         </div>
 
