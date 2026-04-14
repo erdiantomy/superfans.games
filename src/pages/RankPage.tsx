@@ -39,9 +39,9 @@ export default function RankPage() {
   const { data: userProfile } = useQuery({
     queryKey: ["user-profile-check", user?.id],
     queryFn: async () => {
-      const { data: player } = await (supabase as any).from("padel_players").select("id").eq("user_id", user!.id).single();
+      const { data: player } = await (supabase as any).from("padel_players").select("id").eq("user_id", user!.id).maybeSingle();
       if (!player) return null;
-      const { data: profile } = await (supabase as any).from("player_profiles").select("slug").eq("player_id", player.id).single();
+      const { data: profile } = await (supabase as any).from("player_profiles").select("slug").eq("player_id", player.id).maybeSingle();
       return profile?.slug ?? null;
     },
     enabled: !!user,

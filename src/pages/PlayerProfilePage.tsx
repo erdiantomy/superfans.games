@@ -28,7 +28,7 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
         .from("player_profile_full")
         .select("*")
         .eq("player_id", playerId)
-        .single();
+        .maybeSingle();
       return data;
     },
   });

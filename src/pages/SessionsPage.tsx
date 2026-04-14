@@ -92,7 +92,7 @@ export default function SessionsPage() {
           </div>
           {user && (
             <button
-              onClick={() => navigate("/tomspadel/host")}
+              onClick={() => navigate("/host")}
               className="bg-primary text-primary-foreground font-bold text-sm px-4 py-2 rounded-lg"
             >
               + Create
@@ -173,7 +173,7 @@ export default function SessionsPage() {
             <p className="text-sm text-muted-foreground mb-6">Check back soon or create your own!</p>
             {user && (
               <button
-                onClick={() => navigate("/tomspadel/host")}
+                onClick={() => navigate("/host")}
                 className="bg-primary text-primary-foreground font-bold text-sm px-6 py-3 rounded-xl"
               >
                 Create a Session
@@ -186,7 +186,7 @@ export default function SessionsPage() {
               const count = (playerCounts as Record<string, number>)[s.id] || 0;
               const spotsLeft = s.max_players - count;
               const hostDiv = s.host ? getDivision(s.host.lifetime_xp) : null;
-              const venueSlug = s.venue?.slug || "tomspadel";
+              const venueSlug = s.venue?.slug;
 
               return (
                 <motion.div
@@ -194,7 +194,7 @@ export default function SessionsPage() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.03 }}
-                  onClick={() => navigate(`/${venueSlug}/session/${s.code}`)}
+                  onClick={() => navigate(venueSlug ? `/${venueSlug}/session/${s.code}` : `/s/${s.code}`)}
                   className="bg-card border border-border rounded-2xl p-4 cursor-pointer hover:shadow-md hover:border-primary/20 transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -231,8 +231,8 @@ export default function SessionsPage() {
                       <button
                         onClick={e => {
                           e.stopPropagation();
-                          if (!user) navigate(`/auth?returnTo=/${venueSlug}/session/${s.code}`);
-                          else navigate(`/${venueSlug}/session/${s.code}`);
+                          if (!user) navigate(`/auth?returnTo=${encodeURIComponent(venueSlug ? `/${venueSlug}/session/${s.code}` : `/s/${s.code}`)}`);
+                          else navigate(venueSlug ? `/${venueSlug}/session/${s.code}` : `/s/${s.code}`);
                         }}
                         className="bg-primary text-primary-foreground font-bold text-xs px-4 py-2 rounded-lg shrink-0 ml-3"
                       >

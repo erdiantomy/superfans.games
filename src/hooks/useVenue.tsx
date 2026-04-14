@@ -50,7 +50,7 @@ export function VenueProvider({ children }: { children: ReactNode }) {
         .from("venues")
         .select("*")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
       if (error) throw new Error(error.message);
       return data as Venue;
     },
