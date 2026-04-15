@@ -15,12 +15,14 @@ interface Props {
   slug: string;
 }
 
+type ProfileTab = "stats" | "support";
+
 export default function PlayerProfilePage({ playerId, slug }: Props) {
   const [donateOpen, setDonateOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<ProfileTab>("stats");
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  // Full profile
   const { data: profile, isLoading } = useQuery({
     queryKey: ["player-profile-full", playerId],
     queryFn: async () => {
@@ -33,7 +35,6 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
     },
   });
 
-  // Recent donations
   const { data: donations = [] } = useQuery({
     queryKey: ["player-donations", playerId],
     queryFn: async () => {
@@ -48,7 +49,6 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
     },
   });
 
-  // Supporters (unique)
   const supporters = donations.reduce((acc: any[], d: any) => {
     if (!d.is_anonymous && d.donor_name && !acc.find((s: any) => s.donor_name === d.donor_name)) {
       acc.push(d);
@@ -56,7 +56,6 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
     return acc;
   }, []).slice(0, 5);
 
-  // Check if current user owns this profile
   const isOwner = user && profile?.player_id === playerId;
 
   if (isLoading) {
@@ -75,13 +74,6 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
       </div>
     );
   }
-
-  const stats = [
-    { icon: "🎮", label: "Games", value: profile.games_played ?? 0 },
-    { icon: "🏆", label: "Wins", value: profile.wins ?? 0 },
-    { icon: "📉", label: "Losses", value: profile.losses ?? 0 },
-    { icon: "📊", label: "Win Rate", value: `${profile.win_rate ?? 0}%` },
-  ];
 
   const initials = (profile.display_name || "??")
     .split(" ")
@@ -105,8 +97,8 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
       </div>
 
       <div style={{ flex: 1, overflowY: "auto", padding: "20px 16px 100px" }}>
-        {/* Hero */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: 28 }}>
+        {/* Hero — always visible */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ textAlign: "center", marginBottom: 20 }}>
           {profile.avatar_url ? (
             <img src={profile.avatar_url} alt={profile.display_name} style={{ width: 88, height: 88, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.green}40`, margin: "0 auto 12px" }} />
           ) : (
@@ -132,60 +124,118 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
           )}
         </motion.div>
 
-        {/* Division Progress Block */}
-        <DivisionProgressBlock playerId={playerId} lifetimeXp={profile.lifetime_xp || 0} />
-
-        {/* Stats */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
-          {stats.map((s) => (
-            <motion.div key={s.label} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
-              <div style={{ fontSize: 20 }}>{s.icon}</div>
-              <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>{s.value}</div>
-              <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</div>
-            </motion.div>
+        {/* Tab switcher */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+          {([
+            { id: "stats" as const, label: "🎾 Player Stats" },
+            { id: "support" as const, label: "💎 Superfans" },
+          ]).map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: 1, padding: "10px 0", borderRadius: 12,
+                background: activeTab === tab.id ? `${C.green}15` : C.card,
+                border: `1px solid ${activeTab === tab.id ? C.green + "40" : C.border}`,
+                color: activeTab === tab.id ? C.green : C.muted,
+                fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 700,
+                cursor: "pointer", letterSpacing: 0.5,
+              }}
+            >
+              {tab.label}
+            </button>
           ))}
         </div>
 
-        {/* Badge Row */}
-        <BadgeRow playerId={playerId} />
+        {/* Stats tab */}
+        {activeTab === "stats" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key="stats">
+            {/* Division Progress */}
+            <DivisionProgressBlock playerId={playerId} lifetimeXp={profile.lifetime_xp || 0} />
 
-        {/* Superfans section */}
-        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 24 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-            <div className="font-display" style={{ fontSize: 15, fontWeight: 800 }}>💎 Superfans</div>
-            <span style={{ fontSize: 12, color: C.green, fontWeight: 700 }}>{profile.supporter_count || 0} supporters</span>
-          </div>
-          <div style={{ fontSize: 13, color: C.green, fontWeight: 700, marginBottom: 8 }}>
-            Rp {((profile.total_raised || 0) as number).toLocaleString("id-ID")} raised
-          </div>
-          {supporters.length > 0 ? (
-            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              {supporters.map((s: any, i: number) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: `${C.green}10`, border: `1px solid ${C.green}20`, borderRadius: 20, padding: "4px 10px 4px 4px" }}>
-                  <Av initials={s.donor_name?.slice(0, 2).toUpperCase() || "??"} size={22} color={C.green} />
-                  <span style={{ fontSize: 11, fontWeight: 600 }}>{s.donor_name}</span>
-                </div>
+            {/* Playing stats grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
+              {[
+                { icon: "🎮", label: "Games", value: profile.games_played ?? 0 },
+                { icon: "🏆", label: "Wins", value: profile.wins ?? 0 },
+                { icon: "📉", label: "Losses", value: profile.losses ?? 0 },
+                { icon: "📊", label: "Win Rate", value: `${profile.win_rate ?? 0}%` },
+              ].map((s) => (
+                <motion.div key={s.label} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
+                  <div style={{ fontSize: 20 }}>{s.icon}</div>
+                  <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>{s.value}</div>
+                  <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</div>
+                </motion.div>
               ))}
             </div>
-          ) : (
-            <div style={{ fontSize: 12, color: C.muted }}>Be the first to support {profile.display_name}!</div>
-          )}
-        </div>
 
-        {/* Recent donations */}
-        {donations.length > 0 && (
-          <div style={{ marginBottom: 24 }}>
-            <div className="font-display" style={{ fontSize: 15, fontWeight: 800, marginBottom: 12 }}>Recent Support</div>
-            {donations.slice(0, 8).map((d: any) => (
-              <div key={d.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, marginBottom: 6 }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600 }}>{d.is_anonymous ? "Anonymous" : d.donor_name}</div>
-                  {d.message && <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{d.message}</div>}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: C.green }}>Rp {d.amount?.toLocaleString("id-ID")}</div>
+            {/* Streak & Monthly Pts */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 24 }}>
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>🔥</div>
+                <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.orange }}>{profile.streak ?? 0}</div>
+                <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>Streak</div>
               </div>
-            ))}
-          </div>
+              <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 12px", textAlign: "center" }}>
+                <div style={{ fontSize: 20 }}>🏅</div>
+                <div className="font-display" style={{ fontSize: 22, fontWeight: 900, color: C.green }}>{(profile.monthly_pts ?? 0).toLocaleString()}</div>
+                <div style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: 1 }}>Monthly Pts</div>
+              </div>
+            </div>
+
+            {/* Badges */}
+            <BadgeRow playerId={playerId} />
+          </motion.div>
+        )}
+
+        {/* Support tab */}
+        {activeTab === "support" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} key="support">
+            {/* Superfans section */}
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 16, marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <div className="font-display" style={{ fontSize: 15, fontWeight: 800 }}>💎 Superfans</div>
+                <span style={{ fontSize: 12, color: C.green, fontWeight: 700 }}>{profile.supporter_count || 0} supporters</span>
+              </div>
+              <div style={{ fontSize: 13, color: C.green, fontWeight: 700, marginBottom: 8 }}>
+                Rp {((profile.total_raised || 0) as number).toLocaleString("id-ID")} raised
+              </div>
+              {supporters.length > 0 ? (
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {supporters.map((s: any, i: number) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 6, background: `${C.green}10`, border: `1px solid ${C.green}20`, borderRadius: 20, padding: "4px 10px 4px 4px" }}>
+                      <Av initials={s.donor_name?.slice(0, 2).toUpperCase() || "??"} size={22} color={C.green} />
+                      <span style={{ fontSize: 11, fontWeight: 600 }}>{s.donor_name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: C.muted }}>Be the first to support {profile.display_name}!</div>
+              )}
+            </div>
+
+            {/* Recent donations */}
+            {donations.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <div className="font-display" style={{ fontSize: 15, fontWeight: 800, marginBottom: 12 }}>Recent Support</div>
+                {donations.slice(0, 8).map((d: any) => (
+                  <div key={d.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 12px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, marginBottom: 6 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{d.is_anonymous ? "Anonymous" : d.donor_name}</div>
+                      {d.message && <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{d.message}</div>}
+                    </div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.green }}>Rp {d.amount?.toLocaleString("id-ID")}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {donations.length === 0 && (
+              <div style={{ textAlign: "center", padding: "24px 0", color: C.muted, fontSize: 13 }}>
+                No support received yet. Share your profile to get fans!
+              </div>
+            )}
+          </motion.div>
         )}
 
         {/* Owner link to dashboard */}

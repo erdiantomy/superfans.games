@@ -27,6 +27,7 @@ import PaymentSuccessPage  from "@/pages/PaymentSuccessPage";
 import PaymentFailedPage   from "@/pages/PaymentFailedPage";
 import NotFound            from "@/pages/NotFound";
 import PlayerDashboard     from "@/pages/PlayerDashboard";
+import VenueSessionsPage  from "@/pages/VenueSessionsPage";
 import SlugResolver        from "@/components/profile/SlugResolver";
 
 import ChatAssistant from "@/components/ChatAssistant";
@@ -86,6 +87,7 @@ const App = () => (
 
             {/* Venue-scoped routes */}
             <Route path="/:slug/dashboard"     element={<PlayerDashboard />} />
+            <Route path="/:slug/sessions"     element={<VenueLayout><VenueSessionsPage /></VenueLayout>} />
             <Route path="/:slug/rank"          element={<VenueLayout><RankPage /></VenueLayout>} />
             <Route path="/:slug/host"          element={<VenueLayout><HostDashboard /></VenueLayout>} />
             <Route path="/:slug/admin"         element={<VenueLayout><AdminPage /></VenueLayout>} />

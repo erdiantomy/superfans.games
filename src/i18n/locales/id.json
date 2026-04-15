@@ -2,7 +2,8 @@
   "nav": {
     "home": "Beranda",
     "rankings": "Peringkat",
-    "myPage": "Halaman Saya",
+    "myPage": "Profil",
+    "sessions": "Sesi",
     "topUp": "Isi Saldo",
     "signIn": "Masuk",
     "signUp": "Daftar",

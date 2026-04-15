@@ -32,12 +32,14 @@ export default function BottomNav() {
   const tabs = [
     { id: "home", icon: "🏟️", label: t("nav.home"), path: `/${slug}` },
     { id: "rank", icon: "🏆", label: t("nav.rankings"), path: `/${slug}/rank` },
+    { id: "sessions", icon: "🎾", label: t("nav.sessions"), path: `/${slug}/sessions` },
     { id: "profile", icon: "👤", label: profileSlug ? t("nav.myPage") : "Profile", path: profileSlug ? `/${profileSlug}` : "/auth" },
     { id: "topup", icon: "💰", label: t("nav.topUp"), path: "/topup" },
   ];
 
   const getActive = () => {
     if (path === `/${slug}/rank`) return "rank";
+    if (path === `/${slug}/sessions`) return "sessions";
     if (path === "/topup") return "topup";
     if (profileSlug && path === `/${profileSlug}`) return "profile";
     if (path === `/${slug}`) return "home";
@@ -72,16 +74,17 @@ export default function BottomNav() {
               }}
               style={{
                 flex: 1, display: "flex", flexDirection: "column",
-                alignItems: "center", justifyContent: "center", gap: 2,
+                alignItems: "center", justifyContent: "center", gap: 1,
                 background: "none", border: "none", cursor: "pointer",
-                padding: 0,
+                padding: 0, minWidth: 0,
               }}
             >
-              <span style={{ fontSize: 18, opacity: isActive ? 1 : 0.4 }}>{t.icon}</span>
+              <span style={{ fontSize: 16, opacity: isActive ? 1 : 0.4 }}>{t.icon}</span>
               <span className="font-display" style={{
-                fontSize: 9, fontWeight: 700, letterSpacing: 1,
+                fontSize: 8, fontWeight: 700, letterSpacing: 0.5,
                 textTransform: "uppercase" as const,
                 color: isActive ? C.green : C.muted,
+                whiteSpace: "nowrap",
               }}>{t.label}</span>
             </button>
           );
