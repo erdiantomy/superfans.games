@@ -275,7 +275,7 @@ export default function SessionsPage() {
                     <span className="flex items-center gap-1">
                       <Users className="w-3 h-3" />
                       {count}/{s.max_players} players
-                      {spotsLeft > 0 && s.status === "active" && (
+                      {spotsLeft > 0 && s.status === "active" && !expired && (
                         <span className="text-primary font-semibold">· {spotsLeft} spots left</span>
                       )}
                     </span>
