@@ -71,22 +71,10 @@ export default function Dashboard() {
   const playerCards: DashCard[] = [
     {
       icon: <CalendarDays className="w-6 h-6" />,
-      title: "Browse Sessions",
-      desc: "Find open sessions across all venues",
+      title: "Sessions",
+      desc: `Browse, join & manage · ${mySessions.length} upcoming`,
       action: () => navigate("/sessions"),
       primary: true,
-    },
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Join a Session",
-      desc: "Find an open session at your venue",
-      action: () => navigate("/sessions"),
-    },
-    {
-      icon: <ClipboardList className="w-6 h-6" />,
-      title: "My Sessions",
-      desc: `${mySessions.length} upcoming · View history`,
-      action: () => navigate("/sessions"),
     },
     {
       icon: <Trophy className="w-6 h-6" />,
