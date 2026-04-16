@@ -106,7 +106,28 @@ export default function PlayerProfilePage({ playerId, slug }: Props) {
           )}
           <h1 className="font-display" style={{ fontSize: 26, fontWeight: 900, margin: 0 }}>{profile.display_name}</h1>
           {profile.division && <Tag label={profile.division.toUpperCase()} color={C.green} />}
-          {profile.bio && <p style={{ fontSize: 13, color: C.muted, marginTop: 8, maxWidth: 280, margin: "8px auto 0" }}>{profile.bio}</p>}
+          {profile.bio && <p style={{ fontSize: 13, color: C.muted, marginTop: 8, maxWidth: 280, margin: "8px auto 0", lineHeight: 1.4 }}>{profile.bio}</p>}
+
+          {/* Location */}
+          {profile.location && (
+            <div style={{ fontSize: 13, color: C.muted, marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
+              📍 {profile.location}
+            </div>
+          )}
+
+          {/* Padel Level & Sports */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+            {profile.padel_level && (
+              <span style={{ fontSize: 11, fontWeight: 700, background: `${C.green}15`, border: `1px solid ${C.green}30`, color: C.green, padding: "3px 10px", borderRadius: 20 }}>
+                🏸 {profile.padel_level}
+              </span>
+            )}
+            {profile.other_sports && (
+              <span style={{ fontSize: 11, fontWeight: 600, background: C.card, border: `1px solid ${C.border}`, color: C.muted, padding: "3px 10px", borderRadius: 20 }}>
+                🏅 {profile.other_sports}
+              </span>
+            )}
+          </div>
 
           {/* Social links */}
           {profile.social_links && Object.values(profile.social_links).some(Boolean) && (
