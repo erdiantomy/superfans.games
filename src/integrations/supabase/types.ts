@@ -496,6 +496,9 @@ export type Database = {
           display_name: string
           id: string
           is_public: boolean
+          location: string | null
+          other_sports: string | null
+          padel_level: string | null
           player_id: string
           slug: string
           social_links: Json
@@ -508,6 +511,9 @@ export type Database = {
           display_name?: string
           id?: string
           is_public?: boolean
+          location?: string | null
+          other_sports?: string | null
+          padel_level?: string | null
           player_id: string
           slug: string
           social_links?: Json
@@ -520,6 +526,9 @@ export type Database = {
           display_name?: string
           id?: string
           is_public?: boolean
+          location?: string | null
+          other_sports?: string | null
+          padel_level?: string | null
           player_id?: string
           slug?: string
           social_links?: Json
