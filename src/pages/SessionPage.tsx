@@ -489,7 +489,57 @@ export default function SessionPage() {
               </button>
             </div>
 
-            {pending.length > 0 && (
+            {/* Session Status Controls */}
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>
+                ⚙️ Session Controls
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {session.status === "active" && (
+                  <button
+                    disabled={statusUpdating}
+                    onClick={() => handleStatusChange("live")}
+                    style={{ flex: 1, minWidth: 100, background: `${C.red}15`, border: `1px solid ${C.red}40`, color: C.red, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                  >
+                    🔴 Go Live
+                  </button>
+                )}
+                {session.status === "live" && (
+                  <button
+                    disabled={statusUpdating}
+                    onClick={() => handleStatusChange("finished")}
+                    style={{ flex: 1, minWidth: 100, background: `${C.muted}15`, border: `1px solid ${C.muted}40`, color: C.fg, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                  >
+                    ⏹️ End Session
+                  </button>
+                )}
+                {session.status === "finished" && (
+                  <>
+                    <button
+                      disabled={statusUpdating}
+                      onClick={() => handleStatusChange("active")}
+                      style={{ flex: 1, minWidth: 100, background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                    >
+                      ♻️ Reopen
+                    </button>
+                    <button
+                      disabled={statusUpdating}
+                      onClick={() => handleStatusChange("live")}
+                      style={{ flex: 1, minWidth: 100, background: `${C.red}15`, border: `1px solid ${C.red}40`, color: C.red, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                    >
+                      🔴 Go Live Again
+                    </button>
+                  </>
+                )}
+              </div>
+              <div style={{ fontSize: 10, color: C.dim, marginTop: 8, lineHeight: 1.5 }}>
+                {session.status === "active" && "Start the session when all players are ready."}
+                {session.status === "live" && "End the session when all rounds are complete."}
+                {session.status === "finished" && "Reopen to accept more players, or go live again."}
+              </div>
+            </div>
+
+
               <>
                 <Divider label={`Join Requests (${pending.length})`} />
                 {pending.map(sp => sp.player && (
