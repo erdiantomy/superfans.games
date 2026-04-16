@@ -65,7 +65,7 @@ export default function BottomNav() {
     if (path === `/${slug}/rank`) return "rank";
     if (path === `/${slug}/sessions`) return "sessions";
     if (path === "/topup") return "topup";
-    if (profileSlug && path === `/${profileSlug}`) return "profile";
+    if (path === `/${slug}/dashboard`) return "profile";
     if (path === `/${slug}`) return "home";
     return "";
   };
