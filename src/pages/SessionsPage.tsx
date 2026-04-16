@@ -65,12 +65,12 @@ export default function SessionsPage() {
   const filtered = sessions.filter(s => {
     if (statusFilter === "past") {
       if (!isExpired(s) && s.status !== "finished") return false;
-    } else {
-      // Hide expired/finished sessions from default views unless "past" is selected
-      if (statusFilter === "all" && (isExpired(s) || s.status === "finished")) return false;
-      if (statusFilter === "open" && s.status !== "active") return false;
-      if (statusFilter === "live" && s.status !== "live") return false;
+    } else if (statusFilter === "open") {
+      if (s.status !== "active" || isExpired(s)) return false;
+    } else if (statusFilter === "live") {
+      if (s.status !== "live") return false;
     }
+    // "all" shows everything — no filtering by status/expiry
     if (search) {
       const q = search.toLowerCase();
       const matchesSearch =
