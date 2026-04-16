@@ -158,7 +158,7 @@ export default function SessionsPage() {
         {/* Status pills always visible */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "all", label: "Active", count: sessions.filter(s => s.status !== "finished" && !isExpired(s)).length },
+            { key: "all", label: "All", count: sessions.length },
             { key: "open", label: "Open", count: sessions.filter(s => s.status === "active" && !isExpired(s)).length },
             { key: "live", label: "Live", count: sessions.filter(s => s.status === "live").length },
             { key: "past", label: "Past", count: sessions.filter(s => s.status === "finished" || isExpired(s)).length },
