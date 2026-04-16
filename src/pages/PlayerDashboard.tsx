@@ -44,11 +44,8 @@ export default function PlayerDashboard() {
 
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "jpg";
+      const ext = (file.name.includes(".") ? file.name.split(".").pop() : "") || "jpg";
       const path = `${user.id}/avatar.${ext}`;
-
-      // Remove old avatar if exists
-      await supabase.storage.from("avatars").remove([path]);
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
