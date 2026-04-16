@@ -57,7 +57,7 @@ export default function BottomNav() {
     { id: "home", icon: "🏟️", label: t("nav.home"), path: `/${slug}`, badge: 0 },
     { id: "rank", icon: "🏆", label: t("nav.rankings"), path: `/${slug}/rank`, badge: 0 },
     { id: "sessions", icon: "🎾", label: t("nav.sessions"), path: `/${slug}/sessions`, badge: activeSessionCount },
-    { id: "profile", icon: "👤", label: t("nav.myPage"), path: user ? `/${slug}/dashboard` : "/auth", badge: 0 },
+    { id: "profile", icon: "👤", label: t("nav.myPage"), path: profileSlug ? `/${profileSlug}/dashboard` : "/auth", badge: 0 },
     { id: "topup", icon: "💰", label: t("nav.topUp"), path: "/topup", badge: 0 },
   ];
 
@@ -65,7 +65,8 @@ export default function BottomNav() {
     if (path === `/${slug}/rank`) return "rank";
     if (path === `/${slug}/sessions`) return "sessions";
     if (path === "/topup") return "topup";
-    if (path === `/${slug}/dashboard`) return "profile";
+    if (profileSlug && path === `/${profileSlug}/dashboard`) return "profile";
+    if (path.endsWith("/dashboard")) return "profile";
     if (path === `/${slug}`) return "home";
     return "";
   };
