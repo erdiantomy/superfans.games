@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
+import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus, useUpdateSession } from "@/hooks/useArena";
 import { incrementQuestProgress } from "@/hooks/useQuests";
 import { useSessionRealtime } from "@/hooks/useRealtime";
 import { getDivision, getDivisionProgress, getXpToNextDivision, cr, resolveSupports } from "@/lib/gamification";
@@ -60,6 +60,7 @@ export default function SessionPage() {
   const requestJoin      = useRequestJoin();
   const updateStatus     = useUpdatePlayerStatus();
   const placeSupport     = usePlaceSupport();
+  const updateSession    = useUpdateSession();
 
   const [tab,       setTab]       = useState("live");
   const [copied,    setCopied]    = useState(false);
