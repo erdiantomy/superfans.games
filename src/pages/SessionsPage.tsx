@@ -201,6 +201,7 @@ export default function SessionsPage() {
               const spotsLeft = s.max_players - count;
               const hostDiv = s.host ? getDivision(s.host.lifetime_xp) : null;
               const venueSlug = s.venue?.slug;
+              const expired = isExpired(s);
 
               return (
                 <motion.div
@@ -220,14 +221,19 @@ export default function SessionsPage() {
                             LIVE
                           </span>
                         )}
-                        {s.status === "active" && spotsLeft > 0 && (
+                        {s.status === "active" && !expired && spotsLeft > 0 && (
                           <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
                             OPEN
                           </span>
                         )}
-                        {s.status === "active" && spotsLeft <= 0 && (
+                        {s.status === "active" && !expired && spotsLeft <= 0 && (
                           <span className="text-[10px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                             FULL
+                          </span>
+                        )}
+                        {s.status === "active" && expired && (
+                          <span className="text-[10px] font-bold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full">
+                            EXPIRED
                           </span>
                         )}
                         {s.status === "finished" && (
