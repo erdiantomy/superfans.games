@@ -57,7 +57,7 @@ export default function BottomNav() {
     { id: "home", icon: "🏟️", label: t("nav.home"), path: `/${slug}`, badge: 0 },
     { id: "rank", icon: "🏆", label: t("nav.rankings"), path: `/${slug}/rank`, badge: 0 },
     { id: "sessions", icon: "🎾", label: t("nav.sessions"), path: `/${slug}/sessions`, badge: activeSessionCount },
-    { id: "profile", icon: "👤", label: profileSlug ? t("nav.myPage") : "Profile", path: profileSlug ? `/${profileSlug}` : "/auth", badge: 0 },
+    { id: "profile", icon: "👤", label: t("nav.myPage"), path: user ? `/${slug}/dashboard` : "/auth", badge: 0 },
     { id: "topup", icon: "💰", label: t("nav.topUp"), path: "/topup", badge: 0 },
   ];
 
@@ -65,7 +65,7 @@ export default function BottomNav() {
     if (path === `/${slug}/rank`) return "rank";
     if (path === `/${slug}/sessions`) return "sessions";
     if (path === "/topup") return "topup";
-    if (profileSlug && path === `/${profileSlug}`) return "profile";
+    if (path === `/${slug}/dashboard`) return "profile";
     if (path === `/${slug}`) return "home";
     return "";
   };
@@ -89,8 +89,8 @@ export default function BottomNav() {
             <button
               key={t.id}
               onClick={() => {
-                if (t.id === "profile" && !profileSlug) {
-                  toast("Sign in to claim your player page");
+                if (t.id === "profile" && !user) {
+                  toast("Sign in to view your profile");
                   navigate("/auth");
                 } else {
                   navigate(t.path);
