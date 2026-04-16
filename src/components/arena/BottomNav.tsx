@@ -89,8 +89,8 @@ export default function BottomNav() {
             <button
               key={t.id}
               onClick={() => {
-                if (t.id === "profile" && !profileSlug) {
-                  toast("Sign in to claim your player page");
+                if (t.id === "profile" && !user) {
+                  toast("Sign in to view your profile");
                   navigate("/auth");
                 } else {
                   navigate(t.path);
