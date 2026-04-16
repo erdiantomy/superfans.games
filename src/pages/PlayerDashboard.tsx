@@ -202,11 +202,27 @@ export default function PlayerDashboard() {
 
         {/* ═══ PROFILE IDENTITY HERO ═══ */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ padding: "24px 16px 20px", textAlign: "center", borderBottom: `1px solid ${C.border}` }}>
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={displayName} style={{ width: 88, height: 88, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.green}40`, margin: "0 auto 12px" }} />
-          ) : (
-            <Av initials={initials} size={88} color={C.green} glow style={{ margin: "0 auto 12px" }} />
-          )}
+          {/* Avatar with upload */}
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
+          <div
+            onClick={() => !uploading && fileInputRef.current?.click()}
+            style={{ position: "relative", display: "inline-block", cursor: "pointer", marginBottom: 12 }}
+          >
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={displayName} style={{ width: 88, height: 88, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.green}40`, opacity: uploading ? 0.5 : 1 }} />
+            ) : (
+              <Av initials={initials} size={88} color={C.green} glow style={{ opacity: uploading ? 0.5 : 1 }} />
+            )}
+            <div style={{
+              position: "absolute", bottom: 0, right: 0,
+              width: 28, height: 28, borderRadius: "50%",
+              background: C.green, border: `2px solid ${C.bg}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13,
+            }}>
+              {uploading ? "⏳" : "📷"}
+            </div>
+          </div>
           <h1 className="font-display" style={{ fontSize: 26, fontWeight: 900, margin: "0 0 4px" }}>{displayName || "Unnamed Player"}</h1>
 
           {/* Division badge */}
