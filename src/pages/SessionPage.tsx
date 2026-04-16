@@ -147,7 +147,7 @@ export default function SessionPage() {
     }
   };
 
-
+  const tabs = isHost
     ? [{ v: "players", l: `👥 Players${pending.length > 0 ? ` (${pending.length})` : ""}` }, { v: "live", l: "Live" }, { v: "standings", l: "Standings" }, { v: "support", l: "⭐ Support" }, { v: "rounds", l: "Rounds" }, { v: "share", l: "🔗 Share" }]
     : [{ v: "live", l: "Live" }, { v: "standings", l: "Standings" }, { v: "support", l: "⭐ Support" }, { v: "rounds", l: "Rounds" }];
 
