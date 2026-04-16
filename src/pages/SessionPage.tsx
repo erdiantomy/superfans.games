@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus } from "@/hooks/useArena";
+import { useSession, useSessionPlayers, usePadelPlayer, useSessionSupports, usePlaceSupport, useRequestJoin, useUpdatePlayerStatus, useUpdateSession } from "@/hooks/useArena";
 import { incrementQuestProgress } from "@/hooks/useQuests";
 import { useSessionRealtime } from "@/hooks/useRealtime";
 import { getDivision, getDivisionProgress, getXpToNextDivision, cr, resolveSupports } from "@/lib/gamification";
@@ -60,6 +60,7 @@ export default function SessionPage() {
   const requestJoin      = useRequestJoin();
   const updateStatus     = useUpdatePlayerStatus();
   const placeSupport     = usePlaceSupport();
+  const updateSession    = useUpdateSession();
 
   const [tab,       setTab]       = useState("live");
   const [copied,    setCopied]    = useState(false);
@@ -126,6 +127,24 @@ export default function SessionPage() {
       setSupported(true);
       toast.success(`You're backing this player — ${cr(supAmt)} locked`);
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to place support"); }
+  };
+
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const handleStatusChange = async (newStatus: string) => {
+    if (!session) return;
+    setStatusUpdating(true);
+    try {
+      await updateSession.mutateAsync({ id: session.id, updates: { status: newStatus } as any });
+      toast.success(
+        newStatus === "live" ? "🔴 Session is now LIVE!" :
+        newStatus === "finished" ? "✅ Session ended" :
+        newStatus === "active" ? "♻️ Session reopened" : "Status updated"
+      );
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to update status");
+    } finally {
+      setStatusUpdating(false);
+    }
   };
 
   const tabs = isHost
@@ -468,6 +487,56 @@ export default function SessionPage() {
               <button onClick={() => setLocked(l => !l)} style={{ background: locked ? `${C.red}18` : `${C.green}18`, border: `1px solid ${locked ? C.red + "40" : C.green + "40"}`, color: locked ? C.red : C.green, padding: "7px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 800, cursor: "pointer" }}>
                 {locked ? "🔓 Unlock" : "🔒 Lock"}
               </button>
+            </div>
+
+            {/* Session Status Controls */}
+            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: 1, marginBottom: 10 }}>
+                ⚙️ Session Controls
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {session.status === "active" && (
+                  <button
+                    disabled={statusUpdating}
+                    onClick={() => handleStatusChange("live")}
+                    style={{ flex: 1, minWidth: 100, background: `${C.red}15`, border: `1px solid ${C.red}40`, color: C.red, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                  >
+                    🔴 Go Live
+                  </button>
+                )}
+                {session.status === "live" && (
+                  <button
+                    disabled={statusUpdating}
+                    onClick={() => handleStatusChange("finished")}
+                    style={{ flex: 1, minWidth: 100, background: `${C.muted}15`, border: `1px solid ${C.muted}40`, color: C.fg, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                  >
+                    ⏹️ End Session
+                  </button>
+                )}
+                {session.status === "finished" && (
+                  <>
+                    <button
+                      disabled={statusUpdating}
+                      onClick={() => handleStatusChange("active")}
+                      style={{ flex: 1, minWidth: 100, background: `${C.green}15`, border: `1px solid ${C.green}40`, color: C.green, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                    >
+                      ♻️ Reopen
+                    </button>
+                    <button
+                      disabled={statusUpdating}
+                      onClick={() => handleStatusChange("live")}
+                      style={{ flex: 1, minWidth: 100, background: `${C.red}15`, border: `1px solid ${C.red}40`, color: C.red, padding: "10px 14px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 13, fontWeight: 800, cursor: "pointer", opacity: statusUpdating ? 0.5 : 1 }}
+                    >
+                      🔴 Go Live Again
+                    </button>
+                  </>
+                )}
+              </div>
+              <div style={{ fontSize: 10, color: C.dim, marginTop: 8, lineHeight: 1.5 }}>
+                {session.status === "active" && "Start the session when all players are ready."}
+                {session.status === "live" && "End the session when all rounds are complete."}
+                {session.status === "finished" && "Reopen to accept more players, or go live again."}
+              </div>
             </div>
 
             {pending.length > 0 && (
