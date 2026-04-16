@@ -247,7 +247,7 @@ export default function SessionsPage() {
                       </div>
                       <h3 className="font-bold text-base">{s.name}</h3>
                     </div>
-                    {s.status === "active" && spotsLeft > 0 && (
+                    {s.status === "active" && !expired && spotsLeft > 0 && (
                       <button
                         onClick={e => {
                           e.stopPropagation();
