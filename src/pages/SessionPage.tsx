@@ -539,7 +539,7 @@ export default function SessionPage() {
               </div>
             </div>
 
-
+            {pending.length > 0 && (
               <>
                 <Divider label={`Join Requests (${pending.length})`} />
                 {pending.map(sp => sp.player && (
