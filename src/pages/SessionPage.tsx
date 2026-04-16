@@ -129,7 +129,25 @@ export default function SessionPage() {
     } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to place support"); }
   };
 
-  const tabs = isHost
+  const [statusUpdating, setStatusUpdating] = useState(false);
+  const handleStatusChange = async (newStatus: string) => {
+    if (!session) return;
+    setStatusUpdating(true);
+    try {
+      await updateSession.mutateAsync({ id: session.id, updates: { status: newStatus } as any });
+      toast.success(
+        newStatus === "live" ? "🔴 Session is now LIVE!" :
+        newStatus === "finished" ? "✅ Session ended" :
+        newStatus === "active" ? "♻️ Session reopened" : "Status updated"
+      );
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to update status");
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+
     ? [{ v: "players", l: `👥 Players${pending.length > 0 ? ` (${pending.length})` : ""}` }, { v: "live", l: "Live" }, { v: "standings", l: "Standings" }, { v: "support", l: "⭐ Support" }, { v: "rounds", l: "Rounds" }, { v: "share", l: "🔗 Share" }]
     : [{ v: "live", l: "Live" }, { v: "standings", l: "Standings" }, { v: "support", l: "⭐ Support" }, { v: "rounds", l: "Rounds" }];
 
