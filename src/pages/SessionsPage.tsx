@@ -65,12 +65,12 @@ export default function SessionsPage() {
   const filtered = sessions.filter(s => {
     if (statusFilter === "past") {
       if (!isExpired(s) && s.status !== "finished") return false;
-    } else {
-      // Hide expired/finished sessions from default views unless "past" is selected
-      if (statusFilter === "all" && (isExpired(s) || s.status === "finished")) return false;
-      if (statusFilter === "open" && s.status !== "active") return false;
-      if (statusFilter === "live" && s.status !== "live") return false;
+    } else if (statusFilter === "open") {
+      if (s.status !== "active" || isExpired(s)) return false;
+    } else if (statusFilter === "live") {
+      if (s.status !== "live") return false;
     }
+    // "all" shows everything — no filtering by status/expiry
     if (search) {
       const q = search.toLowerCase();
       const matchesSearch =
@@ -158,7 +158,7 @@ export default function SessionsPage() {
         {/* Status pills always visible */}
         <div className="flex gap-2 mb-6">
           {([
-            { key: "all", label: "Active", count: sessions.filter(s => s.status !== "finished" && !isExpired(s)).length },
+            { key: "all", label: "All", count: sessions.length },
             { key: "open", label: "Open", count: sessions.filter(s => s.status === "active" && !isExpired(s)).length },
             { key: "live", label: "Live", count: sessions.filter(s => s.status === "live").length },
             { key: "past", label: "Past", count: sessions.filter(s => s.status === "finished" || isExpired(s)).length },
