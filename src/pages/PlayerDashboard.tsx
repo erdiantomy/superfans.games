@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,57 @@ export default function PlayerDashboard() {
   const [isPublic, setIsPublic] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !profile) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be under 5MB");
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${user.id}/avatar.${ext}`;
+
+      // Remove old avatar if exists
+      await supabase.storage.from("avatars").remove([path]);
+
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(path, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) throw uploadError;
+
+      const { data: urlData } = supabase.storage.from("avatars").getPublicUrl(path);
+      const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+      const { error: updateError } = await (supabase as any)
+        .from("player_profiles")
+        .update({ avatar_url: avatarUrl })
+        .eq("id", profile.id);
+
+      if (updateError) throw updateError;
+
+      qc.invalidateQueries({ queryKey: ["dashboard-profile", slug] });
+      qc.invalidateQueries({ queryKey: ["player-profile-full"] });
+      toast.success("Avatar updated!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to upload avatar");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   // Resolve slug to player profile
   const { data: profile, isLoading } = useQuery({
@@ -151,11 +202,27 @@ export default function PlayerDashboard() {
 
         {/* ═══ PROFILE IDENTITY HERO ═══ */}
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} style={{ padding: "24px 16px 20px", textAlign: "center", borderBottom: `1px solid ${C.border}` }}>
-          {profile.avatar_url ? (
-            <img src={profile.avatar_url} alt={displayName} style={{ width: 88, height: 88, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.green}40`, margin: "0 auto 12px" }} />
-          ) : (
-            <Av initials={initials} size={88} color={C.green} glow style={{ margin: "0 auto 12px" }} />
-          )}
+          {/* Avatar with upload */}
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleAvatarUpload} style={{ display: "none" }} />
+          <div
+            onClick={() => !uploading && fileInputRef.current?.click()}
+            style={{ position: "relative", display: "inline-block", cursor: "pointer", marginBottom: 12 }}
+          >
+            {profile.avatar_url ? (
+              <img src={profile.avatar_url} alt={displayName} style={{ width: 88, height: 88, borderRadius: "50%", objectFit: "cover", border: `3px solid ${C.green}40`, opacity: uploading ? 0.5 : 1 }} />
+            ) : (
+              <Av initials={initials} size={88} color={C.green} glow style={{ opacity: uploading ? 0.5 : 1 }} />
+            )}
+            <div style={{
+              position: "absolute", bottom: 0, right: 0,
+              width: 28, height: 28, borderRadius: "50%",
+              background: C.green, border: `2px solid ${C.bg}`,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 13,
+            }}>
+              {uploading ? "⏳" : "📷"}
+            </div>
+          </div>
           <h1 className="font-display" style={{ fontSize: 26, fontWeight: 900, margin: "0 0 4px" }}>{displayName || "Unnamed Player"}</h1>
 
           {/* Division badge */}
