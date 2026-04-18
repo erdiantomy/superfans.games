@@ -190,8 +190,14 @@ export default function VenuePage() {
   });
 
   const list = rankTab === "monthly" ? monthly : lifetime;
-  const live = sessions.filter(s => s.status === "live");
-  const upcoming = sessions.filter(s => s.status === "active");
+  // Hide sessions whose scheduled time + 3h grace window has already passed
+  const isSessionExpired = (s: Session) => {
+    if (!s.scheduled_at) return false;
+    return new Date(s.scheduled_at).getTime() + 3 * 60 * 60 * 1000 < Date.now();
+  };
+  const live = sessions.filter(s => s.status === "live" && !isSessionExpired(s));
+  const upcoming = sessions.filter(s => s.status === "active" && !isSessionExpired(s));
+  const visibleCount = live.length + upcoming.length;
 
   if (venueLoading) {
     return (
