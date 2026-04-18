@@ -190,8 +190,14 @@ export default function VenuePage() {
   });
 
   const list = rankTab === "monthly" ? monthly : lifetime;
-  const live = sessions.filter(s => s.status === "live");
-  const upcoming = sessions.filter(s => s.status === "active");
+  // Hide sessions whose scheduled time + 3h grace window has already passed
+  const isSessionExpired = (s: Session) => {
+    if (!s.scheduled_at) return false;
+    return new Date(s.scheduled_at).getTime() + 3 * 60 * 60 * 1000 < Date.now();
+  };
+  const live = sessions.filter(s => s.status === "live" && !isSessionExpired(s));
+  const upcoming = sessions.filter(s => s.status === "active" && !isSessionExpired(s));
+  const visibleCount = live.length + upcoming.length;
 
   if (venueLoading) {
     return (
@@ -266,7 +272,7 @@ export default function VenuePage() {
           <div>
             <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>🎾 Join a Session</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 2 }}>
-              {sessions.length > 0 ? `${sessions.length} session${sessions.length > 1 ? "s" : ""} available` : "Browse all open sessions"}
+              {visibleCount > 0 ? `${visibleCount} session${visibleCount > 1 ? "s" : ""} available` : "No sessions available right now · Browse all"}
             </div>
           </div>
           <div style={{ fontSize: 24, color: "rgba(255,255,255,0.9)" }}>→</div>
@@ -339,7 +345,21 @@ export default function VenuePage() {
           </>
         )}
 
-        {/* Rankings */}
+        {/* Empty state when no live or upcoming sessions */}
+        {visibleCount === 0 && (
+          <div style={{ background: C.card, border: `1px dashed ${C.border}`, borderRadius: 14, padding: "24px 16px", marginBottom: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>🎾</div>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>No sessions available</div>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 12 }}>Check back soon or browse sessions from other venues.</div>
+            <button
+              onClick={() => navigate("/sessions")}
+              style={{ background: `${accent}18`, border: `1px solid ${accent}40`, color: accent, padding: "8px 16px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 800, cursor: "pointer" }}
+            >
+              Browse all sessions →
+            </button>
+          </div>
+        )}
+
         <Divider label="Player Rankings" />
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           {([{ v: "monthly", l: "🏅 Monthly Pts" }, { v: "lifetime", l: "⚡ Lifetime XP" }] as const).map(t => (
