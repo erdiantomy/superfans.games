@@ -272,7 +272,7 @@ export default function VenuePage() {
           <div>
             <div className="font-display" style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>🎾 Join a Session</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.8)", marginTop: 2 }}>
-              {sessions.length > 0 ? `${sessions.length} session${sessions.length > 1 ? "s" : ""} available` : "Browse all open sessions"}
+              {visibleCount > 0 ? `${visibleCount} session${visibleCount > 1 ? "s" : ""} available` : "No sessions available right now · Browse all"}
             </div>
           </div>
           <div style={{ fontSize: 24, color: "rgba(255,255,255,0.9)" }}>→</div>
