@@ -345,7 +345,21 @@ export default function VenuePage() {
           </>
         )}
 
-        {/* Rankings */}
+        {/* Empty state when no live or upcoming sessions */}
+        {visibleCount === 0 && (
+          <div style={{ background: C.card, border: `1px dashed ${C.border}`, borderRadius: 14, padding: "24px 16px", marginBottom: 14, textAlign: "center" }}>
+            <div style={{ fontSize: 28, marginBottom: 6 }}>🎾</div>
+            <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>No sessions available</div>
+            <div style={{ fontSize: 11, color: C.muted, marginBottom: 12 }}>Check back soon or browse sessions from other venues.</div>
+            <button
+              onClick={() => navigate("/sessions")}
+              style={{ background: `${accent}18`, border: `1px solid ${accent}40`, color: accent, padding: "8px 16px", borderRadius: 10, fontFamily: "'Barlow Condensed'", fontSize: 12, fontWeight: 800, cursor: "pointer" }}
+            >
+              Browse all sessions →
+            </button>
+          </div>
+        )}
+
         <Divider label="Player Rankings" />
         <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
           {([{ v: "monthly", l: "🏅 Monthly Pts" }, { v: "lifetime", l: "⚡ Lifetime XP" }] as const).map(t => (
