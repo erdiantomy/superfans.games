@@ -14,36 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      credit_packages: {
+      admin_notifications: {
         Row: {
-          bonus_pct: number | null
-          created_at: string | null
-          credits: number
+          body: string
+          created_at: string
           id: string
-          is_active: boolean | null
-          name: string
-          price_idr: number
-          sort_order: number | null
+          metadata: Json
+          read: boolean
+          recipient: string
+          subject: string
+          type: string
         }
         Insert: {
-          bonus_pct?: number | null
-          created_at?: string | null
-          credits: number
+          body: string
+          created_at?: string
           id?: string
-          is_active?: boolean | null
-          name: string
-          price_idr: number
-          sort_order?: number | null
+          metadata?: Json
+          read?: boolean
+          recipient: string
+          subject: string
+          type?: string
         }
         Update: {
-          bonus_pct?: number | null
-          created_at?: string | null
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          read?: boolean
+          recipient?: string
+          subject?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      chat_assistant_usage: {
+        Row: {
+          created_at: string
+          id: string
+          page_route: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          page_route?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          page_route?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      credit_packages: {
+        Row: {
+          bonus_pct: number
+          credits: number
+          id: string
+          is_active: boolean
+          name: string
+          price_idr: number
+          sort_order: number
+        }
+        Insert: {
+          bonus_pct?: number
+          credits: number
+          id?: string
+          is_active?: boolean
+          name: string
+          price_idr: number
+          sort_order?: number
+        }
+        Update: {
+          bonus_pct?: number
           credits?: number
           id?: string
-          is_active?: boolean | null
+          is_active?: boolean
           name?: string
           price_idr?: number
-          sort_order?: number | null
+          sort_order?: number
         }
         Relationships: []
       }
@@ -51,25 +102,23 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
-          currency: string
           donor_id: string | null
           donor_name: string
           id: string
           is_anonymous: boolean
-          message: string
+          message: string | null
           payment_order_id: string | null
           player_id: string
           status: string
         }
         Insert: {
-          amount: number
+          amount?: number
           created_at?: string
-          currency?: string
           donor_id?: string | null
           donor_name?: string
           id?: string
           is_anonymous?: boolean
-          message?: string
+          message?: string | null
           payment_order_id?: string | null
           player_id: string
           status?: string
@@ -77,45 +126,16 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
-          currency?: string
           donor_id?: string | null
           donor_name?: string
           id?: string
           is_anonymous?: boolean
-          message?: string
+          message?: string | null
           payment_order_id?: string | null
           player_id?: string
           status?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "donations_donor_id_fkey"
-            columns: ["donor_id"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donations_donor_id_fkey"
-            columns: ["donor_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donations_donor_id_fkey"
-            columns: ["donor_id"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donations_donor_id_fkey"
-            columns: ["donor_id"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
           {
             foreignKeyName: "donations_payment_order_id_fkey"
             columns: ["payment_order_id"]
@@ -127,15 +147,8 @@ export type Database = {
             foreignKeyName: "donations_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "donations_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "donations_player_id_fkey"
@@ -148,7 +161,7 @@ export type Database = {
             foreignKeyName: "donations_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
         ]
@@ -231,318 +244,133 @@ export type Database = {
         }
         Relationships: []
       }
-      monthly_resets: {
-        Row: {
-          completed: boolean
-          created_at: string
-          id: string
-          prize_first: number
-          prize_second: number
-          prize_third: number
-          reset_date: string
-          venue_id: string | null
-          winner_first: string | null
-          winner_second: string | null
-          winner_third: string | null
-        }
-        Insert: {
-          completed?: boolean
-          created_at?: string
-          id?: string
-          prize_first?: number
-          prize_second?: number
-          prize_third?: number
-          reset_date?: string
-          venue_id?: string | null
-          winner_first?: string | null
-          winner_second?: string | null
-          winner_third?: string | null
-        }
-        Update: {
-          completed?: boolean
-          created_at?: string
-          id?: string
-          prize_first?: number
-          prize_second?: number
-          prize_third?: number
-          reset_date?: string
-          venue_id?: string | null
-          winner_first?: string | null
-          winner_second?: string | null
-          winner_third?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "monthly_resets_venue_id_fkey"
-            columns: ["venue_id"]
-            isOneToOne: false
-            referencedRelation: "venues"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_first_fkey"
-            columns: ["winner_first"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_first_fkey"
-            columns: ["winner_first"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_first_fkey"
-            columns: ["winner_first"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_first_fkey"
-            columns: ["winner_first"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_second_fkey"
-            columns: ["winner_second"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_second_fkey"
-            columns: ["winner_second"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_second_fkey"
-            columns: ["winner_second"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_second_fkey"
-            columns: ["winner_second"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_third_fkey"
-            columns: ["winner_third"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_third_fkey"
-            columns: ["winner_third"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_third_fkey"
-            columns: ["winner_third"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_resets_winner_third_fkey"
-            columns: ["winner_third"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-        ]
-      }
-      notification_preferences: {
+      monthly_leaderboard_archives: {
         Row: {
           created_at: string
-          division_promotion: boolean
-          email_enabled: boolean
+          final_rank: number
           id: string
-          in_app_enabled: boolean
-          join_request: boolean
-          monthly_prize: boolean
-          payment_completed: boolean
-          score_approved: boolean
-          session_approved: boolean
-          session_rejected: boolean
-          support_payout: boolean
-          updated_at: string
-          user_id: string
+          month_key: string
+          monthly_pts: number
+          player_id: string
+          player_name: string
         }
         Insert: {
           created_at?: string
-          division_promotion?: boolean
-          email_enabled?: boolean
+          final_rank?: number
           id?: string
-          in_app_enabled?: boolean
-          join_request?: boolean
-          monthly_prize?: boolean
-          payment_completed?: boolean
-          score_approved?: boolean
-          session_approved?: boolean
-          session_rejected?: boolean
-          support_payout?: boolean
-          updated_at?: string
-          user_id: string
+          month_key: string
+          monthly_pts?: number
+          player_id: string
+          player_name?: string
         }
         Update: {
           created_at?: string
-          division_promotion?: boolean
-          email_enabled?: boolean
+          final_rank?: number
           id?: string
-          in_app_enabled?: boolean
-          join_request?: boolean
-          monthly_prize?: boolean
-          payment_completed?: boolean
-          score_approved?: boolean
-          session_approved?: boolean
-          session_rejected?: boolean
-          support_payout?: boolean
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      notifications: {
-        Row: {
-          body: string
-          created_at: string
-          data: Json
-          id: string
-          read: boolean
-          title: string
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: string
-        }
-        Insert: {
-          body: string
-          created_at?: string
-          data?: Json
-          id?: string
-          read?: boolean
-          title: string
-          type: Database["public"]["Enums"]["notification_type"]
-          user_id: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          data?: Json
-          id?: string
-          read?: boolean
-          title?: string
-          type?: Database["public"]["Enums"]["notification_type"]
-          user_id?: string
+          month_key?: string
+          monthly_pts?: number
+          player_id?: string
+          player_name?: string
         }
         Relationships: []
       }
       padel_players: {
         Row: {
           avatar: string
+          backs_correct: number
+          backs_total: number
           created_at: string
           credits: number
-          division: Database["public"]["Enums"]["division_tier"]
-          email: string
+          division: string
+          hosting_xp: number
           id: string
+          last_known_rank: number | null
           lifetime_xp: number
-          losses: number
+          matches_played: number
+          matches_won: number
           monthly_pts: number
           name: string
           streak: number
-          updated_at: string
           user_id: string
-          wins: number
         }
         Insert: {
           avatar?: string
+          backs_correct?: number
+          backs_total?: number
           created_at?: string
           credits?: number
-          division?: Database["public"]["Enums"]["division_tier"]
-          email?: string
+          division?: string
+          hosting_xp?: number
           id?: string
+          last_known_rank?: number | null
           lifetime_xp?: number
-          losses?: number
+          matches_played?: number
+          matches_won?: number
           monthly_pts?: number
           name?: string
           streak?: number
-          updated_at?: string
           user_id: string
-          wins?: number
         }
         Update: {
           avatar?: string
+          backs_correct?: number
+          backs_total?: number
           created_at?: string
           credits?: number
-          division?: Database["public"]["Enums"]["division_tier"]
-          email?: string
+          division?: string
+          hosting_xp?: number
           id?: string
+          last_known_rank?: number | null
           lifetime_xp?: number
-          losses?: number
+          matches_played?: number
+          matches_won?: number
           monthly_pts?: number
           name?: string
           streak?: number
-          updated_at?: string
           user_id?: string
-          wins?: number
         }
         Relationships: []
       }
       payment_orders: {
         Row: {
-          created_at: string | null
+          created_at: string
           credits_amount: number
           expired_at: string | null
           id: string
-          metadata: Json | null
           package_id: string | null
           paid_at: string | null
           payment_channel: string | null
           player_id: string
           price_idr: number
-          status: string | null
+          status: string
           xendit_invoice_id: string | null
           xendit_invoice_url: string | null
         }
         Insert: {
-          created_at?: string | null
-          credits_amount: number
+          created_at?: string
+          credits_amount?: number
           expired_at?: string | null
           id?: string
-          metadata?: Json | null
           package_id?: string | null
           paid_at?: string | null
           payment_channel?: string | null
           player_id: string
-          price_idr: number
-          status?: string | null
+          price_idr?: number
+          status?: string
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           credits_amount?: number
           expired_at?: string | null
           id?: string
-          metadata?: Json | null
           package_id?: string | null
           paid_at?: string | null
           payment_channel?: string | null
           player_id?: string
           price_idr?: number
-          status?: string | null
+          status?: string
           xendit_invoice_id?: string | null
           xendit_invoice_url?: string | null
         }
@@ -554,32 +382,108 @@ export type Database = {
             referencedRelation: "credit_packages"
             referencedColumns: ["id"]
           },
+        ]
+      }
+      player_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          icon: string
+          id: string
+          label: string
+          player_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          icon: string
+          id?: string
+          label: string
+          player_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          icon?: string
+          id?: string
+          label?: string
+          player_id?: string
+        }
+        Relationships: [
           {
-            foreignKeyName: "payment_orders_player_id_fkey"
+            foreignKeyName: "player_badges_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
-            foreignKeyName: "payment_orders_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_orders_player_id_fkey"
+            foreignKeyName: "player_badges_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "padel_players"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "payment_orders_player_id_fkey"
+            foreignKeyName: "player_badges_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      player_notifications: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          metadata: Json
+          player_id: string
+          read: boolean
+          title: string
+          type: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          player_id: string
+          read?: boolean
+          title: string
+          type?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          player_id?: string
+          read?: boolean
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_notifications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
         ]
@@ -587,11 +491,14 @@ export type Database = {
       player_profiles: {
         Row: {
           avatar_url: string | null
-          bio: string
+          bio: string | null
           created_at: string
           display_name: string
           id: string
           is_public: boolean
+          location: string | null
+          other_sports: string | null
+          padel_level: string | null
           player_id: string
           slug: string
           social_links: Json
@@ -599,11 +506,14 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
-          bio?: string
+          bio?: string | null
           created_at?: string
-          display_name: string
+          display_name?: string
           id?: string
           is_public?: boolean
+          location?: string | null
+          other_sports?: string | null
+          padel_level?: string | null
           player_id: string
           slug: string
           social_links?: Json
@@ -611,11 +521,14 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
-          bio?: string
+          bio?: string | null
           created_at?: string
           display_name?: string
           id?: string
           is_public?: boolean
+          location?: string | null
+          other_sports?: string | null
+          padel_level?: string | null
           player_id?: string
           slug?: string
           social_links?: Json
@@ -626,15 +539,8 @@ export type Database = {
             foreignKeyName: "player_profiles_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: true
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "player_profiles_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: true
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "player_profiles_player_id_fkey"
@@ -647,8 +553,73 @@ export type Database = {
             foreignKeyName: "player_profiles_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: true
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      player_quests: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          period_key: string
+          player_id: string
+          progress: number
+          quest_id: string
+          reward_claimed: boolean
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_key: string
+          player_id: string
+          progress?: number
+          quest_id: string
+          reward_claimed?: boolean
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          period_key?: string
+          player_id?: string
+          progress?: number
+          quest_id?: string
+          reward_claimed?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_quests_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+          {
+            foreignKeyName: "player_quests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "quest_definitions"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -688,22 +659,59 @@ export type Database = {
         }
         Relationships: []
       }
+      quest_definitions: {
+        Row: {
+          action_type: string
+          active: boolean
+          cadence: string
+          description: string
+          id: string
+          reward_badge: string | null
+          reward_type: string
+          reward_value: number
+          target_count: number
+          title: string
+        }
+        Insert: {
+          action_type: string
+          active?: boolean
+          cadence: string
+          description: string
+          id: string
+          reward_badge?: string | null
+          reward_type: string
+          reward_value?: number
+          target_count?: number
+          title: string
+        }
+        Update: {
+          action_type?: string
+          active?: boolean
+          cadence?: string
+          description?: string
+          id?: string
+          reward_badge?: string | null
+          reward_type?: string
+          reward_value?: number
+          target_count?: number
+          title?: string
+        }
+        Relationships: []
+      }
       score_submissions: {
         Row: {
-          admin_note: string | null
           court: number
           created_at: string
           id: string
           reported_by: string
           reviewed_at: string | null
-          reviewed_by: string | null
           round: number
           score_a: string
           score_b: string
           session_id: string
           session_rank_losers: number
           session_rank_winners: number
-          status: Database["public"]["Enums"]["score_status"]
+          status: string
           team_a_p1: string
           team_a_p2: string
           team_b_p1: string
@@ -712,42 +720,38 @@ export type Database = {
           xp_credited: boolean
         }
         Insert: {
-          admin_note?: string | null
-          court: number
+          court?: number
           created_at?: string
           id?: string
           reported_by: string
           reviewed_at?: string | null
-          reviewed_by?: string | null
-          round: number
+          round?: number
           score_a?: string
           score_b?: string
           session_id: string
           session_rank_losers?: number
           session_rank_winners?: number
-          status?: Database["public"]["Enums"]["score_status"]
-          team_a_p1: string
-          team_a_p2: string
-          team_b_p1: string
-          team_b_p2: string
+          status?: string
+          team_a_p1?: string
+          team_a_p2?: string
+          team_b_p1?: string
+          team_b_p2?: string
           winner_team?: string | null
           xp_credited?: boolean
         }
         Update: {
-          admin_note?: string | null
           court?: number
           created_at?: string
           id?: string
           reported_by?: string
           reviewed_at?: string | null
-          reviewed_by?: string | null
           round?: number
           score_a?: string
           score_b?: string
           session_id?: string
           session_rank_losers?: number
           session_rank_winners?: number
-          status?: Database["public"]["Enums"]["score_status"]
+          status?: string
           team_a_p1?: string
           team_a_p2?: string
           team_b_p1?: string
@@ -760,15 +764,8 @@ export type Database = {
             foreignKeyName: "score_submissions_reported_by_fkey"
             columns: ["reported_by"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_reported_by_fkey"
-            columns: ["reported_by"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "score_submissions_reported_by_fkey"
@@ -781,7 +778,7 @@ export type Database = {
             foreignKeyName: "score_submissions_reported_by_fkey"
             columns: ["reported_by"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
           {
@@ -791,118 +788,6 @@ export type Database = {
             referencedRelation: "sessions"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
         ]
       }
       session_players: {
@@ -911,42 +796,35 @@ export type Database = {
           id: string
           joined_at: string | null
           player_id: string
-          role: Database["public"]["Enums"]["player_role"]
+          role: string
           session_id: string
-          status: Database["public"]["Enums"]["join_status"]
+          status: string
         }
         Insert: {
           created_at?: string
           id?: string
           joined_at?: string | null
           player_id: string
-          role?: Database["public"]["Enums"]["player_role"]
+          role?: string
           session_id: string
-          status?: Database["public"]["Enums"]["join_status"]
+          status?: string
         }
         Update: {
           created_at?: string
           id?: string
           joined_at?: string | null
           player_id?: string
-          role?: Database["public"]["Enums"]["player_role"]
+          role?: string
           session_id?: string
-          status?: Database["public"]["Enums"]["join_status"]
+          status?: string
         }
         Relationships: [
           {
             foreignKeyName: "session_players_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "session_players_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "session_players_player_id_fkey"
@@ -959,7 +837,7 @@ export type Database = {
             foreignKeyName: "session_players_player_id_fkey"
             columns: ["player_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
           {
@@ -983,7 +861,7 @@ export type Database = {
           supporter_id: string
         }
         Insert: {
-          amount: number
+          amount?: number
           backed_id: string
           created_at?: string
           id?: string
@@ -1007,15 +885,8 @@ export type Database = {
             foreignKeyName: "session_supports_backed_id_fkey"
             columns: ["backed_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "session_supports_backed_id_fkey"
-            columns: ["backed_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "session_supports_backed_id_fkey"
@@ -1028,7 +899,7 @@ export type Database = {
             foreignKeyName: "session_supports_backed_id_fkey"
             columns: ["backed_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
           {
@@ -1042,15 +913,8 @@ export type Database = {
             foreignKeyName: "session_supports_supporter_id_fkey"
             columns: ["supporter_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "session_supports_supporter_id_fkey"
-            columns: ["supporter_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "session_supports_supporter_id_fkey"
@@ -1063,7 +927,7 @@ export type Database = {
             foreignKeyName: "session_supports_supporter_id_fkey"
             columns: ["supporter_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
         ]
@@ -1072,89 +936,79 @@ export type Database = {
         Row: {
           admin_note: string | null
           approved_at: string | null
-          approved_by: string | null
           code: string
           courts: number
           created_at: string
           current_round: number
-          finished_at: string | null
-          format: Database["public"]["Enums"]["session_format"]
+          format: string
           host_id: string
           id: string
           locked: boolean
           max_players: number
           name: string
-          partner_type: Database["public"]["Enums"]["partner_type"]
+          partner_type: string
           points_per_match: number
           scheduled_at: string | null
-          started_at: string | null
-          status: Database["public"]["Enums"]["session_status"]
+          status: string
           total_rounds: number
-          updated_at: string
+          venue_city_tag: string | null
+          venue_claim_status: string
           venue_id: string | null
+          venue_name_tag: string | null
         }
         Insert: {
           admin_note?: string | null
           approved_at?: string | null
-          approved_by?: string | null
-          code: string
+          code?: string
           courts?: number
           created_at?: string
           current_round?: number
-          finished_at?: string | null
-          format?: Database["public"]["Enums"]["session_format"]
+          format?: string
           host_id: string
           id?: string
           locked?: boolean
           max_players?: number
           name: string
-          partner_type?: Database["public"]["Enums"]["partner_type"]
+          partner_type?: string
           points_per_match?: number
           scheduled_at?: string | null
-          started_at?: string | null
-          status?: Database["public"]["Enums"]["session_status"]
+          status?: string
           total_rounds?: number
-          updated_at?: string
+          venue_city_tag?: string | null
+          venue_claim_status?: string
           venue_id?: string | null
+          venue_name_tag?: string | null
         }
         Update: {
           admin_note?: string | null
           approved_at?: string | null
-          approved_by?: string | null
           code?: string
           courts?: number
           created_at?: string
           current_round?: number
-          finished_at?: string | null
-          format?: Database["public"]["Enums"]["session_format"]
+          format?: string
           host_id?: string
           id?: string
           locked?: boolean
           max_players?: number
           name?: string
-          partner_type?: Database["public"]["Enums"]["partner_type"]
+          partner_type?: string
           points_per_match?: number
           scheduled_at?: string | null
-          started_at?: string | null
-          status?: Database["public"]["Enums"]["session_status"]
+          status?: string
           total_rounds?: number
-          updated_at?: string
+          venue_city_tag?: string | null
+          venue_claim_status?: string
           venue_id?: string | null
+          venue_name_tag?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "sessions_host_id_fkey"
             columns: ["host_id"]
             isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sessions_host_id_fkey"
-            columns: ["host_id"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
           },
           {
             foreignKeyName: "sessions_host_id_fkey"
@@ -1167,7 +1021,7 @@ export type Database = {
             foreignKeyName: "sessions_host_id_fkey"
             columns: ["host_id"]
             isOneToOne: false
-            referencedRelation: "player_profile_full"
+            referencedRelation: "player_stats"
             referencedColumns: ["player_id"]
           },
           {
@@ -1179,369 +1033,29 @@ export type Database = {
           },
         ]
       }
-      sf_follows: {
+      slugs: {
         Row: {
           created_at: string
-          follower_id: string
+          entity_id: string
+          entity_type: string
           id: string
-          target_id: string
-          target_type: string
+          slug: string
         }
         Insert: {
           created_at?: string
-          follower_id: string
+          entity_id: string
+          entity_type: string
           id?: string
-          target_id: string
-          target_type: string
+          slug: string
         }
         Update: {
           created_at?: string
-          follower_id?: string
+          entity_id?: string
+          entity_type?: string
           id?: string
-          target_id?: string
-          target_type?: string
-        }
-        Relationships: []
-      }
-      sf_leagues: {
-        Row: {
-          badge_url: string | null
-          country: string | null
-          created_at: string
-          external_ref: string | null
-          id: string
-          logo_url: string | null
-          name: string
-          priority: number
-          season: string | null
-          slug: string
-          sport: string
-        }
-        Insert: {
-          badge_url?: string | null
-          country?: string | null
-          created_at?: string
-          external_ref?: string | null
-          id?: string
-          logo_url?: string | null
-          name: string
-          priority?: number
-          season?: string | null
-          slug: string
-          sport?: string
-        }
-        Update: {
-          badge_url?: string | null
-          country?: string | null
-          created_at?: string
-          external_ref?: string | null
-          id?: string
-          logo_url?: string | null
-          name?: string
-          priority?: number
-          season?: string | null
           slug?: string
-          sport?: string
         }
         Relationships: []
-      }
-      sf_matches: {
-        Row: {
-          away_badge: string | null
-          away_score: number | null
-          away_team_id: string | null
-          away_team_name: string
-          created_at: string
-          external_ref: string | null
-          home_badge: string | null
-          home_score: number | null
-          home_team_id: string | null
-          home_team_name: string
-          id: string
-          kickoff_at: string | null
-          league_id: string | null
-          league_name: string | null
-          round: string | null
-          season: string | null
-          status: Database["public"]["Enums"]["sf_match_status"]
-          thumb_url: string | null
-          updated_at: string
-          venue: string | null
-          winner: string | null
-        }
-        Insert: {
-          away_badge?: string | null
-          away_score?: number | null
-          away_team_id?: string | null
-          away_team_name: string
-          created_at?: string
-          external_ref?: string | null
-          home_badge?: string | null
-          home_score?: number | null
-          home_team_id?: string | null
-          home_team_name: string
-          id?: string
-          kickoff_at?: string | null
-          league_id?: string | null
-          league_name?: string | null
-          round?: string | null
-          season?: string | null
-          status?: Database["public"]["Enums"]["sf_match_status"]
-          thumb_url?: string | null
-          updated_at?: string
-          venue?: string | null
-          winner?: string | null
-        }
-        Update: {
-          away_badge?: string | null
-          away_score?: number | null
-          away_team_id?: string | null
-          away_team_name?: string
-          created_at?: string
-          external_ref?: string | null
-          home_badge?: string | null
-          home_score?: number | null
-          home_team_id?: string | null
-          home_team_name?: string
-          id?: string
-          kickoff_at?: string | null
-          league_id?: string | null
-          league_name?: string | null
-          round?: string | null
-          season?: string | null
-          status?: Database["public"]["Enums"]["sf_match_status"]
-          thumb_url?: string | null
-          updated_at?: string
-          venue?: string | null
-          winner?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sf_matches_away_team_id_fkey"
-            columns: ["away_team_id"]
-            isOneToOne: false
-            referencedRelation: "sf_teams"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sf_matches_home_team_id_fkey"
-            columns: ["home_team_id"]
-            isOneToOne: false
-            referencedRelation: "sf_teams"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sf_matches_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "sf_leagues"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sf_post_likes: {
-        Row: {
-          created_at: string
-          id: string
-          post_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          post_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          post_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sf_post_likes_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "sf_posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sf_posts: {
-        Row: {
-          author_id: string
-          body: string
-          created_at: string
-          deleted_at: string | null
-          id: string
-          like_count: number
-          match_id: string | null
-          prediction_id: string | null
-        }
-        Insert: {
-          author_id: string
-          body: string
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          like_count?: number
-          match_id?: string | null
-          prediction_id?: string | null
-        }
-        Update: {
-          author_id?: string
-          body?: string
-          created_at?: string
-          deleted_at?: string | null
-          id?: string
-          like_count?: number
-          match_id?: string | null
-          prediction_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sf_posts_match_id_fkey"
-            columns: ["match_id"]
-            isOneToOne: false
-            referencedRelation: "sf_matches"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sf_posts_prediction_id_fkey"
-            columns: ["prediction_id"]
-            isOneToOne: false
-            referencedRelation: "sf_predictions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sf_predictions: {
-        Row: {
-          confidence: number
-          created_at: string
-          id: string
-          match_id: string
-          pick: string
-          points_awarded: number | null
-          resolved_at: string | null
-          status: Database["public"]["Enums"]["sf_prediction_status"]
-          user_id: string
-        }
-        Insert: {
-          confidence?: number
-          created_at?: string
-          id?: string
-          match_id: string
-          pick: string
-          points_awarded?: number | null
-          resolved_at?: string | null
-          status?: Database["public"]["Enums"]["sf_prediction_status"]
-          user_id: string
-        }
-        Update: {
-          confidence?: number
-          created_at?: string
-          id?: string
-          match_id?: string
-          pick?: string
-          points_awarded?: number | null
-          resolved_at?: string | null
-          status?: Database["public"]["Enums"]["sf_prediction_status"]
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sf_predictions_match_id_fkey"
-            columns: ["match_id"]
-            isOneToOne: false
-            referencedRelation: "sf_matches"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      sf_reputation: {
-        Row: {
-          accuracy: number
-          best_streak: number
-          correct_predictions: number
-          current_streak: number
-          points: number
-          tier: string
-          total_predictions: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          accuracy?: number
-          best_streak?: number
-          correct_predictions?: number
-          current_streak?: number
-          points?: number
-          tier?: string
-          total_predictions?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          accuracy?: number
-          best_streak?: number
-          correct_predictions?: number
-          current_streak?: number
-          points?: number
-          tier?: string
-          total_predictions?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      sf_teams: {
-        Row: {
-          badge_url: string | null
-          country: string | null
-          created_at: string
-          external_ref: string | null
-          id: string
-          league_id: string | null
-          name: string
-          short_name: string | null
-          slug: string
-          stadium: string | null
-        }
-        Insert: {
-          badge_url?: string | null
-          country?: string | null
-          created_at?: string
-          external_ref?: string | null
-          id?: string
-          league_id?: string | null
-          name: string
-          short_name?: string | null
-          slug: string
-          stadium?: string | null
-        }
-        Update: {
-          badge_url?: string | null
-          country?: string | null
-          created_at?: string
-          external_ref?: string | null
-          id?: string
-          league_id?: string | null
-          name?: string
-          short_name?: string | null
-          slug?: string
-          stadium?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "sf_teams_league_id_fkey"
-            columns: ["league_id"]
-            isOneToOne: false
-            referencedRelation: "sf_leagues"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       supports: {
         Row: {
@@ -1581,150 +1095,186 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       venue_registrations: {
         Row: {
-          admin_password: string
-          city: string | null
+          admin_password_hash: string | null
+          city: string
           contact_email: string
           contact_name: string
-          contact_phone: string | null
-          country: string | null
-          courts_default: number | null
-          created_at: string | null
+          contact_phone: string
+          country: string
+          courts: number
+          created_at: string
           id: string
           logo_url: string | null
           monthly_prize: number | null
-          name: string
           primary_color: string | null
           prize_split_1st: number | null
           prize_split_2nd: number | null
           prize_split_3rd: number | null
-          rejection_reason: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
           slug: string
-          status: string | null
+          status: string
+          venue_name: string
         }
         Insert: {
-          admin_password: string
-          city?: string | null
+          admin_password_hash?: string | null
+          city: string
           contact_email: string
           contact_name: string
-          contact_phone?: string | null
-          country?: string | null
-          courts_default?: number | null
-          created_at?: string | null
+          contact_phone: string
+          country?: string
+          courts?: number
+          created_at?: string
           id?: string
           logo_url?: string | null
           monthly_prize?: number | null
-          name: string
           primary_color?: string | null
           prize_split_1st?: number | null
           prize_split_2nd?: number | null
           prize_split_3rd?: number | null
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
           slug: string
-          status?: string | null
+          status?: string
+          venue_name: string
         }
         Update: {
-          admin_password?: string
-          city?: string | null
+          admin_password_hash?: string | null
+          city?: string
           contact_email?: string
           contact_name?: string
-          contact_phone?: string | null
-          country?: string | null
-          courts_default?: number | null
-          created_at?: string | null
+          contact_phone?: string
+          country?: string
+          courts?: number
+          created_at?: string
           id?: string
           logo_url?: string | null
           monthly_prize?: number | null
-          name?: string
           primary_color?: string | null
           prize_split_1st?: number | null
           prize_split_2nd?: number | null
           prize_split_3rd?: number | null
-          rejection_reason?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
           slug?: string
-          status?: string | null
+          status?: string
+          venue_name?: string
         }
         Relationships: []
+      }
+      venue_session_claims: {
+        Row: {
+          created_at: string
+          id: string
+          session_id: string
+          status: string
+          venue_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          session_id: string
+          status?: string
+          venue_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          session_id?: string
+          status?: string
+          venue_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venue_session_claims_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venue_session_claims_venue_id_fkey"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       venues: {
         Row: {
           admin_password_hash: string | null
-          approved_at: string | null
-          approved_by: string | null
           city: string | null
           contact_email: string | null
           contact_name: string | null
           contact_phone: string | null
           country: string | null
           courts_default: number | null
-          created_at: string | null
+          created_at: string
           id: string
           logo_url: string | null
           monthly_prize: number | null
           name: string
-          platform_fee_pct: number | null
           primary_color: string | null
           prize_split_1st: number | null
           prize_split_2nd: number | null
           prize_split_3rd: number | null
           slug: string
-          status: string | null
-          updated_at: string | null
+          status: string
         }
         Insert: {
           admin_password_hash?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
           city?: string | null
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
           country?: string | null
           courts_default?: number | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           logo_url?: string | null
           monthly_prize?: number | null
           name: string
-          platform_fee_pct?: number | null
           primary_color?: string | null
           prize_split_1st?: number | null
           prize_split_2nd?: number | null
           prize_split_3rd?: number | null
           slug: string
-          status?: string | null
-          updated_at?: string | null
+          status?: string
         }
         Update: {
           admin_password_hash?: string | null
-          approved_at?: string | null
-          approved_by?: string | null
           city?: string | null
           contact_email?: string | null
           contact_name?: string | null
           contact_phone?: string | null
           country?: string | null
           courts_default?: number | null
-          created_at?: string | null
+          created_at?: string
           id?: string
           logo_url?: string | null
           monthly_prize?: number | null
           name?: string
-          platform_fee_pct?: number | null
           primary_color?: string | null
           prize_split_1st?: number | null
           prize_split_2nd?: number | null
           prize_split_3rd?: number | null
           slug?: string
-          status?: string | null
-          updated_at?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -1771,6 +1321,50 @@ export type Database = {
       }
     }
     Views: {
+      donation_stats: {
+        Row: {
+          player_id: string | null
+          supporter_count: number | null
+          total_donations: number | null
+          total_raised: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "donations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "donations_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+        ]
+      }
+      host_stats: {
+        Row: {
+          active_sessions: number | null
+          avatar: string | null
+          completed_sessions: number | null
+          host_id: string | null
+          name: string | null
+          total_players_hosted: number | null
+          total_sessions: number | null
+          user_id: string | null
+        }
+        Relationships: []
+      }
       leaderboard: {
         Row: {
           avatar_url: string | null
@@ -1782,202 +1376,20 @@ export type Database = {
         }
         Relationships: []
       }
-      lifetime_leaderboard: {
-        Row: {
-          avatar: string | null
-          division: Database["public"]["Enums"]["division_tier"] | null
-          id: string | null
-          lifetime_rank: number | null
-          lifetime_xp: number | null
-          losses: number | null
-          monthly_pts: number | null
-          name: string | null
-          streak: number | null
-          user_id: string | null
-          wins: number | null
-        }
-        Relationships: []
-      }
-      monthly_leaderboard: {
-        Row: {
-          avatar: string | null
-          division: Database["public"]["Enums"]["division_tier"] | null
-          id: string | null
-          lifetime_xp: number | null
-          losses: number | null
-          monthly_pts: number | null
-          monthly_rank: number | null
-          name: string | null
-          streak: number | null
-          user_id: string | null
-          wins: number | null
-        }
-        Relationships: []
-      }
-      player_match_history: {
-        Row: {
-          court: number | null
-          played_at: string | null
-          round: number | null
-          score_a: string | null
-          score_b: string | null
-          score_id: string | null
-          session_code: string | null
-          session_id: string | null
-          session_name: string | null
-          team_a_p1: string | null
-          team_a_p2: string | null
-          team_b_p1: string | null
-          team_b_p2: string | null
-          venue_id: string | null
-          venue_name: string | null
-          venue_slug: string | null
-          winner_team: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "score_submissions_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p1_fkey"
-            columns: ["team_a_p1"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_a_p2_fkey"
-            columns: ["team_a_p2"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p1_fkey"
-            columns: ["team_b_p1"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "lifetime_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "monthly_leaderboard"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "padel_players"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "score_submissions_team_b_p2_fkey"
-            columns: ["team_b_p2"]
-            isOneToOne: false
-            referencedRelation: "player_profile_full"
-            referencedColumns: ["player_id"]
-          },
-          {
-            foreignKeyName: "sessions_venue_id_fkey"
-            columns: ["venue_id"]
-            isOneToOne: false
-            referencedRelation: "venues"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       player_profile_full: {
         Row: {
-          avatar: string | null
           avatar_url: string | null
           bio: string | null
-          credits: number | null
           display_name: string | null
-          division: Database["public"]["Enums"]["division_tier"] | null
-          donation_count: number | null
+          division: string | null
           games_played: number | null
           is_public: boolean | null
           lifetime_xp: number | null
+          location: string | null
           losses: number | null
           monthly_pts: number | null
-          name: string | null
+          other_sports: string | null
+          padel_level: string | null
           player_id: string | null
           profile_created_at: string | null
           profile_id: string | null
@@ -1985,83 +1397,122 @@ export type Database = {
           social_links: Json | null
           streak: number | null
           supporter_count: number | null
+          total_donations: number | null
           total_raised: number | null
-          user_id: string | null
           win_rate: number | null
           wins: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "player_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "host_stats"
+            referencedColumns: ["host_id"]
+          },
+          {
+            foreignKeyName: "player_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "padel_players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_profiles_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: true
+            referencedRelation: "player_stats"
+            referencedColumns: ["player_id"]
+          },
+        ]
       }
-      sf_leaderboard: {
+      player_stats: {
         Row: {
-          accuracy: number | null
-          avatar_url: string | null
-          best_streak: number | null
-          correct_predictions: number | null
-          current_streak: number | null
-          display_name: string | null
-          points: number | null
-          position: number | null
-          tier: string | null
-          total_predictions: number | null
-          user_id: string | null
-          username: string | null
+          avatar: string | null
+          division: string | null
+          games_played: number | null
+          lifetime_xp: number | null
+          losses: number | null
+          monthly_pts: number | null
+          name: string | null
+          player_id: string | null
+          streak: number | null
+          win_rate: number | null
+          wins: number | null
+        }
+        Insert: {
+          avatar?: string | null
+          division?: string | null
+          games_played?: number | null
+          lifetime_xp?: number | null
+          losses?: never
+          monthly_pts?: number | null
+          name?: string | null
+          player_id?: string | null
+          streak?: number | null
+          win_rate?: never
+          wins?: number | null
+        }
+        Update: {
+          avatar?: string | null
+          division?: string | null
+          games_played?: number | null
+          lifetime_xp?: number | null
+          losses?: never
+          monthly_pts?: number | null
+          name?: string | null
+          player_id?: string | null
+          streak?: number | null
+          win_rate?: never
+          wins?: number | null
         }
         Relationships: []
       }
     }
     Functions: {
+      archive_and_reset_monthly_pts: { Args: never; Returns: undefined }
       check_slug_available: { Args: { p_slug: string }; Returns: boolean }
-      create_notification: {
-        Args: {
-          p_body: string
-          p_data?: Json
-          p_title: string
-          p_type: Database["public"]["Enums"]["notification_type"]
-          p_user_id: string
-        }
+      credit_player_balance: {
+        Args: { p_credits: number; p_player_id: string }
         Returns: undefined
       }
       credit_xp_for_score: {
         Args: { submission_id: string }
         Returns: undefined
       }
-      resolve_slug: {
-        Args: { p_slug: string }
-        Returns: {
-          entity_id: string
-          entity_type: string
-        }[]
+      get_host_tier: { Args: { hosting_xp: number }; Returns: string }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
-      resolve_support_payouts: {
-        Args: { p_session_id: string; winner_player_id: string }
-        Returns: undefined
-      }
-      sf_recompute_reputation: { Args: { p_user: string }; Returns: undefined }
-      sf_resolve_match: { Args: { p_match: string }; Returns: undefined }
-      sf_tier_for: { Args: { points: number }; Returns: string }
+      resolve_slug: { Args: { p_slug: string }; Returns: Json }
       upsert_padel_player: {
         Args: {
-          p_avatar?: string
+          p_avatar: string
           p_email: string
           p_name: string
           p_user_id: string
         }
         Returns: {
           avatar: string
+          backs_correct: number
+          backs_total: number
           created_at: string
           credits: number
-          division: Database["public"]["Enums"]["division_tier"]
-          email: string
+          division: string
+          hosting_xp: number
           id: string
+          last_known_rank: number | null
           lifetime_xp: number
-          losses: number
+          matches_played: number
+          matches_won: number
           monthly_pts: number
           name: string
           streak: number
-          updated_at: string
           user_id: string
-          wins: number
         }
         SetofOptions: {
           from: "*"
@@ -2070,39 +1521,44 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      venue_lifetime_leaderboard: {
+        Args: { p_venue_id: string }
+        Returns: {
+          avatar: string
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }[]
+      }
+      venue_monthly_leaderboard: {
+        Args: { p_venue_id: string }
+        Returns: {
+          avatar: string
+          division: string
+          id: string
+          lifetime_xp: number
+          matches_played: number
+          matches_won: number
+          monthly_pts: number
+          name: string
+          streak: number
+          user_id: string
+        }[]
+      }
+      verify_venue_password: {
+        Args: { plain_password: string; venue_slug: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      division_tier: "bronze" | "silver" | "gold" | "platinum" | "diamond"
-      join_status: "pending" | "approved" | "declined"
+      app_role: "admin" | "moderator" | "user" | "host" | "venue_owner"
       match_status: "live" | "upcoming" | "finished"
-      notification_type:
-        | "score_approved"
-        | "support_payout"
-        | "division_promotion"
-        | "session_approved"
-        | "session_rejected"
-        | "monthly_prize"
-        | "join_request_received"
-        | "join_request_approved"
-        | "join_request_declined"
-        | "payment_completed"
-      partner_type: "random" | "fixed"
-      player_role: "host" | "player"
-      score_status: "pending" | "approved" | "rejected"
-      session_format: "americano" | "mexicano"
-      session_status:
-        | "pending_approval"
-        | "active"
-        | "live"
-        | "finished"
-        | "rejected"
-      sf_match_status:
-        | "scheduled"
-        | "live"
-        | "finished"
-        | "postponed"
-        | "cancelled"
-      sf_prediction_status: "pending" | "correct" | "incorrect" | "void"
       tx_type: "support" | "reward" | "topup" | "redeem" | "bonus"
     }
     CompositeTypes: {
@@ -2231,40 +1687,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      division_tier: ["bronze", "silver", "gold", "platinum", "diamond"],
-      join_status: ["pending", "approved", "declined"],
+      app_role: ["admin", "moderator", "user", "host", "venue_owner"],
       match_status: ["live", "upcoming", "finished"],
-      notification_type: [
-        "score_approved",
-        "support_payout",
-        "division_promotion",
-        "session_approved",
-        "session_rejected",
-        "monthly_prize",
-        "join_request_received",
-        "join_request_approved",
-        "join_request_declined",
-        "payment_completed",
-      ],
-      partner_type: ["random", "fixed"],
-      player_role: ["host", "player"],
-      score_status: ["pending", "approved", "rejected"],
-      session_format: ["americano", "mexicano"],
-      session_status: [
-        "pending_approval",
-        "active",
-        "live",
-        "finished",
-        "rejected",
-      ],
-      sf_match_status: [
-        "scheduled",
-        "live",
-        "finished",
-        "postponed",
-        "cancelled",
-      ],
-      sf_prediction_status: ["pending", "correct", "incorrect", "void"],
       tx_type: ["support", "reward", "topup", "redeem", "bonus"],
     },
   },
