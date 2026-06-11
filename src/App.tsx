@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
@@ -60,11 +60,14 @@ const VenueLayout = ({ children }: { children: React.ReactNode }) => (
   <VenueProvider>{children}</VenueProvider>
 );
 
+// Use hash routing when hosted on a static store without SPA rewrites (e.g. Supabase Storage).
+const Router = import.meta.env.VITE_HASH_ROUTER === "1" ? HashRouter : BrowserRouter;
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <BrowserRouter>
+        <Router>
           <Routes>
             {/* ===== Superfans (primary) ===== */}
             <Route path="/"            element={<SFHome />} />
@@ -112,7 +115,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
+        </Router>
         <Toaster richColors position="top-center" />
       </TooltipProvider>
     </AuthProvider>
