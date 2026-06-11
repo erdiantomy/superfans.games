@@ -1,7 +1,10 @@
 // Superfans — football data layer (typed Supabase queries + React Query hooks)
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase as _supabase } from "@/integrations/supabase/client";
+// Superfans sf_* tables are not yet present in the generated Supabase types.
+// Cast to any here so this data layer compiles; runtime calls remain unchanged.
+const supabase = _supabase as any;
 
 export type MatchStatus = "scheduled" | "live" | "finished" | "postponed" | "cancelled";
 export type Pick = "home" | "away" | "draw";
