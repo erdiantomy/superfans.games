@@ -238,6 +238,7 @@ export function useFeed(userId?: string) {
         const map = new Map((profs ?? []).map((p: any) => [p.user_id, p]));
         posts.forEach((p) => {
           const pr = map.get(p.author_id);
+          const pr: any = map.get(p.author_id);
           p.author = pr ? { display_name: pr.display_name, username: pr.username, avatar_url: pr.avatar_url } : null;
         });
       }
