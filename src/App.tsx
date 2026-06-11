@@ -1,12 +1,21 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, HashRouter, Route, Routes, Navigate, useParams } from "react-router-dom";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { VenueProvider } from "@/hooks/useVenue";
 
-import HomePage           from "@/pages/HomePage";
+// Superfans — football social network (primary product)
+import SFHome        from "@/superfans/pages/Home";
+import SFMatches     from "@/superfans/pages/Matches";
+import SFMatch       from "@/superfans/pages/Match";
+import SFFeed        from "@/superfans/pages/FeedPage";
+import SFLeaderboard from "@/superfans/pages/Leaderboard";
+import SFProfile     from "@/superfans/pages/Profile";
+import SFAuth        from "@/superfans/pages/Auth";
 
+// Legacy padel/arena product (kept accessible under /padel + scoped routes)
+import HomePage           from "@/pages/HomePage";
 import GamificationPage   from "@/pages/GamificationPage";
 import SessionsPage       from "@/pages/SessionsPage";
 import VenuesPage          from "@/pages/VenuesPage";
@@ -30,7 +39,6 @@ import PlayerDashboard     from "@/pages/PlayerDashboard";
 import VenueSessionsPage  from "@/pages/VenueSessionsPage";
 import SlugResolver        from "@/components/profile/SlugResolver";
 
-import ChatAssistant from "@/components/ChatAssistant";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -52,22 +60,33 @@ const VenueLayout = ({ children }: { children: React.ReactNode }) => (
   <VenueProvider>{children}</VenueProvider>
 );
 
+// Use hash routing when hosted on a static store without SPA rewrites (e.g. Supabase Storage).
+const Router = import.meta.env.VITE_HASH_ROUTER === "1" ? HashRouter : BrowserRouter;
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <BrowserRouter>
+        <Router>
           <Routes>
-            {/* Marketing pages */}
-            <Route path="/"              element={<HomePage />} />
-            
+            {/* ===== Superfans (primary) ===== */}
+            <Route path="/"            element={<SFHome />} />
+            <Route path="/matches"     element={<SFMatches />} />
+            <Route path="/m/:id"       element={<SFMatch />} />
+            <Route path="/feed"        element={<SFFeed />} />
+            <Route path="/leaderboard" element={<SFLeaderboard />} />
+            <Route path="/me"          element={<SFProfile />} />
+            <Route path="/login"       element={<SFAuth />} />
+
+            {/* ===== Legacy padel/arena product ===== */}
+            <Route path="/padel"         element={<HomePage />} />
             <Route path="/gamification"  element={<GamificationPage />} />
             <Route path="/sessions"      element={<SessionsPage />} />
             <Route path="/venues"        element={<VenuesPage />} />
             <Route path="/pricing"       element={<PricingPage />} />
             <Route path="/top-players"   element={<TopPlayersPage />} />
 
-            {/* Auth & Dashboard */}
+            {/* Auth & Dashboard (legacy) */}
             <Route path="/auth"          element={<AuthScreen />} />
             <Route path="/dashboard"     element={<Dashboard />} />
             <Route path="/register"      element={<RegisterPage />} />
@@ -76,16 +95,15 @@ const App = () => (
             <Route path="/payment/success" element={<PaymentSuccessPage />} />
             <Route path="/payment/failed"  element={<PaymentFailedPage />} />
 
-            {/* Backwards-compat redirects */}
+            {/* Backwards-compat redirects (legacy) */}
             <Route path="/rank"            element={<RankPage />} />
             <Route path="/host"            element={<HostDashboard />} />
             <Route path="/s/:code"         element={<VenueLayout><SessionPage /></VenueLayout>} />
             <Route path="/admin"           element={<Navigate to="/superadmin" replace />} />
             <Route path="/superadmin"      element={<SuperAdminPage />} />
             <Route path="/session/:code"   element={<LegacySessionRedirect />} />
-            <Route path="/match/:code"     element={<LegacyMatchRedirect />} />
 
-            {/* Venue-scoped routes */}
+            {/* Venue-scoped routes (legacy) */}
             <Route path="/:slug/dashboard"     element={<PlayerDashboard />} />
             <Route path="/:slug/sessions"     element={<VenueLayout><VenueSessionsPage /></VenueLayout>} />
             <Route path="/:slug/rank"          element={<VenueLayout><RankPage /></VenueLayout>} />
@@ -97,8 +115,7 @@ const App = () => (
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-          <ChatAssistant />
-        </BrowserRouter>
+        </Router>
         <Toaster richColors position="top-center" />
       </TooltipProvider>
     </AuthProvider>
