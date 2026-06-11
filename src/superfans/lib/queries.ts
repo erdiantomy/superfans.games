@@ -235,7 +235,7 @@ export function useFeed(userId?: string) {
       if (authorIds.length) {
         const { data: profs } = await supabase.from("profiles")
           .select("user_id,display_name,username,avatar_url").in("user_id", authorIds);
-        const map = new Map((profs ?? []).map((p) => [p.user_id, p]));
+        const map = new Map((profs ?? []).map((p: any) => [p.user_id, p]));
         posts.forEach((p) => {
           const pr = map.get(p.author_id);
           p.author = pr ? { display_name: pr.display_name, username: pr.username, avatar_url: pr.avatar_url } : null;
